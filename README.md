@@ -22,14 +22,41 @@ Create a personal sneaker museum for every collector.
 
 ---
 
+Start Here
+
+All contributors and AI coding assistants must read the following documents before implementation.
+
+Required Reading Order
+
+1. "docs/DESIGN_SYSTEM.md"
+2. "docs/ARCHITECTURE.md"
+3. "specs/README.md"
+4. "specs/MVP_SPEC.md"
+5. "specs/IMPLEMENTATION_RULES.md"
+
+Implementation Rule
+
+All code changes must follow:
+
+- DESIGN_SYSTEM.md
+- ARCHITECTURE.md
+- All specifications under "/specs"
+- IMPLEMENTATION_RULES.md
+
+---
+
 Current Status
 
 Sprint| Status
-Sprint1| Complete
-Sprint2| Reviewed
-Sprint3| Specified
-Sprint4| Planned
-Sprint5| Planned
+Sprint 1| Complete
+Sprint 2| Reviewed
+Sprint 3| Specified
+Sprint 4| Planned
+Sprint 5| Planned
+
+Current Phase
+
+MVP Implementation
 
 ---
 
@@ -61,34 +88,36 @@ Technology
 - Flutter
 - Dart
 - Riverpod
-- SQLite
+- SQLite (Drift)
 - Material 3
 
 ---
 
 Documentation
 
-Product
-
-- docs/ROADMAP.md
-- docs/RELEASE_PLAN.md
-- docs/USER_STORIES.md
-
 Architecture
 
 - docs/ARCHITECTURE.md
+- docs/DEVELOPMENT_WORKFLOW.md
 - docs/DECISIONS.md
-- docs/CONTRIBUTING.md
 
-Design
+Specifications
 
-- docs/BRAND_GUIDELINES.md
-- docs/SCREEN_SPEC.md
-
-Management
-
-- docs/CHANGELOG.md
-- docs/ISSUES.md
+- specs/README.md
+- specs/MVP_SPEC.md
+- specs/HOME_SCREEN_SPEC.md
+- specs/COLLECTION_SCREEN_SPEC.md
+- specs/SHOE_DETAIL_SCREEN_SPEC.md
+- specs/SHOE_FORM_SCREEN_SPEC.md
+- specs/SETTINGS_SCREEN_SPEC.md
+- specs/DATABASE_SPEC.md
+- specs/NAVIGATION_SPEC.md
+- specs/STATE_MANAGEMENT_SPEC.md
+- specs/PROJECT_STRUCTURE_SPEC.md
+- specs/UI_COMPONENT_SPEC.md
+- specs/IMPLEMENTATION_RULES.md
+- specs/ROADMAP.md
+- specs/RELEASE_CHECKLIST.md
 
 ---
 
