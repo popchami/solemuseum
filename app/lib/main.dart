@@ -6,6 +6,7 @@ import 'providers/navigation_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/collection_screen.dart';
 import 'screens/settings_screen.dart';
+import 'widgets/app_fab.dart';
 
 void main() {
   runApp(const ProviderScope(child: SoleMuseumApp()));
@@ -42,6 +43,8 @@ class SoleMuseumHome extends ConsumerWidget {
       const SettingsScreen(),
     ];
 
+    final showFab = currentIndex == 0 || currentIndex == 1;
+
     return Scaffold(
       body: screens[currentIndex],
       bottomNavigationBar: NavigationBar(
@@ -67,14 +70,7 @@ class SoleMuseumHome extends ConsumerWidget {
           ),
         ],
       ),
-      floatingActionButton: currentIndex == 1
-          ? FloatingActionButton(
-              onPressed: () {
-                // TODO: Add new shoe
-              },
-              child: const Icon(Icons.add),
-            )
-          : null,
+      floatingActionButton: showFab ? const AppFab() : null,
     );
   }
 }
