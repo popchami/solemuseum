@@ -1,269 +1,247 @@
-SoleMuseum Architecture v1.0
+# ARCHITECTURE.md
 
-Overview
+## 概要
 
-SoleMuseum is a Flutter application designed to collect, record, and exhibit sneaker collections.
+SoleMuseum MVPのアーキテクチャ方針を定義する。
 
-Architecture goals:
-
-- Simple
-- Maintainable
-- Offline-first
-- Easy to extend
+本アプリは、Flutterによるローカルファーストなスニーカーコレクションアプリである。
 
 ---
 
-Technology Stack
+# 基本方針
 
-Framework
+SoleMuseumは以下を優先する。
 
-Flutter
+```text
+シンプル
+安定
+拡張可能
+オフラインファースト
+```
 
-Language
+---
 
-Dart
+# Architecture Overview
 
-State Management
+```text
+Presentation
+↓
+Provider
+↓
+Repository
+↓
+Database
+```
 
+---
+
+# Layer
+
+## Presentation
+
+画面とUIを担当する。
+
+対象
+
+```text
+Home
+Collection
+Shoe Detail
+Shoe Form
+Settings
+```
+
+---
+
+## Provider
+
+Riverpodによる状態管理を担当する。
+
+責務
+
+```text
+データ取得
+非同期状態管理
+UIへの状態提供
+```
+
+---
+
+## Repository
+
+データ操作の窓口。
+
+責務
+
+```text
+CRUD
+検索
+統計取得
+```
+
+---
+
+## Database
+
+SQLite / Drift によるローカル保存。
+
+責務
+
+```text
+スニーカーデータ保存
+画像パス保存
+登録日時管理
+```
+
+---
+
+# Data Flow
+
+## Read
+
+```text
+Screen
+↓
+Provider
+↓
+Repository
+↓
+Database
+↓
+Repository
+↓
+Provider
+↓
+Screen
+```
+
+---
+
+## Write
+
+```text
+Form Screen
+↓
+Repository
+↓
+Database
+↓
+Provider invalidate
+↓
+Screen update
+```
+
+---
+
+# State Management
+
+使用
+
+```text
 Riverpod
+```
 
-Database
+方針
 
+```text
+AsyncValueを使用する
+Providerを増やしすぎない
+画面単位で状態を管理する
+```
+
+---
+
+# Database
+
+使用
+
+```text
 SQLite
+Drift
+```
 
-Storage
+MVPでは
 
-Local Device Storage
-
-Navigation
-
-Flutter Navigation
-
----
-
-Architectural Principles
-
-1. Offline First
-2. Local Data Ownership
-3. Simple CRUD Before Advanced Features
-4. Museum Experience Over Marketplace Features
-
----
-
-Project Structure
-
-lib/
-
-core/
-
-data/
-
-- database/
-- models/
-- repositories/
-
-features/
-
-- collection/
-- photos/
-- wear_logs/
-- home/
-- settings/
-
-shared/
-
-- widgets/
-- providers/
-- theme/
-
----
-
-Data Flow
-
-UI
-
-↓
-
-Provider
-
-↓
-
-Repository
-
-↓
-
-Database
-
-↓
-
-Repository
-
-↓
-
-Provider
-
-↓
-
-UI
-
----
-
-Database Design
-
-brands
-
-Stores sneaker brands.
-
-Examples:
-
-- Nike
-- Jordan
-- adidas
-- New Balance
-
----
-
+```text
 shoes
+```
 
-Stores sneaker collection data.
-
-Examples:
-
-- model name
-- size
-- color
-- purchase information
-- notes
+テーブルを中心に実装する。
 
 ---
 
-photos
+# Offline First
 
-Stores sneaker photo metadata.
+SoleMuseumのデータはユーザーの端末内に保存する。
 
-Photo files are stored locally.
+MVPでは以下を使用しない。
 
-Database stores only file paths.
-
----
-
-wear_logs
-
-Stores wear history.
-
-Examples:
-
-- date worn
-- notes
+```text
+Firebase
+Cloud Sync
+Authentication
+```
 
 ---
 
-State Management
+# Routing
 
-Riverpod Providers
+ルーティングはシンプルに保つ。
 
-Examples:
-
-- brandsProvider
-- shoesProvider
-- shoeByIdProvider
-- photosByShoeIdProvider
-- mainPhotoProvider
-
----
-
-Repository Layer
-
-Repositories isolate database access.
-
-Examples:
-
-- BrandRepository
-- ShoeRepository
-- PhotoRepository
-
-Benefits:
-
-- Easier testing
-- Easier migration
-- Cleaner UI code
+```text
+/
+ /collection
+ /shoe/new
+ /shoe/:id
+ /shoe/:id/edit
+ /settings
+```
 
 ---
 
-Photo Storage
+# Error Handling
 
-Photo files are stored in:
+Repositoryで例外を扱い、UIでは分かりやすいメッセージを表示する。
 
-solemuseum/
-photos/
-shoe_id/
+表示例
 
-Example:
-
-solemuseum/photos/15/
-
-Database stores:
-
-- file_path
-- photo_type
-
-Only.
+```text
+データの取得に失敗しました
+```
 
 ---
 
-Version Roadmap
+# Forbidden
 
-Database Version 1
+MVPでは以下を禁止する。
 
-- brands
-- shoes
-
----
-
-Database Version 2
-
-- photos
-
----
-
-Database Version 3
-
-- wear_logs
+```text
+ログイン
+クラウド同期
+AI鑑定
+相場取得
+SNS共有
+売買機能
+```
 
 ---
 
-Security Principles
+# Design Principle
 
-No user account required.
+SoleMuseumは
 
-No cloud dependency required.
+```text
+スニーカー管理アプリ
+```
 
-User owns all collection data.
+ではない。
 
----
+```text
+スニーカーを収蔵・記録・展示する
+デジタルミュージアム
+```
 
-Future Expansion
+である。
 
-Potential future features:
-
-- JSON Backup
-- Cloud Sync
-- Firebase
-- Web Version
-- Collection Sharing
-
-These features must not affect offline functionality.
-
----
-
-Definition of Success
-
-A collector can:
-
-1. Register sneakers
-2. Add photos
-3. Record wear history
-4. Browse collection
-5. Backup collection
-
-Without requiring an internet connection.
+アーキテクチャもこの思想を壊さないように、
+機能追加より安定性と所有感を優先する。
