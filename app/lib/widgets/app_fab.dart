@@ -1,18 +1,21 @@
+import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../models/shoe.dart';
 import '../models/wear_log.dart';
+import '../providers/backup_provider.dart';
 import '../providers/brand_provider.dart';
 import '../providers/shoe_provider.dart';
 import '../providers/wear_log_provider.dart';
 import '../screens/shoe_form_screen.dart';
 
-class AppFab extends StatelessWidget {
+class AppFab extends ConsumerWidget {
   const AppFab({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return FloatingActionButton(
       onPressed: () {
         showModalBottomSheet<void>(
@@ -53,8 +56,11 @@ class AppFab extends StatelessWidget {
                     ListTile(
                       leading: const Icon(Icons.ios_share_outlined),
                       title: const Text('コレクション共有'),
-                      subtitle: const Text('今後のアップデートで追加予定'),
-                      enabled: false,
+                      subtitle: const Text('JSONバックアップファイルを共有します'),
+                      onTap: () async {
+                        Navigator.of(sheetContext).pop();
+                        await _shareCollection(context, ref);
+                      },
                     ),
                   ],
                 ),
@@ -65,6 +71,23 @@ class AppFab extends StatelessWidget {
       },
       child: const Icon(Icons.add),
     );
+  }
+
+  Future<void> _shareCollection(BuildContext context, WidgetRef ref) async {
+    try {
+      final file = await ref.read(backupServiceProvider).createBackupFile();
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        subject: 'SoleMuseum コレクション',
+        text: 'SoleMuseumのコレクションデータです。',
+      );
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('共有に失敗しました')),
+        );
+      }
+    }
   }
 }
 

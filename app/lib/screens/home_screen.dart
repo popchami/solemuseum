@@ -59,7 +59,9 @@ class _HomeContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final recentShoes = shoes.take(6).toList();
-    final featuredShoe = shoes.isNotEmpty ? shoes.first : null;
+    final featuredShoe = shoes.isNotEmpty
+        ? shoes.firstWhere((s) => s.topOrder == 1, orElse: () => shoes.first)
+        : null;
     final brandNames = {
       for (final brand in brands) if (brand.id != null) brand.id!: brand.name,
     };

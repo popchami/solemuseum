@@ -119,7 +119,13 @@ class WearHistorySection extends ConsumerWidget {
           label: const Text('今日履いた'),
         ),
         const SizedBox(height: 20),
-        Text('着用履歴', style: Theme.of(context).textTheme.titleLarge),
+        Text(
+          wearLogsAsync.maybeWhen(
+            data: (logs) => logs.isNotEmpty ? '着用履歴（${logs.length}回）' : '着用履歴',
+            orElse: () => '着用履歴',
+          ),
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         const SizedBox(height: 8),
         wearLogsAsync.when(
           data: (wearLogs) {

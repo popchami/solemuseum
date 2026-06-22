@@ -11,6 +11,7 @@ import '../providers/brand_provider.dart';
 import '../providers/photo_provider.dart';
 import '../providers/photo_storage_provider.dart';
 import '../providers/shoe_provider.dart';
+import '../providers/wear_log_provider.dart';
 import '../widgets/wear_history_section.dart';
 import 'shoe_form_screen.dart';
 
@@ -314,6 +315,11 @@ class _DetailBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final mainPhotoAsync = ref.watch(mainPhotoProvider(shoe.id!));
     final photosAsync = ref.watch(photosByShoeIdProvider(shoe.id!));
+    final wearLogsAsync = ref.watch(wearLogsByShoeIdProvider(shoe.id!));
+    final wearCount = wearLogsAsync.maybeWhen(
+      data: (logs) => logs.length,
+      orElse: () => 0,
+    );
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -342,11 +348,26 @@ class _DetailBody extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          shoe.archiveNumber,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.outline,
-          ),
+        Row(
+          children: [
+            Text(
+              shoe.archiveNumber,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.outline,
+              ),
+            ),
+            if (wearCount > 0) ...[
+              const SizedBox(width: 10),
+              Icon(Icons.directions_walk, size: 13, color: Theme.of(context).colorScheme.outline),
+              const SizedBox(width: 2),
+              Text(
+                '$wearCount回着用',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ),
+            ],
+          ],
         ),
         const SizedBox(height: 24),
         photosAsync.when(
@@ -359,10 +380,9 @@ class _DetailBody extends ConsumerWidget {
         ),
         const SizedBox(height: 24),
         WearHistorySection(shoeId: shoe.id!),
-        const SizedBox(height: 24),
-        _InfoTile(label: 'ブランド', value: brand?.name ?? 'Unknown'),
-        _InfoTile(label: 'アーカイブ番号', value: shoe.archiveNumber),
-        _InfoTile(label: 'モデル名', value: shoe.modelName),
+        const SizedBox(height: 32),
+        Text('コレクション詳細', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 8),
         _InfoTile(label: 'サイズ', value: shoe.size),
         _InfoTile(label: 'カラー', value: shoe.color),
         _InfoTile(label: '購入日', value: _formatDate(shoe.purchaseDate)),
