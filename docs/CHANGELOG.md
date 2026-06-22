@@ -8,7 +8,59 @@ All notable changes to SoleMuseum will be documented in this file.
 
 Added
 
-Sprint4
+- App icon (1024x1024) and adaptive icon foreground assets
+- Splash screen logo asset
+- flutter_launcher_icons and flutter_native_splash configuration
+- Assets directory structure (assets/icon/, assets/splash/)
+
+Changed
+
+- Removed unused flutter_adaptive_scaffold dependency
+- Fixed deprecated Color.withOpacity() to withValues(alpha:) in 4 files
+- Added memo field maxLength 500 constraint per design spec
+- Updated CI to latest Flutter stable channel
+
+---
+
+[0.5.0] - 2026-06-22
+
+Sprint6: Backup Foundation
+
+Added
+
+- JSON backup export and sharing
+- JSON file import
+- Backup format validation
+- Restore confirmation
+- Collection, wear history, favorite, and TOP 5 restoration
+
+Changed
+
+- Settings screen now includes backup controls
+
+Known limitation
+
+- Photo files are not included in JSON backups
+
+---
+
+[0.4.0] - 2026-06-22
+
+Sprint5: Museum Home
+
+- Manual MY TOP 5 selection
+- Museum collection summary
+- Brand ownership summary
+- Database migration v4 for TOP 5 ordering
+- Completed Museum Home dashboard
+
+---
+
+[0.3.0] - 2026-06-22
+
+Sprint4: Wear History
+
+Added
 
 - Wear log model and repository
 - wear_logs database migration v3
@@ -22,23 +74,13 @@ Sprint4
 Changed
 
 - Enabled SQLite foreign keys for cascade deletion
-- Marked Sprint3 and Sprint4 as code complete pending runtime verification
-
-Added
-
-Sprint5
-
-- Manual MY TOP 5 selection
-- Museum collection summary
-- Brand ownership summary
-- Database migration v4 for TOP 5 ordering
-- Completed Museum Home dashboard
 
 ---
 
-[0.2.0] - Planned
+[0.2.0] - 2026-06-22
 
 Sprint3: Exhibition Foundation
+
 
 Added
 
@@ -59,7 +101,7 @@ Changed
 
 ---
 
-[0.1.0] - Current Development Version
+[0.1.0] - 2026-06-22
 
 Sprint2: Collection CRUD
 
@@ -152,22 +194,3 @@ Public Release
 
 ---
 
-[0.5.0] - Unreleased
-
-Sprint6: Backup Foundation
-
-Added
-
-- JSON backup export and sharing
-- JSON file import
-- Backup format validation
-- Restore confirmation
-- Collection, wear history, favorite, and TOP 5 restoration
-
-Changed
-
-- Settings screen now includes backup controls
-
-Known limitation
-
-- Photo files are not included in JSON backups
