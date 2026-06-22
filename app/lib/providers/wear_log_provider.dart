@@ -17,3 +17,8 @@ final recentWearLogsProvider = FutureProvider<List<WearLog>>((ref) async {
   final repository = ref.watch(wearLogRepositoryProvider);
   return repository.getRecentWearLogs();
 });
+
+final allWearLogsProvider = FutureProvider<List<WearLog>>((ref) async {
+  final repository = ref.watch(wearLogRepositoryProvider);
+  return repository.getAllWearLogs();
+});

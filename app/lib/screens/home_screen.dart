@@ -15,6 +15,7 @@ import '../widgets/recent_worn_section.dart';
 import '../widgets/top_five_section.dart';
 import 'shoe_detail_screen.dart';
 import 'shoe_form_screen.dart';
+import 'wear_stats_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -36,6 +37,15 @@ class HomeScreen extends ConsumerWidget {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bar_chart_outlined),
+            tooltip: '着用統計',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const WearStatsScreen()),
+            ),
+          ),
+        ],
       ),
       body: shoesAsync.when(
         data: (shoes) => brandsAsync.when(

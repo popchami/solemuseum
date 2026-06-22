@@ -15,6 +15,15 @@ class WearLogRepository {
     return maps.map(WearLog.fromMap).toList();
   }
 
+  Future<List<WearLog>> getAllWearLogs() async {
+    final db = await AppDatabase.instance.database;
+    final maps = await db.query(
+      'wear_logs',
+      orderBy: 'worn_date DESC, created_at DESC',
+    );
+    return maps.map(WearLog.fromMap).toList();
+  }
+
   Future<List<WearLog>> getRecentWearLogs({int limit = 10}) async {
     final db = await AppDatabase.instance.database;
     final maps = await db.query(
