@@ -147,23 +147,15 @@ Medium
 
 Status
 
-Open
+Resolved
 
-Description
+Decision
 
-Sprint6 introduces backup.
-
-Questions:
-
-- JSON only?
-- ZIP package?
-- Include photos?
-
-Current decision:
-
-JSON first.
-
-ZIP deferred.
+- v1 uses JSON files
+- Brands, shoes, wear history, favorites, and MY TOP 5 are included
+- Photo files and photo metadata are not included
+- Restore replaces existing collection data after confirmation
+- ZIP backup with photos is deferred
 
 ---
 
