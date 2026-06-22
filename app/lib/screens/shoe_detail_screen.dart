@@ -19,7 +19,8 @@ class ShoeDetailScreen extends ConsumerWidget {
 
   const ShoeDetailScreen({super.key, required this.shoeId});
 
-  Future<void> _toggleFavorite(BuildContext context, WidgetRef ref, Shoe shoe) async {
+  Future<void> _toggleFavorite(
+      BuildContext context, WidgetRef ref, Shoe shoe) async {
     final repository = ref.read(shoeRepositoryProvider);
     await repository.toggleFavorite(shoe.id!, !shoe.isFavorite);
     ref.invalidate(shoesProvider);
@@ -58,9 +59,14 @@ class ShoeDetailScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _addPhoto(BuildContext context, WidgetRef ref, Shoe shoe) async {
-    final photoType = await _selectPhotoType(context);
-    if (photoType == null) {
+  Future<void> _addPhoto(
+    BuildContext context,
+    WidgetRef ref,
+    Shoe shoe,
+    PhotoType photoType,
+  ) async {
+    if (photoType == PhotoType.gallery) {
+      await _addGalleryPhotos(context, ref, shoe);
       return;
     }
 
@@ -75,7 +81,8 @@ class ShoeDetailScreen extends ConsumerWidget {
       }
     }
 
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile == null) {
       return;
     }
@@ -125,6 +132,64 @@ class ShoeDetailScreen extends ConsumerWidget {
     }
   }
 
+  Future<void> _addGalleryPhotos(
+    BuildContext context,
+    WidgetRef ref,
+    Shoe shoe,
+  ) async {
+    const maxGalleryPhotos = 10;
+    final repository = ref.read(photoRepositoryProvider);
+    final currentPhotos = await repository.getPhotosByShoeId(shoe.id!);
+    final galleryCount = currentPhotos
+        .where((photo) => photo.photoType == PhotoType.gallery)
+        .length;
+    final remaining = maxGalleryPhotos - galleryCount;
+    if (remaining <= 0) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('ギャラリーは10枚までです')),
+        );
+      }
+      return;
+    }
+
+    final pickedFiles = await ImagePicker().pickMultiImage(limit: remaining);
+    if (pickedFiles.isEmpty) {
+      return;
+    }
+    final selectedFiles = pickedFiles.take(remaining).toList();
+
+    try {
+      for (final pickedFile in selectedFiles) {
+        final filePath = await ref.read(photoStorageServiceProvider).savePhoto(
+              sourceFile: File(pickedFile.path),
+              shoeId: shoe.id!,
+              photoType: PhotoType.gallery,
+            );
+        await repository.insertPhoto(
+          Photo.create(
+            shoeId: shoe.id!,
+            photoType: PhotoType.gallery,
+            filePath: filePath,
+          ),
+        );
+      }
+      ref.invalidate(photosByShoeIdProvider(shoe.id!));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${selectedFiles.length}枚追加しました')),
+        );
+      }
+    } catch (_) {
+      ref.invalidate(photosByShoeIdProvider(shoe.id!));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('写真の追加に失敗しました')),
+        );
+      }
+    }
+  }
+
   Future<bool?> _confirmMainPhotoReplacement(BuildContext context) {
     return showDialog<bool>(
       context: context,
@@ -147,40 +212,8 @@ class ShoeDetailScreen extends ConsumerWidget {
     );
   }
 
-  Future<PhotoType?> _selectPhotoType(BuildContext context) {
-    return showModalBottomSheet<PhotoType>(
-      context: context,
-      builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.star_outline),
-                title: const Text('メイン写真'),
-                subtitle: const Text('Collection画面で表示する写真'),
-                onTap: () => Navigator.of(context).pop(PhotoType.main),
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library_outlined),
-                title: const Text('ギャラリー写真'),
-                subtitle: const Text('Detail画面で表示する追加写真'),
-                onTap: () => Navigator.of(context).pop(PhotoType.gallery),
-              ),
-              ListTile(
-                leading: const Icon(Icons.inventory_2_outlined),
-                title: const Text('箱写真'),
-                subtitle: const Text('箱や付属品の記録写真'),
-                onTap: () => Navigator.of(context).pop(PhotoType.box),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _deleteShoe(BuildContext context, WidgetRef ref, Shoe shoe) async {
+  Future<void> _deleteShoe(
+      BuildContext context, WidgetRef ref, Shoe shoe) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -236,11 +269,8 @@ class ShoeDetailScreen extends ConsumerWidget {
             title: Text(shoe.modelName),
             actions: [
               IconButton(
-                icon: const Icon(Icons.add_photo_alternate_outlined),
-                onPressed: () => _addPhoto(context, ref, shoe),
-              ),
-              IconButton(
-                icon: Icon(shoe.isFavorite ? Icons.favorite : Icons.favorite_border),
+                icon: Icon(
+                    shoe.isFavorite ? Icons.favorite : Icons.favorite_border),
                 onPressed: () => _toggleFavorite(context, ref, shoe),
               ),
               IconButton(
@@ -273,14 +303,23 @@ class ShoeDetailScreen extends ConsumerWidget {
             data: (brands) => _DetailBody(
               shoe: shoe,
               brand: _findBrand(brands, shoe.brandId),
+              onAddPhoto: (type) => _addPhoto(context, ref, shoe, type),
+              onToggleFavorite: () => _toggleFavorite(context, ref, shoe),
             ),
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => _DetailBody(shoe: shoe, brand: null),
+            error: (_, __) => _DetailBody(
+              shoe: shoe,
+              brand: null,
+              onAddPhoto: (type) => _addPhoto(context, ref, shoe, type),
+              onToggleFavorite: () => _toggleFavorite(context, ref, shoe),
+            ),
           ),
         );
       },
-      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (_, __) => const Scaffold(body: Center(child: Text('読み込みに失敗しました'))),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (_, __) =>
+          const Scaffold(body: Center(child: Text('読み込みに失敗しました'))),
     );
   }
 
@@ -297,10 +336,18 @@ class ShoeDetailScreen extends ConsumerWidget {
 class _DetailBody extends ConsumerWidget {
   final Shoe shoe;
   final Brand? brand;
+  final ValueChanged<PhotoType> onAddPhoto;
+  final VoidCallback onToggleFavorite;
 
-  const _DetailBody({required this.shoe, required this.brand});
+  const _DetailBody({
+    required this.shoe,
+    required this.brand,
+    required this.onAddPhoto,
+    required this.onToggleFavorite,
+  });
 
-  Future<void> _deletePhoto(BuildContext context, WidgetRef ref, Photo photo) async {
+  Future<void> _deletePhoto(
+      BuildContext context, WidgetRef ref, Photo photo) async {
     final photoId = photo.id;
     if (photoId == null) {
       return;
@@ -330,7 +377,9 @@ class _DetailBody extends ConsumerWidget {
 
     try {
       await ref.read(photoRepositoryProvider).deletePhoto(photoId);
-      await ref.read(photoStorageServiceProvider).deletePhotoFile(photo.filePath);
+      await ref
+          .read(photoStorageServiceProvider)
+          .deletePhotoFile(photo.filePath);
       ref.invalidate(photosByShoeIdProvider(shoe.id!));
       ref.invalidate(mainPhotoProvider(shoe.id!));
 
@@ -357,18 +406,38 @@ class _DetailBody extends ConsumerWidget {
       padding: const EdgeInsets.all(16),
       children: [
         mainPhotoAsync.when(
-          data: (photo) => _MainPhoto(
+          data: (photo) => _InteractiveMainPhoto(
             photo: photo,
-            onDelete: photo == null ? null : () => _deletePhoto(context, ref, photo),
+            onAdd: () => onAddPhoto(PhotoType.main),
+            onChange: () => onAddPhoto(PhotoType.main),
+            onDelete:
+                photo == null ? null : () => _deletePhoto(context, ref, photo),
           ),
           loading: () => const _PhotoPlaceholder(label: '写真を読み込み中'),
           error: (_, __) => const _PhotoPlaceholder(label: '写真を読み込めませんでした'),
         ),
+        const SizedBox(height: 12),
+        Card(
+          child: ListTile(
+            leading: Icon(
+              shoe.isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: shoe.isFavorite ? Colors.red : null,
+            ),
+            title: Text(shoe.isFavorite ? 'お気に入り登録済み' : 'お気に入りに追加'),
+            trailing: Switch(
+              value: shoe.isFavorite,
+              onChanged: (_) => onToggleFavorite(),
+            ),
+            onTap: onToggleFavorite,
+          ),
+        ),
         const SizedBox(height: 24),
         photosAsync.when(
-          data: (photos) => _PhotoSections(
+          data: (photos) => _InteractivePhotoSections(
             photos: photos,
             onDeletePhoto: (photo) => _deletePhoto(context, ref, photo),
+            onAddGallery: () => onAddPhoto(PhotoType.gallery),
+            onAddBox: () => onAddPhoto(PhotoType.box),
           ),
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (_, __) => const Text('写真一覧を読み込めませんでした'),
@@ -382,7 +451,10 @@ class _DetailBody extends ConsumerWidget {
         _InfoTile(label: 'サイズ', value: shoe.size),
         _InfoTile(label: 'カラー', value: shoe.color),
         _InfoTile(label: '購入日', value: _formatDate(shoe.purchaseDate)),
-        _InfoTile(label: '購入価格', value: shoe.purchasePrice == null ? null : '${shoe.purchasePrice}円'),
+        _InfoTile(
+            label: '購入価格',
+            value:
+                shoe.purchasePrice == null ? null : '${shoe.purchasePrice}円'),
         _InfoTile(label: '購入店', value: shoe.purchaseStore),
         _InfoTile(label: 'メモ', value: shoe.memo),
         _InfoTile(label: 'お気に入り', value: shoe.isFavorite ? 'ON' : 'OFF'),
@@ -401,6 +473,212 @@ class _DetailBody extends ConsumerWidget {
       return null;
     }
     return '${date.year}/${date.month}/${date.day}';
+  }
+}
+
+class _InteractiveMainPhoto extends StatelessWidget {
+  final Photo? photo;
+  final VoidCallback onAdd;
+  final VoidCallback onChange;
+  final VoidCallback? onDelete;
+
+  const _InteractiveMainPhoto({
+    required this.photo,
+    required this.onAdd,
+    required this.onChange,
+    this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final currentPhoto = photo;
+    if (currentPhoto == null) {
+      return InkWell(
+        onTap: onAdd,
+        borderRadius: BorderRadius.circular(24),
+        child: Ink(
+          height: 220,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.add_a_photo_outlined, size: 56),
+              SizedBox(height: 12),
+              Text('メイン写真を追加'),
+              SizedBox(height: 4),
+              Text('タップして写真を選択'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onLongPress: onDelete,
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Image.file(
+              File(currentPhoto.filePath),
+              height: 220,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => const _PhotoPlaceholder(
+                label: '写真ファイルが見つかりません',
+              ),
+            ),
+          ),
+          Positioned(
+            right: 12,
+            top: 12,
+            child: FilledButton.tonalIcon(
+              onPressed: onChange,
+              icon: const Icon(Icons.edit_outlined, size: 18),
+              label: const Text('変更'),
+            ),
+          ),
+          const Positioned(
+            right: 12,
+            bottom: 12,
+            child: _DeleteHintChip(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InteractivePhotoSections extends StatelessWidget {
+  static const int maxGalleryPhotos = 10;
+
+  final List<Photo> photos;
+  final ValueChanged<Photo> onDeletePhoto;
+  final VoidCallback onAddGallery;
+  final VoidCallback onAddBox;
+
+  const _InteractivePhotoSections({
+    required this.photos,
+    required this.onDeletePhoto,
+    required this.onAddGallery,
+    required this.onAddBox,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final galleryPhotos =
+        photos.where((photo) => photo.photoType == PhotoType.gallery).toList();
+    final boxPhotos =
+        photos.where((photo) => photo.photoType == PhotoType.box).toList();
+    final remaining = maxGalleryPhotos - galleryPhotos.length;
+
+    return Column(
+      children: [
+        _InteractivePhotoStrip(
+          title: 'ギャラリー',
+          subtitle: remaining > 0
+              ? '${galleryPhotos.length}/$maxGalleryPhotos枚・あと$remaining枚'
+              : '$maxGalleryPhotos/$maxGalleryPhotos枚・上限に達しました',
+          photos: galleryPhotos,
+          onAdd: remaining > 0 ? onAddGallery : null,
+          onDeletePhoto: onDeletePhoto,
+        ),
+        const SizedBox(height: 20),
+        _InteractivePhotoStrip(
+          title: '箱・付属品',
+          subtitle: '${boxPhotos.length}枚',
+          photos: boxPhotos,
+          onAdd: onAddBox,
+          onDeletePhoto: onDeletePhoto,
+        ),
+      ],
+    );
+  }
+}
+
+class _InteractivePhotoStrip extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final List<Photo> photos;
+  final VoidCallback? onAdd;
+  final ValueChanged<Photo> onDeletePhoto;
+
+  const _InteractivePhotoStrip({
+    required this.title,
+    required this.subtitle,
+    required this.photos,
+    required this.onAdd,
+    required this.onDeletePhoto,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: Theme.of(context).textTheme.titleMedium),
+                  Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
+                ],
+              ),
+            ),
+            TextButton.icon(
+              onPressed: onAdd,
+              icon: const Icon(Icons.add_photo_alternate_outlined),
+              label: const Text('写真を追加'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        if (photos.isEmpty)
+          Text(
+            'まだ写真がありません',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+          )
+        else
+          SizedBox(
+            height: 96,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: photos.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              itemBuilder: (context, index) {
+                final photo = photos[index];
+                return GestureDetector(
+                  onLongPress: () => onDeletePhoto(photo),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.file(
+                      File(photo.filePath),
+                      width: 96,
+                      height: 96,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        width: 96,
+                        height: 96,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                        child: const Icon(Icons.broken_image_outlined),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+      ],
+    );
   }
 }
 
@@ -428,7 +706,8 @@ class _MainPhoto extends StatelessWidget {
               height: 220,
               width: double.infinity,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => const _PhotoPlaceholder(label: '写真ファイルが見つかりません'),
+              errorBuilder: (_, __, ___) =>
+                  const _PhotoPlaceholder(label: '写真ファイルが見つかりません'),
             ),
           ),
           const Positioned(
@@ -481,15 +760,21 @@ class _PhotoSections extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final galleryPhotos = photos.where((photo) => photo.photoType == PhotoType.gallery).toList();
-    final boxPhotos = photos.where((photo) => photo.photoType == PhotoType.box).toList();
+    final galleryPhotos =
+        photos.where((photo) => photo.photoType == PhotoType.gallery).toList();
+    final boxPhotos =
+        photos.where((photo) => photo.photoType == PhotoType.box).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _PhotoStrip(title: 'ギャラリー写真', photos: galleryPhotos, onDeletePhoto: onDeletePhoto),
+        _PhotoStrip(
+            title: 'ギャラリー写真',
+            photos: galleryPhotos,
+            onDeletePhoto: onDeletePhoto),
         const SizedBox(height: 20),
-        _PhotoStrip(title: '箱写真', photos: boxPhotos, onDeletePhoto: onDeletePhoto),
+        _PhotoStrip(
+            title: '箱写真', photos: boxPhotos, onDeletePhoto: onDeletePhoto),
       ],
     );
   }
@@ -547,7 +832,9 @@ class _PhotoStrip extends StatelessWidget {
                         errorBuilder: (_, __, ___) => Container(
                           width: 96,
                           height: 96,
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
                           child: const Icon(Icons.broken_image_outlined),
                         ),
                       ),
