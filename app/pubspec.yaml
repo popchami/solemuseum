@@ -16,6 +16,9 @@ dependencies:
   riverpod: ^2.4.0
   flutter_riverpod: ^2.4.0
 
+  # Preferences
+  shared_preferences: ^2.3.0
+
   # Local Database
   sqflite: ^2.3.0
   path: ^1.8.3

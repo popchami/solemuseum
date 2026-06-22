@@ -12,6 +12,7 @@ import '../providers/photo_provider.dart';
 import '../providers/shoe_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/wear_log_provider.dart';
+import '../theme/app_theme.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -123,7 +124,7 @@ class SettingsScreen extends ConsumerWidget {
             trailing: PopupMenuButton<ThemeMode>(
               initialValue: themeMode,
               onSelected: (value) {
-                ref.read(themeModeProvider.notifier).state = value;
+                ref.read(themeModeProvider.notifier).setMode(value);
               },
               itemBuilder: (_) => const [
                 PopupMenuItem(
@@ -158,11 +159,11 @@ class SettingsScreen extends ConsumerWidget {
           const Divider(),
           const _SectionTitle(title: 'アプリ情報'),
           const ListTile(
-            title: Text('SoleMuseum'),
+            title: Text(AppTheme.appName),
             subtitle: Text('v1.0.0'),
           ),
           const ListTile(
-            title: Text('Collect. Record. Exhibit.'),
+            title: Text(AppTheme.tagline),
             subtitle: Text('Digital Sneaker Collection Museum'),
           ),
         ],

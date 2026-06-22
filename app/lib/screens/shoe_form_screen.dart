@@ -145,7 +145,7 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
         actions: [
           TextButton(
             onPressed: _save,
-            child: const Text('保存'),
+            child: Text(_isEditing ? '保存' : '追加'),
           ),
         ],
       ),
@@ -242,6 +242,15 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
               });
             },
           ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: _save,
+              child: Text(_isEditing ? '変更を保存' : 'コレクションに追加'),
+            ),
+          ),
+          const SizedBox(height: 8),
         ],
       ),
     );

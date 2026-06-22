@@ -158,7 +158,15 @@ class ShoeDetailScreen extends ConsumerWidget {
     }
 
     try {
+      final photos = await ref
+          .read(photoRepositoryProvider)
+          .getPhotosByShoeId(shoe.id!);
       await ref.read(shoeRepositoryProvider).deleteShoe(shoe.id!);
+      for (final photo in photos) {
+        await ref
+            .read(photoStorageServiceProvider)
+            .deletePhotoFile(photo.filePath);
+      }
       ref.invalidate(shoesProvider);
       if (context.mounted) {
         Navigator.of(context).pop();

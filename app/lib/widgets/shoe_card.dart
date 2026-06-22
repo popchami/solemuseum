@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 class ShoeCard extends StatelessWidget {
   final String brandName;
   final String modelName;
-  final String size;
-  final String color;
   final String? imagePath;
   final bool isFavorite;
   final String? archiveNumber;
@@ -17,8 +15,6 @@ class ShoeCard extends StatelessWidget {
     super.key,
     required this.brandName,
     required this.modelName,
-    required this.size,
-    required this.color,
     this.imagePath,
     this.isFavorite = false,
     this.archiveNumber,

@@ -5,6 +5,7 @@ import '../models/shoe.dart';
 import '../providers/brand_provider.dart';
 import '../providers/photo_provider.dart';
 import '../providers/shoe_provider.dart';
+import '../theme/app_theme.dart';
 import '../widgets/brand_summary_section.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/museum_summary.dart';
@@ -27,9 +28,9 @@ class HomeScreen extends ConsumerWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('SoleMuseum'),
+            const Text(AppTheme.appName),
             Text(
-              'Collect. Record. Exhibit.',
+              AppTheme.tagline,
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
@@ -120,8 +121,6 @@ class _RecentShoeCard extends ConsumerWidget {
     return ShoeCard(
       brandName: brandName,
       modelName: shoe.modelName,
-      size: shoe.size ?? '-',
-      color: shoe.color ?? '',
       imagePath: imagePath,
       isFavorite: shoe.isFavorite,
       archiveNumber: shoe.archiveNumber,

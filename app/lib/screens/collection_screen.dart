@@ -212,11 +212,13 @@ class _ShoeGrid extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final crossAxisCount = MediaQuery.of(context).size.width >= 600 ? 3 : 2;
+
     return GridView.builder(
       padding: const EdgeInsets.all(12),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.66,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        childAspectRatio: 0.57,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
       ),
@@ -232,8 +234,6 @@ class _ShoeGrid extends ConsumerWidget {
         return ShoeCard(
           brandName: brandNames[shoe.brandId] ?? 'Unknown',
           modelName: shoe.modelName,
-          size: shoe.size ?? '-',
-          color: shoe.color ?? '',
           imagePath: imagePath,
           isFavorite: shoe.isFavorite,
           archiveNumber: shoe.archiveNumber,

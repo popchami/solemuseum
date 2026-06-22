@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'theme/app_theme.dart';
 import 'providers/theme_provider.dart';
 import 'providers/navigation_provider.dart';
@@ -8,8 +9,17 @@ import 'screens/collection_screen.dart';
 import 'screens/settings_screen.dart';
 import 'widgets/app_fab.dart';
 
-void main() {
-  runApp(const ProviderScope(child: SoleMuseumApp()));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  runApp(
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
+      child: const SoleMuseumApp(),
+    ),
+  );
 }
 
 class SoleMuseumApp extends ConsumerWidget {
@@ -20,7 +30,7 @@ class SoleMuseumApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp(
-      title: 'SoleMuseum',
+      title: AppTheme.appName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
