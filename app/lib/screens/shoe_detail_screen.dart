@@ -9,7 +9,7 @@ import 'shoe_form_screen.dart';
 class ShoeDetailScreen extends ConsumerWidget {
   final int shoeId;
 
-  const ShoeDetailScreen({Key? key, required this.shoeId}) : super(key: key);
+  const ShoeDetailScreen({super.key, required this.shoeId});
 
   Future<void> _toggleFavorite(BuildContext context, WidgetRef ref, Shoe shoe) async {
     final repository = ref.read(shoeRepositoryProvider);
