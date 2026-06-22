@@ -21,7 +21,10 @@ class AppDatabase {
 
     return openDatabase(
       path,
-      version: 2,
+      version: 3,
+      onConfigure: (db) async {
+        await db.execute('PRAGMA foreign_keys = ON');
+      },
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -56,12 +59,16 @@ class AppDatabase {
 
     await _createShoeIndexes(db);
     await _createPhotosTable(db);
+    await _createWearLogsTable(db);
     await _insertInitialBrands(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       await _createPhotosTable(db);
+    }
+    if (oldVersion < 3) {
+      await _createWearLogsTable(db);
     }
   }
 
@@ -92,6 +99,27 @@ class AppDatabase {
     );
     await db.execute(
       'CREATE INDEX IF NOT EXISTS idx_photos_display_order ON photos(display_order)',
+    );
+  }
+
+  Future<void> _createWearLogsTable(Database db) async {
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS wear_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        shoe_id INTEGER NOT NULL,
+        worn_date TEXT NOT NULL,
+        memo TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (shoe_id) REFERENCES shoes(id) ON DELETE CASCADE,
+        UNIQUE (shoe_id, worn_date)
+      )
+    ''');
+
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_wear_logs_shoe_id ON wear_logs(shoe_id)',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_wear_logs_worn_date ON wear_logs(worn_date)',
     );
   }
 
