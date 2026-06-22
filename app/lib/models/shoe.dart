@@ -9,6 +9,7 @@ class Shoe {
   final String? purchaseStore;
   final String? memo;
   final bool isFavorite;
+  final int? topOrder;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -23,6 +24,7 @@ class Shoe {
     this.purchaseStore,
     this.memo,
     this.isFavorite = false,
+    this.topOrder,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -66,6 +68,7 @@ class Shoe {
       purchaseStore: map['purchase_store'] as String?,
       memo: map['memo'] as String?,
       isFavorite: (map['is_favorite'] as int) == 1,
+      topOrder: map['top_order'] as int?,
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),
     );
@@ -83,6 +86,7 @@ class Shoe {
       'purchase_store': purchaseStore,
       'memo': memo,
       'is_favorite': isFavorite ? 1 : 0,
+      'top_order': topOrder,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
@@ -99,6 +103,7 @@ class Shoe {
     String? purchaseStore,
     String? memo,
     bool? isFavorite,
+    int? topOrder,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -113,6 +118,7 @@ class Shoe {
       purchaseStore: purchaseStore ?? this.purchaseStore,
       memo: memo ?? this.memo,
       isFavorite: isFavorite ?? this.isFavorite,
+      topOrder: topOrder ?? this.topOrder,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
