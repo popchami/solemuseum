@@ -393,7 +393,10 @@ class _ShoeGrid extends ConsumerWidget {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (_) => ShoeDetailScreen(shoeId: shoe.id!),
+                builder: (_) => ShoeDetailScreen(
+                  shoeId: shoe.id!,
+                  shoeIds: shoes.map((s) => s.id!).toList(),
+                ),
               ),
             );
           },
@@ -427,6 +430,7 @@ class _ShoeList extends ConsumerWidget {
         return _ShoeListTile(
           shoe: shoe,
           brandName: brandNames[shoe.brandId] ?? 'Unknown',
+          shoeIds: shoes.map((s) => s.id!).toList(),
         );
       },
     );
@@ -436,8 +440,13 @@ class _ShoeList extends ConsumerWidget {
 class _ShoeListTile extends ConsumerWidget {
   final Shoe shoe;
   final String brandName;
+  final List<int> shoeIds;
 
-  const _ShoeListTile({required this.shoe, required this.brandName});
+  const _ShoeListTile({
+    required this.shoe,
+    required this.brandName,
+    required this.shoeIds,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -508,7 +517,9 @@ class _ShoeListTile extends ConsumerWidget {
         },
       ),
       onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => ShoeDetailScreen(shoeId: shoe.id!)),
+        MaterialPageRoute(
+          builder: (_) => ShoeDetailScreen(shoeId: shoe.id!, shoeIds: shoeIds),
+        ),
       ),
     );
   }

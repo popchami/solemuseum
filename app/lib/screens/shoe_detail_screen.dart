@@ -17,12 +17,61 @@ import '../widgets/wear_history_section.dart';
 import 'photo_viewer_screen.dart';
 import 'shoe_form_screen.dart';
 
-class ShoeDetailScreen extends ConsumerWidget {
+class ShoeDetailScreen extends ConsumerStatefulWidget {
   final int shoeId;
+  final List<int>? shoeIds;
 
-  const ShoeDetailScreen({super.key, required this.shoeId});
+  const ShoeDetailScreen({
+    super.key,
+    required this.shoeId,
+    this.shoeIds,
+  });
 
-  Future<void> _toggleFavorite(BuildContext context, WidgetRef ref, Shoe shoe) async {
+  @override
+  ConsumerState<ShoeDetailScreen> createState() => _ShoeDetailScreenState();
+}
+
+class _ShoeDetailScreenState extends ConsumerState<ShoeDetailScreen> {
+  late int _currentShoeId;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentShoeId = widget.shoeId;
+  }
+
+  int? get _currentIndex {
+    final ids = widget.shoeIds;
+    if (ids == null) return null;
+    final i = ids.indexOf(_currentShoeId);
+    return i == -1 ? null : i;
+  }
+
+  bool get _hasPrev {
+    final i = _currentIndex;
+    return i != null && i > 0;
+  }
+
+  bool get _hasNext {
+    final i = _currentIndex;
+    return i != null && widget.shoeIds != null && i < widget.shoeIds!.length - 1;
+  }
+
+  void _goPrev() {
+    final i = _currentIndex;
+    if (i != null && i > 0) {
+      setState(() => _currentShoeId = widget.shoeIds![i - 1]);
+    }
+  }
+
+  void _goNext() {
+    final i = _currentIndex;
+    if (i != null && widget.shoeIds != null && i < widget.shoeIds!.length - 1) {
+      setState(() => _currentShoeId = widget.shoeIds![i + 1]);
+    }
+  }
+
+  Future<void> _toggleFavorite(BuildContext context, Shoe shoe) async {
     final repository = ref.read(shoeRepositoryProvider);
     await repository.toggleFavorite(shoe.id!, !shoe.isFavorite);
     ref.invalidate(shoesProvider);
@@ -31,7 +80,6 @@ class ShoeDetailScreen extends ConsumerWidget {
 
   Future<void> _toggleTopFive(
     BuildContext context,
-    WidgetRef ref,
     Shoe shoe,
   ) async {
     final shouldSelect = shoe.topOrder == null;
@@ -61,7 +109,7 @@ class ShoeDetailScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _addPhoto(BuildContext context, WidgetRef ref, Shoe shoe) async {
+  Future<void> _addPhoto(BuildContext context, Shoe shoe) async {
     final photoType = await _selectPhotoType(context);
     if (photoType == null) {
       return;
@@ -161,7 +209,7 @@ class ShoeDetailScreen extends ConsumerWidget {
     Share.share(lines.join('\n'), subject: shoe.modelName);
   }
 
-  Future<void> _deleteShoe(BuildContext context, WidgetRef ref, Shoe shoe) async {
+  Future<void> _deleteShoe(BuildContext context, Shoe shoe) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -208,8 +256,8 @@ class ShoeDetailScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final shoeAsync = ref.watch(shoeByIdProvider(shoeId));
+  Widget build(BuildContext context) {
+    final shoeAsync = ref.watch(shoeByIdProvider(_currentShoeId));
     final brandsAsync = ref.watch(brandsProvider);
 
     return shoeAsync.when(
@@ -231,11 +279,11 @@ class ShoeDetailScreen extends ConsumerWidget {
             actions: [
               IconButton(
                 icon: const Icon(Icons.add_photo_alternate_outlined),
-                onPressed: () => _addPhoto(context, ref, shoe),
+                onPressed: () => _addPhoto(context, shoe),
               ),
               IconButton(
                 icon: Icon(shoe.isFavorite ? Icons.favorite : Icons.favorite_border),
-                onPressed: () => _toggleFavorite(context, ref, shoe),
+                onPressed: () => _toggleFavorite(context, shoe),
               ),
               IconButton(
                 tooltip: shoe.topOrder == null ? 'MY TOP 5に追加' : 'MY TOP 5から外す',
@@ -244,7 +292,7 @@ class ShoeDetailScreen extends ConsumerWidget {
                       ? Icons.emoji_events_outlined
                       : Icons.emoji_events,
                 ),
-                onPressed: () => _toggleTopFive(context, ref, shoe),
+                onPressed: () => _toggleTopFive(context, shoe),
               ),
               IconButton(
                 icon: const Icon(Icons.edit_outlined),
@@ -254,7 +302,7 @@ class ShoeDetailScreen extends ConsumerWidget {
                       builder: (_) => ShoeFormScreen(shoe: shoe),
                     ),
                   );
-                  ref.invalidate(shoeByIdProvider(shoeId));
+                  ref.invalidate(shoeByIdProvider(_currentShoeId));
                 },
               ),
               PopupMenuButton<_ShoeAction>(
@@ -263,7 +311,7 @@ class ShoeDetailScreen extends ConsumerWidget {
                     case _ShoeAction.share:
                       _shareShoe(shoe, brand);
                     case _ShoeAction.delete:
-                      _deleteShoe(context, ref, shoe);
+                      _deleteShoe(context, shoe);
                   }
                 },
                 itemBuilder: (_) => const [
@@ -287,6 +335,16 @@ class ShoeDetailScreen extends ConsumerWidget {
               ),
             ],
           ),
+          bottomNavigationBar: widget.shoeIds != null
+              ? _ShoeNavBar(
+                  currentIndex: _currentIndex!,
+                  total: widget.shoeIds!.length,
+                  hasPrev: _hasPrev,
+                  hasNext: _hasNext,
+                  onPrev: _goPrev,
+                  onNext: _goNext,
+                )
+              : null,
           body: brandsAsync.when(
             data: (brands) => _DetailBody(
               shoe: shoe,
@@ -719,6 +777,50 @@ class _DeleteHintChip extends StatelessWidget {
             Icon(Icons.touch_app_outlined, size: 16),
             SizedBox(width: 4),
             Text('タップで拡大・長押しで削除'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ShoeNavBar extends StatelessWidget {
+  final int currentIndex;
+  final int total;
+  final bool hasPrev;
+  final bool hasNext;
+  final VoidCallback onPrev;
+  final VoidCallback onNext;
+
+  const _ShoeNavBar({
+    required this.currentIndex,
+    required this.total,
+    required this.hasPrev,
+    required this.hasNext,
+    required this.onPrev,
+    required this.onNext,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton.outlined(
+              icon: const Icon(Icons.chevron_left),
+              onPressed: hasPrev ? onPrev : null,
+            ),
+            Text(
+              '${currentIndex + 1} / $total',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            IconButton.outlined(
+              icon: const Icon(Icons.chevron_right),
+              onPressed: hasNext ? onNext : null,
+            ),
           ],
         ),
       ),
