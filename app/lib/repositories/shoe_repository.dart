@@ -49,6 +49,46 @@ class ShoeRepository {
     );
   }
 
+  Future<bool> setTopFive(int id, bool selected) async {
+    final db = await AppDatabase.instance.database;
+
+    if (!selected) {
+      final updated = await db.update(
+        'shoes',
+        {
+          'top_order': null,
+          'updated_at': DateTime.now().toIso8601String(),
+        },
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+      return updated > 0;
+    }
+
+    final countRows = await db.rawQuery(
+      'SELECT COUNT(*) AS count FROM shoes WHERE top_order IS NOT NULL',
+    );
+    final count = countRows.first['count'] as int? ?? 0;
+    if (count >= 5) {
+      return false;
+    }
+
+    final maxRows = await db.rawQuery(
+      'SELECT MAX(top_order) AS max_order FROM shoes',
+    );
+    final maxOrder = maxRows.first['max_order'] as int? ?? 0;
+    final updated = await db.update(
+      'shoes',
+      {
+        'top_order': maxOrder + 1,
+        'updated_at': DateTime.now().toIso8601String(),
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    return updated > 0;
+  }
+
   Future<int> toggleFavorite(int id, bool isFavorite) async {
     final db = await AppDatabase.instance.database;
     return db.update(
