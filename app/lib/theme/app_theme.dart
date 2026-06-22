@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   static const String appName = 'SoleMuseum';
-  static const String tagline = 'Collect. Preserve. Showcase.';
+  static const String tagline = 'Collect. Record. Exhibit.';
 
   // Light Theme
   static ThemeData get lightTheme {

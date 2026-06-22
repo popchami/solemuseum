@@ -9,6 +9,7 @@ class ShoeCard extends StatelessWidget {
   final String color;
   final String? imagePath;
   final bool isFavorite;
+  final String? archiveNumber;
   final VoidCallback onTap;
   final VoidCallback? onFavoriteTap;
 
@@ -20,6 +21,7 @@ class ShoeCard extends StatelessWidget {
     required this.color,
     this.imagePath,
     this.isFavorite = false,
+    this.archiveNumber,
     required this.onTap,
     this.onFavoriteTap,
   });
@@ -76,7 +78,7 @@ class ShoeCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Text(
                     brandName,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -85,6 +87,17 @@ class ShoeCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  if (archiveNumber != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      archiveNumber!,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: Theme.of(context).colorScheme.outline,
+                            fontSize: 10,
+                            letterSpacing: 0.5,
+                          ),
+                    ),
+                  ],
                 ],
               ),
             ),

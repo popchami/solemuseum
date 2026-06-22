@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/brand.dart';
 import '../models/shoe.dart';
 import '../providers/brand_provider.dart';
+import '../providers/photo_provider.dart';
 import '../providers/shoe_provider.dart';
 import '../widgets/brand_summary_section.dart';
 import '../widgets/empty_state.dart';
@@ -28,7 +29,7 @@ class HomeScreen extends ConsumerWidget {
           children: [
             const Text('SoleMuseum'),
             Text(
-              'Collect. Preserve. Showcase.',
+              'Collect. Record. Exhibit.',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
@@ -85,17 +86,9 @@ class _HomeContent extends StatelessWidget {
           ...recentShoes.map(
             (shoe) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: ShoeCard(
+              child: _RecentShoeCard(
+                shoe: shoe,
                 brandName: brandNames[shoe.brandId] ?? 'Unknown',
-                modelName: shoe.modelName,
-                size: shoe.size ?? '-',
-                color: shoe.color ?? '',
-                isFavorite: shoe.isFavorite,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => ShoeDetailScreen(shoeId: shoe.id!)),
-                  );
-                },
               ),
             ),
           ),
@@ -106,6 +99,39 @@ class _HomeContent extends StatelessWidget {
         const SizedBox(height: 24),
         BrandSummarySection(shoes: shoes, brands: brands),
       ],
+    );
+  }
+}
+
+class _RecentShoeCard extends ConsumerWidget {
+  final Shoe shoe;
+  final String brandName;
+
+  const _RecentShoeCard({required this.shoe, required this.brandName});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mainPhotoAsync = ref.watch(mainPhotoProvider(shoe.id!));
+    final imagePath = mainPhotoAsync.maybeWhen(
+      data: (photo) => photo?.filePath,
+      orElse: () => null,
+    );
+
+    return ShoeCard(
+      brandName: brandName,
+      modelName: shoe.modelName,
+      size: shoe.size ?? '-',
+      color: shoe.color ?? '',
+      imagePath: imagePath,
+      isFavorite: shoe.isFavorite,
+      archiveNumber: shoe.archiveNumber,
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ShoeDetailScreen(shoeId: shoe.id!),
+          ),
+        );
+      },
     );
   }
 }

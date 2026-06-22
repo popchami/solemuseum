@@ -331,6 +331,7 @@ class _DetailBody extends ConsumerWidget {
         WearHistorySection(shoeId: shoe.id!),
         const SizedBox(height: 24),
         _InfoTile(label: 'ブランド', value: brand?.name ?? 'Unknown'),
+        _InfoTile(label: 'アーカイブ番号', value: shoe.archiveNumber),
         _InfoTile(label: 'モデル名', value: shoe.modelName),
         _InfoTile(label: 'サイズ', value: shoe.size),
         _InfoTile(label: 'カラー', value: shoe.color),
