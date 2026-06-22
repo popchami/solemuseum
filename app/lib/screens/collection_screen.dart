@@ -132,6 +132,12 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
             );
           }
 
+          Future<void> onRefresh() async {
+            ref.invalidate(shoesProvider);
+            ref.invalidate(brandsProvider);
+            await ref.read(shoesProvider.future);
+          }
+
           return brandsAsync.when(
             data: (brands) => _CollectionContent(
               shoes: shoes,
@@ -145,6 +151,7 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
               onSearchChanged: (value) => setState(() => _searchText = value),
               onBrandSelected: (brandId) => setState(() => _selectedBrandId = brandId),
               onFavoritesChanged: (value) => setState(() => _showFavoritesOnly = value),
+              onRefresh: onRefresh,
             ),
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (_, __) => _CollectionContent(
@@ -159,6 +166,7 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
               onSearchChanged: (value) => setState(() => _searchText = value),
               onBrandSelected: (brandId) => setState(() => _selectedBrandId = brandId),
               onFavoritesChanged: (value) => setState(() => _showFavoritesOnly = value),
+              onRefresh: onRefresh,
             ),
           );
         },
@@ -181,6 +189,7 @@ class _CollectionContent extends StatelessWidget {
   final ValueChanged<String> onSearchChanged;
   final ValueChanged<int?> onBrandSelected;
   final ValueChanged<bool> onFavoritesChanged;
+  final Future<void> Function() onRefresh;
 
   const _CollectionContent({
     required this.shoes,
@@ -194,6 +203,7 @@ class _CollectionContent extends StatelessWidget {
     required this.onSearchChanged,
     required this.onBrandSelected,
     required this.onFavoritesChanged,
+    required this.onRefresh,
   });
 
   @override
@@ -286,15 +296,24 @@ class _CollectionContent extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: filteredShoes.isEmpty
-              ? const EmptyState(
-                  icon: Icons.search_off_outlined,
-                  title: '該当するスニーカーがありません',
-                  description: '検索条件を変更してください',
-                )
-              : viewMode == _ViewMode.grid
-                  ? _ShoeGrid(shoes: filteredShoes, brandNames: brandNames)
-                  : _ShoeList(shoes: filteredShoes, brandNames: brandNames),
+          child: RefreshIndicator(
+            onRefresh: onRefresh,
+            child: filteredShoes.isEmpty
+                ? SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: SizedBox(
+                      height: 400,
+                      child: EmptyState(
+                        icon: Icons.search_off_outlined,
+                        title: '該当するスニーカーがありません',
+                        description: '検索条件を変更してください',
+                      ),
+                    ),
+                  )
+                : viewMode == _ViewMode.grid
+                    ? _ShoeGrid(shoes: filteredShoes, brandNames: brandNames)
+                    : _ShoeList(shoes: filteredShoes, brandNames: brandNames),
+          ),
         ),
       ],
     );

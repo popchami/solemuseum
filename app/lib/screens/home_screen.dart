@@ -7,6 +7,7 @@ import '../models/shoe.dart';
 import '../providers/brand_provider.dart';
 import '../providers/photo_provider.dart';
 import '../providers/shoe_provider.dart';
+import '../providers/wear_log_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/brand_summary_section.dart';
 import '../widgets/empty_state.dart';
@@ -48,11 +49,29 @@ class HomeScreen extends ConsumerWidget {
         ],
       ),
       body: shoesAsync.when(
-        data: (shoes) => brandsAsync.when(
-          data: (brands) => _HomeContent(shoes: shoes, brands: brands),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, __) => _HomeContent(shoes: shoes, brands: const []),
-        ),
+        data: (shoes) {
+          Future<void> onRefresh() async {
+            ref.invalidate(shoesProvider);
+            ref.invalidate(brandsProvider);
+            ref.invalidate(recentWearLogsProvider);
+            ref.invalidate(allWearLogsProvider);
+            await ref.read(shoesProvider.future);
+          }
+
+          return brandsAsync.when(
+            data: (brands) => _HomeContent(
+              shoes: shoes,
+              brands: brands,
+              onRefresh: onRefresh,
+            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (_, __) => _HomeContent(
+              shoes: shoes,
+              brands: const [],
+              onRefresh: onRefresh,
+            ),
+          );
+        },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, __) => const Center(child: Text('読み込みに失敗しました')),
       ),
@@ -63,8 +82,13 @@ class HomeScreen extends ConsumerWidget {
 class _HomeContent extends StatelessWidget {
   final List<Shoe> shoes;
   final List<Brand> brands;
+  final Future<void> Function() onRefresh;
 
-  const _HomeContent({required this.shoes, required this.brands});
+  const _HomeContent({
+    required this.shoes,
+    required this.brands,
+    required this.onRefresh,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +100,9 @@ class _HomeContent extends StatelessWidget {
       for (final brand in brands) if (brand.id != null) brand.id!: brand.name,
     };
 
-    return ListView(
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: ListView(
       padding: const EdgeInsets.all(16),
       children: [
         Text('MY COLLECTION', style: Theme.of(context).textTheme.labelLarge),
@@ -115,6 +141,7 @@ class _HomeContent extends StatelessWidget {
         const SizedBox(height: 24),
         BrandSummarySection(shoes: shoes, brands: brands),
       ],
+    ),
     );
   }
 }
