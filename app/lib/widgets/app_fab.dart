@@ -25,6 +25,9 @@ class _SneakerPlusIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = IconTheme.of(context).color ?? Colors.white;
+    final backgroundColor =
+        Theme.of(context).floatingActionButtonTheme.backgroundColor ??
+            Theme.of(context).colorScheme.primaryContainer;
     return SizedBox(
       width: 48,
       height: 36,
@@ -38,15 +41,13 @@ class _SneakerPlusIcon extends StatelessWidget {
               painter: _SneakerPainter(color),
             ),
           ),
-          Container(
-            width: 13,
-            height: 13,
-            decoration: BoxDecoration(
-              color:
-                  Theme.of(context).floatingActionButtonTheme.backgroundColor,
-              shape: BoxShape.circle,
+          Transform.translate(
+            offset: const Offset(0, 3),
+            child: Icon(
+              Icons.add,
+              size: 13,
+              color: backgroundColor,
             ),
-            child: Icon(Icons.add, size: 12, color: color),
           ),
         ],
       ),
