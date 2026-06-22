@@ -1,9 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/brand.dart';
 import '../models/shoe.dart';
 
 enum _SortOption { newest, oldest, brand, modelName, favoriteFirst }
+
+enum _ViewMode { grid, list }
+
 import '../providers/brand_provider.dart';
 import '../providers/photo_provider.dart';
 import '../providers/shoe_provider.dart';
@@ -25,6 +30,7 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
   String _searchText = '';
   _SortOption _sortOption = _SortOption.newest;
   bool _showFavoritesOnly = false;
+  _ViewMode _viewMode = _ViewMode.grid;
 
   @override
   void dispose() {
@@ -85,6 +91,19 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
         actions: [
           IconButton(
             icon: Icon(
+              _viewMode == _ViewMode.grid
+                  ? Icons.view_list_outlined
+                  : Icons.grid_view_outlined,
+            ),
+            tooltip: _viewMode == _ViewMode.grid ? 'リスト表示' : 'グリッド表示',
+            onPressed: () => setState(() {
+              _viewMode = _viewMode == _ViewMode.grid
+                  ? _ViewMode.list
+                  : _ViewMode.grid;
+            }),
+          ),
+          IconButton(
+            icon: Icon(
               Icons.sort,
               color: _sortOption != _SortOption.newest
                   ? Theme.of(context).colorScheme.primary
@@ -121,6 +140,7 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
               searchText: _searchText,
               sortOption: _sortOption,
               showFavoritesOnly: _showFavoritesOnly,
+              viewMode: _viewMode,
               searchController: _searchController,
               onSearchChanged: (value) => setState(() => _searchText = value),
               onBrandSelected: (brandId) => setState(() => _selectedBrandId = brandId),
@@ -134,6 +154,7 @@ class _CollectionScreenState extends ConsumerState<CollectionScreen> {
               searchText: _searchText,
               sortOption: _sortOption,
               showFavoritesOnly: _showFavoritesOnly,
+              viewMode: _viewMode,
               searchController: _searchController,
               onSearchChanged: (value) => setState(() => _searchText = value),
               onBrandSelected: (brandId) => setState(() => _selectedBrandId = brandId),
@@ -155,6 +176,7 @@ class _CollectionContent extends StatelessWidget {
   final String searchText;
   final _SortOption sortOption;
   final bool showFavoritesOnly;
+  final _ViewMode viewMode;
   final TextEditingController searchController;
   final ValueChanged<String> onSearchChanged;
   final ValueChanged<int?> onBrandSelected;
@@ -167,6 +189,7 @@ class _CollectionContent extends StatelessWidget {
     required this.searchText,
     required this.sortOption,
     required this.showFavoritesOnly,
+    required this.viewMode,
     required this.searchController,
     required this.onSearchChanged,
     required this.onBrandSelected,
@@ -269,7 +292,9 @@ class _CollectionContent extends StatelessWidget {
                   title: '該当するスニーカーがありません',
                   description: '検索条件を変更してください',
                 )
-              : _ShoeGrid(shoes: filteredShoes, brandNames: brandNames),
+              : viewMode == _ViewMode.grid
+                  ? _ShoeGrid(shoes: filteredShoes, brandNames: brandNames)
+                  : _ShoeList(shoes: filteredShoes, brandNames: brandNames),
         ),
       ],
     );
@@ -362,5 +387,115 @@ class _ShoeGrid extends ConsumerWidget {
         );
       },
     );
+  }
+}
+
+class _ShoeList extends ConsumerWidget {
+  final List<Shoe> shoes;
+  final Map<int, String> brandNames;
+
+  const _ShoeList({required this.shoes, required this.brandNames});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: shoes.length,
+      separatorBuilder: (_, __) => const Divider(height: 1, indent: 76),
+      itemBuilder: (context, index) {
+        final shoe = shoes[index];
+        return _ShoeListTile(
+          shoe: shoe,
+          brandName: brandNames[shoe.brandId] ?? 'Unknown',
+        );
+      },
+    );
+  }
+}
+
+class _ShoeListTile extends ConsumerWidget {
+  final Shoe shoe;
+  final String brandName;
+
+  const _ShoeListTile({required this.shoe, required this.brandName});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mainPhotoAsync = ref.watch(mainPhotoProvider(shoe.id!));
+    final imagePath = mainPhotoAsync.maybeWhen(
+      data: (photo) => photo?.filePath,
+      orElse: () => null,
+    );
+
+    final subtitleParts = <String>[
+      if (shoe.size != null) shoe.size!,
+      if (shoe.color != null) shoe.color!,
+      if (shoe.purchaseDate != null) _formatDate(shoe.purchaseDate!),
+    ];
+
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      leading: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: SizedBox(
+          width: 56,
+          height: 56,
+          child: imagePath != null
+              ? Image.file(File(imagePath), fit: BoxFit.cover)
+              : ColoredBox(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  child: const Icon(Icons.image_outlined),
+                ),
+        ),
+      ),
+      title: Text(
+        '${brandName}  ${shoe.modelName}',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            shoe.archiveNumber,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+          ),
+          if (subtitleParts.isNotEmpty)
+            Text(
+              subtitleParts.join('  ·  '),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+        ],
+      ),
+      trailing: IconButton(
+        icon: Icon(
+          shoe.isFavorite ? Icons.favorite : Icons.favorite_border,
+          color: shoe.isFavorite ? Theme.of(context).colorScheme.primary : null,
+          size: 20,
+        ),
+        onPressed: () async {
+          await ref.read(shoeRepositoryProvider).toggleFavorite(
+                shoe.id!,
+                !shoe.isFavorite,
+              );
+          ref.invalidate(shoesProvider);
+        },
+      ),
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => ShoeDetailScreen(shoeId: shoe.id!)),
+      ),
+    );
+  }
+
+  static String _formatDate(DateTime date) {
+    final mm = date.month.toString().padLeft(2, '0');
+    final dd = date.day.toString().padLeft(2, '0');
+    return '${date.year}/$mm/$dd';
   }
 }
