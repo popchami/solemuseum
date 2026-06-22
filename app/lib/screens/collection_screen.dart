@@ -124,6 +124,9 @@ class _CollectionContent extends StatelessWidget {
     final brandNames = {
       for (final brand in brands) if (brand.id != null) brand.id!: brand.name,
     };
+    final brandsWithShoes = brands
+        .where((brand) => shoes.any((shoe) => shoe.brandId == brand.id))
+        .toList();
     final filteredShoes = _filterShoes(brandNames);
 
     return Column(
@@ -148,7 +151,7 @@ class _CollectionContent extends StatelessWidget {
             onChanged: onSearchChanged,
           ),
         ),
-        if (brands.isNotEmpty)
+        if (brandsWithShoes.isNotEmpty)
           SizedBox(
             height: 52,
             child: ListView(
@@ -163,7 +166,7 @@ class _CollectionContent extends StatelessWidget {
                     onSelected: (_) => onBrandSelected(null),
                   ),
                 ),
-                ...brands.map(
+                ...brandsWithShoes.map(
                   (brand) => Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: FilterChip(

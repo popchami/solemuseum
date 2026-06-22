@@ -161,6 +161,8 @@ class WearHistorySection extends ConsumerWidget {
   }
 
   static String _formatDate(DateTime date) {
-    return '${date.year}/${date.month}/${date.day}';
+    final mm = date.month.toString().padLeft(2, '0');
+    final dd = date.day.toString().padLeft(2, '0');
+    return '${date.year}/$mm/$dd';
   }
 }

@@ -326,6 +326,28 @@ class _DetailBody extends ConsumerWidget {
           loading: () => const _PhotoPlaceholder(label: '写真を読み込み中'),
           error: (_, __) => const _PhotoPlaceholder(label: '写真を読み込めませんでした'),
         ),
+        const SizedBox(height: 16),
+        Text(
+          brand?.name ?? 'Unknown',
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            color: Theme.of(context).colorScheme.primary,
+            letterSpacing: 1.5,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          shoe.modelName,
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          shoe.archiveNumber,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.outline,
+          ),
+        ),
         const SizedBox(height: 24),
         photosAsync.when(
           data: (photos) => _PhotoSections(
@@ -362,7 +384,9 @@ class _DetailBody extends ConsumerWidget {
     if (date == null) {
       return null;
     }
-    return '${date.year}/${date.month}/${date.day}';
+    final mm = date.month.toString().padLeft(2, '0');
+    final dd = date.day.toString().padLeft(2, '0');
+    return '${date.year}/$mm/$dd';
   }
 }
 
@@ -387,7 +411,7 @@ class _MainPhoto extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
             child: Image.file(
               File(photo.filePath),
-              height: 220,
+              height: 320,
               width: double.infinity,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => const _PhotoPlaceholder(label: '写真ファイルが見つかりません'),
@@ -412,7 +436,7 @@ class _PhotoPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 220,
+      height: 320,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(24),
@@ -443,26 +467,31 @@ class _PhotoSections extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final galleryPhotos = photos.where((photo) => photo.photoType == PhotoType.gallery).toList();
-    final boxPhotos = photos.where((photo) => photo.photoType == PhotoType.box).toList();
+    final galleryPhotos = photos.where((p) => p.photoType == PhotoType.gallery).toList();
+    final boxPhotos = photos.where((p) => p.photoType == PhotoType.box).toList();
+
+    if (galleryPhotos.isEmpty && boxPhotos.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _PhotoStrip(title: 'ギャラリー写真', photos: galleryPhotos, onDeletePhoto: onDeletePhoto),
-        const SizedBox(height: 20),
-        _PhotoStrip(title: '箱写真', photos: boxPhotos, onDeletePhoto: onDeletePhoto),
+        if (galleryPhotos.isNotEmpty) ...[
+          _PhotoGrid(title: 'ギャラリー', photos: galleryPhotos, onDeletePhoto: onDeletePhoto),
+          const SizedBox(height: 20),
+        ],
+        if (boxPhotos.isNotEmpty)
+          _PhotoGrid(title: '箱写真', photos: boxPhotos, onDeletePhoto: onDeletePhoto),
       ],
     );
   }
 }
 
-class _PhotoStrip extends StatelessWidget {
+class _PhotoGrid extends StatelessWidget {
   final String title;
   final List<Photo> photos;
   final ValueChanged<Photo> onDeletePhoto;
 
-  const _PhotoStrip({
+  const _PhotoGrid({
     required this.title,
     required this.photos,
     required this.onDeletePhoto,
@@ -470,63 +499,47 @@ class _PhotoStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (photos.isEmpty) {
-      return Text(
-        '$titleは未登録です',
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.outline,
-            ),
-      );
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        Text(title, style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 12),
-        SizedBox(
-          height: 96,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: photos.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
-            itemBuilder: (context, index) {
-              final photo = photos[index];
-              return GestureDetector(
-                onLongPress: () => onDeletePhoto(photo),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+          ),
+          itemCount: photos.length,
+          itemBuilder: (context, index) {
+            final photo = photos[index];
+            return GestureDetector(
+              onLongPress: () => onDeletePhoto(photo),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
                 child: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.file(
-                        File(photo.filePath),
-                        width: 96,
-                        height: 96,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          width: 96,
-                          height: 96,
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                          child: const Icon(Icons.broken_image_outlined),
-                        ),
+                    Image.file(
+                      File(photo.filePath),
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => ColoredBox(
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        child: const Icon(Icons.broken_image_outlined),
                       ),
                     ),
                     const Positioned(
                       right: 4,
                       bottom: 4,
-                      child: Icon(
-                        Icons.delete_outline,
-                        size: 18,
-                      ),
+                      child: Icon(Icons.delete_outline, size: 16, color: Colors.white),
                     ),
                   ],
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ],
     );
@@ -566,10 +579,11 @@ class _InfoTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (value == null || value!.isEmpty) return const SizedBox.shrink();
     return ListTile(
       contentPadding: EdgeInsets.zero,
       title: Text(label),
-      subtitle: Text(value == null || value!.isEmpty ? '未設定' : value!),
+      subtitle: Text(value!),
     );
   }
 }

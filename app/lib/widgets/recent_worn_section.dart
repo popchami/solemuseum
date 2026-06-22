@@ -60,7 +60,7 @@ class RecentWornSection extends ConsumerWidget {
                   title: Text(shoe.modelName),
                   subtitle: Text(
                     '${brandNames[shoe.brandId] ?? 'Unknown'} • '
-                    '${wearLog.wornDate.year}/${wearLog.wornDate.month}/${wearLog.wornDate.day}',
+                    '${wearLog.wornDate.year}/${wearLog.wornDate.month.toString().padLeft(2, '0')}/${wearLog.wornDate.day.toString().padLeft(2, '0')}',
                   ),
                   onTap: () {
                     Navigator.of(context).push(

@@ -10,7 +10,10 @@ class MuseumSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final brandCount = shoes.map((shoe) => shoe.brandId).toSet().length;
-    final favoriteCount = shoes.where((shoe) => shoe.isFavorite).length;
+    final now = DateTime.now();
+    final thisMonthCount = shoes
+        .where((s) => s.createdAt.year == now.year && s.createdAt.month == now.month)
+        .length;
 
     return Row(
       children: [
@@ -32,9 +35,9 @@ class MuseumSummary extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: _SummaryCard(
-            label: 'FAVORITES',
-            value: favoriteCount.toString(),
-            icon: Icons.favorite_outline,
+            label: '今月追加',
+            value: thisMonthCount.toString(),
+            icon: Icons.add_circle_outline,
           ),
         ),
       ],

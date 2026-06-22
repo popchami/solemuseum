@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/brand.dart';
@@ -10,7 +12,6 @@ import '../widgets/brand_summary_section.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/museum_summary.dart';
 import '../widgets/recent_worn_section.dart';
-import '../widgets/shoe_card.dart';
 import '../widgets/top_five_section.dart';
 import 'shoe_detail_screen.dart';
 import 'shoe_form_screen.dart';
@@ -57,7 +58,8 @@ class _HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recentShoes = shoes.take(3).toList();
+    final recentShoes = shoes.take(6).toList();
+    final featuredShoe = shoes.isNotEmpty ? shoes.first : null;
     final brandNames = {
       for (final brand in brands) if (brand.id != null) brand.id!: brand.name,
     };
@@ -68,6 +70,15 @@ class _HomeContent extends StatelessWidget {
         Text('MY COLLECTION', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 12),
         MuseumSummary(shoes: shoes),
+        if (featuredShoe != null) ...[
+          const SizedBox(height: 24),
+          Text('注目の展示', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 12),
+          _FeaturedShoe(
+            shoe: featuredShoe,
+            brandName: brandNames[featuredShoe.brandId] ?? 'Unknown',
+          ),
+        ],
         const SizedBox(height: 24),
         Text('最近追加', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
@@ -84,15 +95,7 @@ class _HomeContent extends StatelessWidget {
             },
           )
         else
-          ...recentShoes.map(
-            (shoe) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _RecentShoeCard(
-                shoe: shoe,
-                brandName: brandNames[shoe.brandId] ?? 'Unknown',
-              ),
-            ),
-          ),
+          _RecentGrid(shoes: recentShoes, brandNames: brandNames),
         const SizedBox(height: 24),
         RecentWornSection(shoes: shoes, brands: brands),
         const SizedBox(height: 24),
@@ -104,11 +107,11 @@ class _HomeContent extends StatelessWidget {
   }
 }
 
-class _RecentShoeCard extends ConsumerWidget {
+class _FeaturedShoe extends ConsumerWidget {
   final Shoe shoe;
   final String brandName;
 
-  const _RecentShoeCard({required this.shoe, required this.brandName});
+  const _FeaturedShoe({required this.shoe, required this.brandName});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -118,19 +121,169 @@ class _RecentShoeCard extends ConsumerWidget {
       orElse: () => null,
     );
 
-    return ShoeCard(
-      brandName: brandName,
-      modelName: shoe.modelName,
-      imagePath: imagePath,
-      isFavorite: shoe.isFavorite,
-      archiveNumber: shoe.archiveNumber,
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => ShoeDetailScreen(shoeId: shoe.id!),
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => ShoeDetailScreen(shoeId: shoe.id!)),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: SizedBox(
+          height: 200,
+          width: double.infinity,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (imagePath != null)
+                Image.file(File(imagePath), fit: BoxFit.cover)
+              else
+                ColoredBox(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  child: const Center(child: Icon(Icons.image_outlined, size: 64)),
+                ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [Color(0xCC000000), Colors.transparent],
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        shoe.archiveNumber,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.white70),
+                      ),
+                      Text(
+                        brandName,
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(color: Colors.white),
+                      ),
+                      Text(
+                        shoe.modelName,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RecentGrid extends StatelessWidget {
+  final List<Shoe> shoes;
+  final Map<int, String> brandNames;
+
+  const _RecentGrid({required this.shoes, required this.brandNames});
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 0.75,
+      ),
+      itemCount: shoes.length,
+      itemBuilder: (context, index) {
+        final shoe = shoes[index];
+        return _RecentGridCell(
+          shoe: shoe,
+          brandName: brandNames[shoe.brandId] ?? 'Unknown',
         );
       },
+    );
+  }
+}
+
+class _RecentGridCell extends ConsumerWidget {
+  final Shoe shoe;
+  final String brandName;
+
+  const _RecentGridCell({required this.shoe, required this.brandName});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mainPhotoAsync = ref.watch(mainPhotoProvider(shoe.id!));
+    final imagePath = mainPhotoAsync.maybeWhen(
+      data: (photo) => photo?.filePath,
+      orElse: () => null,
+    );
+
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => ShoeDetailScreen(shoeId: shoe.id!)),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (imagePath != null)
+              Image.file(File(imagePath), fit: BoxFit.cover)
+            else
+              ColoredBox(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: const Center(child: Icon(Icons.image_outlined)),
+              ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [Color(0xAA000000), Colors.transparent],
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      brandName,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.white70),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      shoe.modelName,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
