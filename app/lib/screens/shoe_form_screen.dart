@@ -157,29 +157,93 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
     );
   }
 
+  Future<void> _addBrandInline(BuildContext context) async {
+    final controller = TextEditingController();
+    final name = await showDialog<String>(
+      context: context,
+      builder: (dlgCtx) => AlertDialog(
+        title: const Text('ブランドを追加'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            labelText: 'ブランド名',
+            hintText: '例: Salehe Bembury',
+          ),
+          autofocus: true,
+          textCapitalization: TextCapitalization.words,
+          onSubmitted: (value) {
+            if (value.trim().isNotEmpty) Navigator.of(dlgCtx).pop(value.trim());
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dlgCtx).pop(),
+            child: const Text('キャンセル'),
+          ),
+          FilledButton(
+            onPressed: () {
+              final text = controller.text.trim();
+              if (text.isNotEmpty) Navigator.of(dlgCtx).pop(text);
+            },
+            child: const Text('追加'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (name == null || !context.mounted) return;
+
+    final rowId = await ref.read(brandRepositoryProvider).insertBrand(name);
+    ref.invalidate(brandsProvider);
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(rowId > 0 ? '$name を追加しました' : '$name はすでに登録されています'),
+        ),
+      );
+    }
+
+    if (rowId > 0) {
+      setState(() => _brandId = rowId);
+    }
+  }
+
   Widget _buildForm(List<Brand> brands) {
     return Form(
       key: _formKey,
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          DropdownButtonFormField<int>(
-            value: _brandId,
-            decoration: const InputDecoration(labelText: 'ブランド'),
-            items: brands
-                .map(
-                  (brand) => DropdownMenuItem<int>(
-                    value: brand.id,
-                    child: Text(brand.name),
-                  ),
-                )
-                .toList(),
-            onChanged: (value) {
-              setState(() {
-                _brandId = value;
-              });
-            },
-            validator: (value) => value == null ? 'ブランドを選択してください' : null,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: DropdownButtonFormField<int>(
+                  value: _brandId,
+                  decoration: const InputDecoration(labelText: 'ブランド'),
+                  items: brands
+                      .map(
+                        (brand) => DropdownMenuItem<int>(
+                          value: brand.id,
+                          child: Text(brand.name),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _brandId = value;
+                    });
+                  },
+                  validator: (value) => value == null ? 'ブランドを選択してください' : null,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add_circle_outline),
+                tooltip: 'ブランドを追加',
+                onPressed: () => _addBrandInline(context),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           TextFormField(

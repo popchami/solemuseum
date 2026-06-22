@@ -9,54 +9,38 @@ class WearHistorySection extends ConsumerWidget {
 
   const WearHistorySection({super.key, required this.shoeId});
 
-  Future<void> _recordToday(BuildContext context, WidgetRef ref) async {
-    final controller = TextEditingController();
-    final memo = await showDialog<String>(
+  Future<void> _recordWear(BuildContext context, WidgetRef ref) async {
+    final result = await showDialog<(DateTime, String)>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('今日履いた'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'メモ（任意）',
-            hintText: '行き先や天気など',
-          ),
-          maxLines: 3,
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('キャンセル'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: const Text('記録'),
-          ),
-        ],
-      ),
+      builder: (context) => _WearLogDialog(),
     );
-    controller.dispose();
+    if (result == null) return;
 
-    if (memo == null) {
-      return;
-    }
+    final (date, memo) = result;
 
     try {
       final inserted = await ref.read(wearLogRepositoryProvider).insertWearLog(
             WearLog.create(
               shoeId: shoeId,
-              wornDate: DateTime.now(),
+              wornDate: date,
               memo: memo.isEmpty ? null : memo,
             ),
           );
       ref.invalidate(wearLogsByShoeIdProvider(shoeId));
       ref.invalidate(recentWearLogsProvider);
+      ref.invalidate(allWearLogsProvider);
 
       if (context.mounted) {
+        final isToday = _isToday(date);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(inserted ? '今日の着用を記録しました' : '今日はすでに記録済みです'),
+            content: Text(
+              inserted
+                  ? isToday
+                      ? '今日の着用を記録しました'
+                      : '${_formatDate(date)}の着用を記録しました'
+                  : 'その日はすでに記録済みです',
+            ),
           ),
         );
       }
@@ -75,9 +59,7 @@ class WearHistorySection extends ConsumerWidget {
     WearLog wearLog,
   ) async {
     final id = wearLog.id;
-    if (id == null) {
-      return;
-    }
+    if (id == null) return;
 
     final confirmed = await showDialog<bool>(
       context: context,
@@ -97,13 +79,12 @@ class WearHistorySection extends ConsumerWidget {
       ),
     );
 
-    if (confirmed != true) {
-      return;
-    }
+    if (confirmed != true) return;
 
     await ref.read(wearLogRepositoryProvider).deleteWearLog(id);
     ref.invalidate(wearLogsByShoeIdProvider(shoeId));
     ref.invalidate(recentWearLogsProvider);
+    ref.invalidate(allWearLogsProvider);
   }
 
   @override
@@ -114,9 +95,9 @@ class WearHistorySection extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         FilledButton.icon(
-          onPressed: () => _recordToday(context, ref),
+          onPressed: () => _recordWear(context, ref),
           icon: const Icon(Icons.directions_walk),
-          label: const Text('今日履いた'),
+          label: const Text('着用を記録'),
         ),
         const SizedBox(height: 20),
         Text(
@@ -166,9 +147,97 @@ class WearHistorySection extends ConsumerWidget {
     );
   }
 
+  static bool _isToday(DateTime date) {
+    final now = DateTime.now();
+    return date.year == now.year && date.month == now.month && date.day == now.day;
+  }
+
   static String _formatDate(DateTime date) {
     final mm = date.month.toString().padLeft(2, '0');
     final dd = date.day.toString().padLeft(2, '0');
     return '${date.year}/$mm/$dd';
+  }
+}
+
+class _WearLogDialog extends StatefulWidget {
+  const _WearLogDialog();
+
+  @override
+  State<_WearLogDialog> createState() => _WearLogDialogState();
+}
+
+class _WearLogDialogState extends State<_WearLogDialog> {
+  DateTime _selectedDate = DateTime.now();
+  final _memoController = TextEditingController();
+
+  @override
+  void dispose() {
+    _memoController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: now,
+    );
+    if (picked != null) {
+      setState(() => _selectedDate = picked);
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final isToday =
+        date.year == now.year && date.month == now.month && date.day == now.day;
+    if (isToday) return '今日';
+    final mm = date.month.toString().padLeft(2, '0');
+    final dd = date.day.toString().padLeft(2, '0');
+    return '${date.year}/$mm/$dd';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('着用を記録'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.calendar_month_outlined),
+            title: const Text('日付'),
+            subtitle: Text(_formatDate(_selectedDate)),
+            onTap: _pickDate,
+            trailing: const Icon(Icons.chevron_right, size: 18),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _memoController,
+            decoration: const InputDecoration(
+              labelText: 'メモ（任意）',
+              hintText: '行き先や天気など',
+            ),
+            maxLines: 3,
+            autofocus: false,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('キャンセル'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.of(context).pop(
+            (_selectedDate, _memoController.text.trim()),
+          ),
+          child: const Text('記録'),
+        ),
+      ],
+    );
   }
 }
