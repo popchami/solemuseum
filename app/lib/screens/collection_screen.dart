@@ -241,7 +241,7 @@ class _ShoeGrid extends ConsumerWidget {
       padding: const EdgeInsets.all(12),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.66,
+        childAspectRatio: 0.64,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
       ),
