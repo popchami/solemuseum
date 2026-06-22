@@ -162,7 +162,7 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: Text('v1.0.0'),
           ),
           const ListTile(
-            title: Text('Collect. Preserve. Showcase.'),
+            title: Text('Collect. Record. Exhibit.'),
             subtitle: Text('Digital Sneaker Collection Museum'),
           ),
         ],

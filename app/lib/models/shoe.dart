@@ -124,6 +124,12 @@ class Shoe {
     );
   }
 
+  String get archiveNumber {
+    final id = this.id;
+    if (id == null) return 'SM-????';
+    return 'SM-${id.toString().padLeft(4, '0')}';
+  }
+
   static DateTime? _parseDate(String? value) {
     if (value == null || value.isEmpty) {
       return null;

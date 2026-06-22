@@ -236,6 +236,7 @@ class _ShoeGrid extends ConsumerWidget {
           color: shoe.color ?? '',
           imagePath: imagePath,
           isFavorite: shoe.isFavorite,
+          archiveNumber: shoe.archiveNumber,
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
