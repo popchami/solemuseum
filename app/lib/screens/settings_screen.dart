@@ -18,10 +18,12 @@ class SettingsScreen extends ConsumerWidget {
   Future<void> _createBackup(BuildContext context, WidgetRef ref) async {
     try {
       final file = await ref.read(backupServiceProvider).createBackupFile();
-      await Share.shareXFiles(
-        [XFile(file.path)],
-        subject: 'SoleMuseum Backup',
-        text: 'SoleMuseumのコレクションバックアップです。',
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(file.path)],
+          subject: 'SoleMuseum Backup',
+          text: 'SoleMuseumのコレクションバックアップです。',
+        ),
       );
     } catch (_) {
       if (context.mounted) {
@@ -33,9 +35,10 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Future<void> _restoreBackup(BuildContext context, WidgetRef ref) async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: const ['json'],
+      allowMultiple: false,
     );
     final filePath = result?.files.single.path;
     if (filePath == null || !context.mounted) {
