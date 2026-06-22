@@ -69,6 +69,10 @@ class _StatsContent extends StatelessWidget {
           thisYear: thisYearCount,
         ),
         const SizedBox(height: 28),
+        Text('着用カレンダー', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+        const SizedBox(height: 12),
+        _WearCalendarSection(logs: logs, shoes: shoes, brands: brands),
+        const SizedBox(height: 28),
         Text('月別着用回数', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
         _MonthlyChart(data: monthlyData),
@@ -309,4 +313,227 @@ class _ShoeRank {
   final int count;
 
   const _ShoeRank({required this.shoe, required this.count});
+}
+
+// ─── Calendar ────────────────────────────────────────────────────────────────
+
+class _WearCalendarSection extends StatefulWidget {
+  final List<WearLog> logs;
+  final List<Shoe> shoes;
+  final Map<int, String> brands;
+
+  const _WearCalendarSection({
+    required this.logs,
+    required this.shoes,
+    required this.brands,
+  });
+
+  @override
+  State<_WearCalendarSection> createState() => _WearCalendarSectionState();
+}
+
+class _WearCalendarSectionState extends State<_WearCalendarSection> {
+  late DateTime _month;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _month = DateTime(now.year, now.month);
+  }
+
+  bool get _canGoNext {
+    final now = DateTime.now();
+    return _month.year < now.year ||
+        (_month.year == now.year && _month.month < now.month);
+  }
+
+  Map<String, List<WearLog>> get _logsByDate {
+    final map = <String, List<WearLog>>{};
+    for (final log in widget.logs) {
+      final key = _dateKey(log.wornDate);
+      map.putIfAbsent(key, () => []).add(log);
+    }
+    return map;
+  }
+
+  static String _dateKey(DateTime d) =>
+      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+  void _showDayDetail(DateTime date, List<WearLog> logs) {
+    final mm = date.month.toString().padLeft(2, '0');
+    final dd = date.day.toString().padLeft(2, '0');
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+              child: Text(
+                '${date.year}/$mm/$dd の着用',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+            ...logs.map((log) {
+              final shoe = widget.shoes.where((s) => s.id == log.shoeId).firstOrNull;
+              final brandName = shoe == null ? '' : (widget.brands[shoe.brandId] ?? '');
+              return ListTile(
+                leading: const Icon(Icons.directions_walk_outlined),
+                title: Text(shoe?.modelName ?? 'Unknown'),
+                subtitle: Text(brandName),
+                trailing: log.memo != null
+                    ? const Icon(Icons.notes_outlined, size: 18)
+                    : null,
+                onTap: shoe == null
+                    ? null
+                    : () {
+                        Navigator.of(ctx).pop();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => ShoeDetailScreen(shoeId: shoe.id!),
+                          ),
+                        );
+                      },
+              );
+            }),
+            if (logs.any((l) => l.memo != null))
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: logs
+                      .where((l) => l.memo != null)
+                      .map((l) => Text(
+                            '📝 ${l.memo}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ))
+                      .toList(),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final logsByDate = _logsByDate;
+    final daysInMonth = DateTime(_month.year, _month.month + 1, 0).day;
+    // weekday: 1=Mon … 7=Sun; grid starts Monday → leading blanks = weekday-1
+    final leadingBlanks = DateTime(_month.year, _month.month, 1).weekday - 1;
+    final now = DateTime.now();
+
+    final headerStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: Theme.of(context).colorScheme.outline,
+        );
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.chevron_left),
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () => setState(
+                    () => _month = DateTime(_month.year, _month.month - 1),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    '${_month.year}年${_month.month}月',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.chevron_right),
+                  visualDensity: VisualDensity.compact,
+                  onPressed: _canGoNext
+                      ? () => setState(
+                            () => _month = DateTime(_month.year, _month.month + 1),
+                          )
+                      : null,
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: ['月', '火', '水', '木', '金', '土', '日']
+                  .map((d) => Expanded(
+                        child: Text(d, textAlign: TextAlign.center, style: headerStyle),
+                      ))
+                  .toList(),
+            ),
+            const SizedBox(height: 4),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 7,
+                mainAxisSpacing: 4,
+                crossAxisSpacing: 4,
+              ),
+              itemCount: leadingBlanks + daysInMonth,
+              itemBuilder: (context, index) {
+                if (index < leadingBlanks) return const SizedBox();
+                final day = index - leadingBlanks + 1;
+                final date = DateTime(_month.year, _month.month, day);
+                final key = _dateKey(date);
+                final dayLogs = logsByDate[key] ?? [];
+                final hasLog = dayLogs.isNotEmpty;
+                final isToday = date.year == now.year &&
+                    date.month == now.month &&
+                    date.day == now.day;
+                final isFuture = date.isAfter(now);
+
+                return GestureDetector(
+                  onTap: hasLog ? () => _showDayDetail(date, dayLogs) : null,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: hasLog
+                          ? Theme.of(context).colorScheme.primary
+                          : isToday
+                              ? Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer
+                              : null,
+                      border: isToday && !hasLog
+                          ? Border.all(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 1.5,
+                            )
+                          : null,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$day',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: hasLog
+                                  ? Theme.of(context).colorScheme.onPrimary
+                                  : isFuture
+                                      ? Theme.of(context).colorScheme.outline
+                                      : null,
+                              fontWeight:
+                                  isToday ? FontWeight.bold : null,
+                            ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
