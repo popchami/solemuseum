@@ -95,7 +95,7 @@ Scope:
 
 ## Sprint5: Museum Home
 
-Status: Planned
+Status: Code Complete — Runtime Verification Pending
 
 Scope:
 

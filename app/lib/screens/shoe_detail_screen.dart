@@ -26,6 +26,38 @@ class ShoeDetailScreen extends ConsumerWidget {
     ref.invalidate(shoeByIdProvider(shoe.id!));
   }
 
+  Future<void> _toggleTopFive(
+    BuildContext context,
+    WidgetRef ref,
+    Shoe shoe,
+  ) async {
+    final shouldSelect = shoe.topOrder == null;
+    final updated = await ref
+        .read(shoeRepositoryProvider)
+        .setTopFive(shoe.id!, shouldSelect);
+
+    if (updated) {
+      ref.invalidate(shoesProvider);
+      ref.invalidate(shoeByIdProvider(shoe.id!));
+    }
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            updated
+                ? shouldSelect
+                    ? 'MY TOP 5に追加しました'
+                    : 'MY TOP 5から外しました'
+                : shouldSelect
+                    ? 'MY TOP 5は5足までです'
+                    : 'MY TOP 5の更新に失敗しました',
+          ),
+        ),
+      );
+    }
+  }
+
   Future<void> _addPhoto(BuildContext context, WidgetRef ref, Shoe shoe) async {
     final photoType = await _selectPhotoType(context);
     if (photoType == null) {
@@ -166,6 +198,15 @@ class ShoeDetailScreen extends ConsumerWidget {
                 onPressed: () => _toggleFavorite(context, ref, shoe),
               ),
               IconButton(
+                tooltip: shoe.topOrder == null ? 'MY TOP 5に追加' : 'MY TOP 5から外す',
+                icon: Icon(
+                  shoe.topOrder == null
+                      ? Icons.emoji_events_outlined
+                      : Icons.emoji_events,
+                ),
+                onPressed: () => _toggleTopFive(context, ref, shoe),
+              ),
+              IconButton(
                 icon: const Icon(Icons.edit_outlined),
                 onPressed: () async {
                   await Navigator.of(context).push(
@@ -298,6 +339,10 @@ class _DetailBody extends ConsumerWidget {
         _InfoTile(label: '購入店', value: shoe.purchaseStore),
         _InfoTile(label: 'メモ', value: shoe.memo),
         _InfoTile(label: 'お気に入り', value: shoe.isFavorite ? 'ON' : 'OFF'),
+        _InfoTile(
+          label: 'MY TOP 5',
+          value: shoe.topOrder == null ? '未選択' : 'No. ${shoe.topOrder}',
+        ),
         _InfoTile(label: '登録日', value: _formatDate(shoe.createdAt)),
         _InfoTile(label: '更新日', value: _formatDate(shoe.updatedAt)),
       ],
