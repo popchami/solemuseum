@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/brand.dart';
 import '../models/shoe.dart';
 import '../providers/brand_provider.dart';
+import '../providers/photo_provider.dart';
 import '../providers/shoe_provider.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/shoe_card.dart';
@@ -222,11 +223,18 @@ class _ShoeGrid extends ConsumerWidget {
       itemCount: shoes.length,
       itemBuilder: (context, index) {
         final shoe = shoes[index];
+        final mainPhotoAsync = ref.watch(mainPhotoProvider(shoe.id!));
+        final imagePath = mainPhotoAsync.maybeWhen(
+          data: (photo) => photo?.filePath,
+          orElse: () => null,
+        );
+
         return ShoeCard(
           brandName: brandNames[shoe.brandId] ?? 'Unknown',
           modelName: shoe.modelName,
           size: shoe.size ?? '-',
           color: shoe.color ?? '',
+          imagePath: imagePath,
           isFavorite: shoe.isFavorite,
           onTap: () {
             Navigator.of(context).push(
