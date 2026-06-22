@@ -10,13 +10,13 @@ class WearHistorySection extends ConsumerWidget {
   const WearHistorySection({super.key, required this.shoeId});
 
   Future<void> _recordToday(BuildContext context, WidgetRef ref) async {
-    final controller = TextEditingController();
+    var memoText = '';
     final memo = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('今日履いた'),
         content: TextField(
-          controller: controller,
+          onChanged: (value) => memoText = value,
           decoration: const InputDecoration(
             labelText: 'メモ（任意）',
             hintText: '行き先や天気など',
@@ -30,13 +30,12 @@ class WearHistorySection extends ConsumerWidget {
             child: const Text('キャンセル'),
           ),
           FilledButton(
-            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+            onPressed: () => Navigator.of(context).pop(memoText.trim()),
             child: const Text('記録'),
           ),
         ],
       ),
     );
-    controller.dispose();
 
     if (memo == null) {
       return;
