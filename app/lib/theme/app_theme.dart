@@ -34,7 +34,7 @@ class AppTheme {
         backgroundColor: Color(0xFF000000),
         foregroundColor: Color(0xFFFFFFFF),
       ),
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 0,
         color: Color(0xFFFFFFFF),
         margin: EdgeInsets.zero,
@@ -72,7 +72,7 @@ class AppTheme {
         backgroundColor: Color(0xFFFFFFFF),
         foregroundColor: Color(0xFF000000),
       ),
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 0,
         color: Color(0xFF1E1E1E),
         margin: EdgeInsets.zero,
