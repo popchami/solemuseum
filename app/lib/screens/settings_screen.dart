@@ -13,6 +13,7 @@ import '../providers/shoe_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/wear_log_provider.dart';
 import '../theme/app_theme.dart';
+import 'brand_management_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -140,6 +141,19 @@ class SettingsScreen extends ConsumerWidget {
                   child: Text('システム設定'),
                 ),
               ],
+            ),
+          ),
+          const Divider(),
+          const _SectionTitle(title: 'カスタマイズ'),
+          ListTile(
+            leading: const Icon(Icons.label_outlined),
+            title: const Text('ブランド管理'),
+            subtitle: const Text('ブランドの追加・削除'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const BrandManagementScreen(),
+              ),
             ),
           ),
           const Divider(),
