@@ -12,6 +12,7 @@ import '../theme/app_theme.dart';
 import '../widgets/brand_summary_section.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/museum_summary.dart';
+import '../widgets/neglected_shoes_section.dart';
 import '../widgets/recent_worn_section.dart';
 import '../widgets/top_five_section.dart';
 import 'shoe_detail_screen.dart';
@@ -138,6 +139,7 @@ class _HomeContent extends StatelessWidget {
           _RecentGrid(shoes: recentShoes, brandNames: brandNames),
         const SizedBox(height: 24),
         RecentWornSection(shoes: ownedShoes, brands: brands),
+        NeglectedShoesSection(shoes: ownedShoes, brandNames: brandNames),
         const SizedBox(height: 24),
         TopFiveSection(shoes: ownedShoes, brands: brands),
         if (wishlistShoes.isNotEmpty) ...[

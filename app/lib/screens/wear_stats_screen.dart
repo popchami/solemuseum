@@ -59,6 +59,7 @@ class _StatsContent extends StatelessWidget {
 
     final monthlyData = _buildMonthlyData(now);
     final ranking = _buildRanking();
+    final neglected = _buildNeglected(now);
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -83,6 +84,19 @@ class _StatsContent extends StatelessWidget {
           const _EmptyHint(message: '着用履歴がありません')
         else
           _RankingList(ranking: ranking, brands: brands),
+        if (neglected.isNotEmpty) ...[
+          const SizedBox(height: 28),
+          Text('放置中の一足', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 4),
+          Text(
+            '30日以上着用していないシューズ',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+          ),
+          const SizedBox(height: 12),
+          _NeglectedList(items: neglected, brands: brands),
+        ],
       ],
     );
   }
@@ -97,6 +111,36 @@ class _StatsContent extends StatelessWidget {
       result.add(_MonthData(year: date.year, month: date.month, count: count));
     }
     return result;
+  }
+
+  List<_NeglectedEntry> _buildNeglected(DateTime now) {
+    final latestWear = <int, DateTime>{};
+    for (final log in logs) {
+      final current = latestWear[log.shoeId];
+      if (current == null || log.wornDate.isAfter(current)) {
+        latestWear[log.shoeId] = log.wornDate;
+      }
+    }
+
+    final entries = <_NeglectedEntry>[];
+    for (final shoe in shoes) {
+      final id = shoe.id;
+      if (id == null) continue;
+      final last = latestWear[id];
+      if (last == null) {
+        final days = now.difference(shoe.createdAt).inDays;
+        if (days >= 30) {
+          entries.add(_NeglectedEntry(shoe: shoe, daysSince: days, neverWorn: true));
+        }
+      } else {
+        final days = now.difference(last).inDays;
+        if (days >= 30) {
+          entries.add(_NeglectedEntry(shoe: shoe, daysSince: days, neverWorn: false));
+        }
+      }
+    }
+    entries.sort((a, b) => b.daysSince.compareTo(a.daysSince));
+    return entries.take(10).toList();
   }
 
   List<_ShoeRank> _buildRanking() {
@@ -313,6 +357,75 @@ class _ShoeRank {
   final int count;
 
   const _ShoeRank({required this.shoe, required this.count});
+}
+
+class _NeglectedEntry {
+  final Shoe shoe;
+  final int daysSince;
+  final bool neverWorn;
+
+  const _NeglectedEntry({
+    required this.shoe,
+    required this.daysSince,
+    required this.neverWorn,
+  });
+}
+
+class _NeglectedList extends StatelessWidget {
+  final List<_NeglectedEntry> items;
+  final Map<int, String> brands;
+
+  const _NeglectedList({required this.items, required this.brands});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: List.generate(items.length, (index) {
+        final item = items[index];
+        final brandName = brands[item.shoe.brandId] ?? 'Unknown';
+        final badge = item.neverWorn ? '未着用' : '${item.daysSince}日着用なし';
+        return ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: CircleAvatar(
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+            child: Icon(
+              Icons.hourglass_bottom_outlined,
+              size: 20,
+              color: Theme.of(context).colorScheme.outline,
+            ),
+          ),
+          title: Text(
+            item.shoe.modelName,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          subtitle: Text(brandName, style: Theme.of(context).textTheme.bodySmall),
+          trailing: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: item.neverWorn
+                  ? Theme.of(context).colorScheme.surfaceContainerHighest
+                  : Theme.of(context).colorScheme.tertiaryContainer,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              badge,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: item.neverWorn
+                        ? Theme.of(context).colorScheme.onSurfaceVariant
+                        : Theme.of(context).colorScheme.onTertiaryContainer,
+                  ),
+            ),
+          ),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ShoeDetailScreen(shoeId: item.shoe.id!),
+            ),
+          ),
+        );
+      }),
+    );
+  }
 }
 
 // ─── Calendar ────────────────────────────────────────────────────────────────
