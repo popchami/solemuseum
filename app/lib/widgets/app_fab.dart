@@ -31,9 +31,12 @@ class _SneakerPlusIcon extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CustomPaint(
-            size: const Size(34, 24),
-            painter: _SneakerPainter(color),
+          Transform.flip(
+            flipX: true,
+            child: CustomPaint(
+              size: const Size(34, 24),
+              painter: _SneakerPainter(color),
+            ),
           ),
           Container(
             width: 17,
