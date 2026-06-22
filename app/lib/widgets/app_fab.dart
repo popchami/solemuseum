@@ -7,105 +7,21 @@ class AppFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
-      tooltip: 'スニーカーを登録',
+    return FloatingActionButton.extended(
+      tooltip: 'スニーカーを収蔵する',
+      icon: const Icon(Icons.inventory_2_outlined),
+      label: const Text(
+        '収蔵する',
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.6,
+        ),
+      ),
       onPressed: () {
         Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const ShoeFormScreen()),
         );
       },
-      child: const _SneakerPlusIcon(),
     );
-  }
-}
-
-class _SneakerPlusIcon extends StatelessWidget {
-  const _SneakerPlusIcon();
-
-  @override
-  Widget build(BuildContext context) {
-    final color = IconTheme.of(context).color ?? Colors.white;
-    final backgroundColor =
-        Theme.of(context).floatingActionButtonTheme.backgroundColor ??
-            Theme.of(context).colorScheme.primaryContainer;
-    return SizedBox(
-      width: 48,
-      height: 36,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Transform.flip(
-            flipX: true,
-            child: CustomPaint(
-              size: const Size(48, 32),
-              painter: _SneakerPainter(color),
-            ),
-          ),
-          Transform.translate(
-            offset: const Offset(0, 3),
-            child: Icon(
-              Icons.add,
-              size: 13,
-              color: backgroundColor,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SneakerPainter extends CustomPainter {
-  final Color color;
-
-  const _SneakerPainter(this.color);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-    final path = Path()
-      ..moveTo(size.width * 0.05, size.height * 0.62)
-      ..quadraticBezierTo(
-        size.width * 0.15,
-        size.height * 0.48,
-        size.width * 0.28,
-        size.height * 0.18,
-      )
-      ..lineTo(size.width * 0.48, size.height * 0.25)
-      ..quadraticBezierTo(
-        size.width * 0.6,
-        size.height * 0.5,
-        size.width * 0.9,
-        size.height * 0.58,
-      )
-      ..quadraticBezierTo(
-        size.width,
-        size.height * 0.63,
-        size.width * 0.96,
-        size.height * 0.78,
-      )
-      ..lineTo(size.width * 0.1, size.height * 0.78)
-      ..quadraticBezierTo(
-        size.width * 0.02,
-        size.height * 0.75,
-        size.width * 0.05,
-        size.height * 0.62,
-      )
-      ..close();
-    canvas.drawPath(path, paint);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(0, size.height * 0.8, size.width, size.height * 0.12),
-        const Radius.circular(2),
-      ),
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _SneakerPainter oldDelegate) {
-    return oldDelegate.color != color;
   }
 }
