@@ -6,9 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/brand.dart';
 import '../models/shoe.dart';
 import '../providers/photo_provider.dart';
+import '../providers/shoe_provider.dart';
 import '../screens/shoe_detail_screen.dart';
+import '../screens/top_five_edit_screen.dart';
 
-class TopFiveSection extends StatelessWidget {
+class TopFiveSection extends ConsumerWidget {
   final List<Shoe> shoes;
   final List<Brand> brands;
 
@@ -19,7 +21,7 @@ class TopFiveSection extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final topShoes = shoes.where((shoe) => shoe.topOrder != null).toList()
       ..sort((a, b) => a.topOrder!.compareTo(b.topOrder!));
     final brandNames = {
@@ -37,6 +39,22 @@ class TopFiveSection extends StatelessWidget {
             Text('MY TOP 5', style: Theme.of(context).textTheme.titleLarge),
             const Spacer(),
             Text('${topShoes.length}/5'),
+            if (topShoes.length > 1) ...[
+              const SizedBox(width: 4),
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, size: 20),
+                tooltip: '並び替え',
+                visualDensity: VisualDensity.compact,
+                onPressed: () async {
+                  final changed = await Navigator.of(context).push<bool>(
+                    MaterialPageRoute(
+                      builder: (_) => const TopFiveEditScreen(),
+                    ),
+                  );
+                  if (changed == true) ref.invalidate(shoesProvider);
+                },
+              ),
+            ],
           ],
         ),
         const SizedBox(height: 12),

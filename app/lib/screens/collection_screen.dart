@@ -250,6 +250,18 @@ class _CollectionContent extends StatelessWidget {
             ],
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '${filteredShoes.length}足',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+            ),
+          ),
+        ),
         Expanded(
           child: filteredShoes.isEmpty
               ? const EmptyState(

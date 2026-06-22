@@ -89,6 +89,23 @@ class ShoeRepository {
     return updated > 0;
   }
 
+  Future<void> reorderTopFive(List<int> orderedIds) async {
+    final db = await AppDatabase.instance.database;
+    await db.transaction((txn) async {
+      for (int i = 0; i < orderedIds.length; i++) {
+        await txn.update(
+          'shoes',
+          {
+            'top_order': i + 1,
+            'updated_at': DateTime.now().toIso8601String(),
+          },
+          where: 'id = ?',
+          whereArgs: [orderedIds[i]],
+        );
+      }
+    });
+  }
+
   Future<int> toggleFavorite(int id, bool isFavorite) async {
     final db = await AppDatabase.instance.database;
     return db.update(
