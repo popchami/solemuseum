@@ -51,7 +51,7 @@ class SettingsScreen extends ConsumerWidget {
         title: const Text('バックアップを復元しますか？'),
         content: const Text(
           '現在のコレクション、着用履歴、TOP 5をバックアップ内容で置き換えます。\n\n'
-          '写真ファイルはJSONバックアップに含まれないため、写真の登録情報は削除されます。'
+          '写真ファイルはバックアップに含まれないため、写真の登録情報は削除されます。'
           'この操作は取り消せません。',
         ),
         actions: [
@@ -71,9 +71,7 @@ class SettingsScreen extends ConsumerWidget {
     }
 
     try {
-      await ref
-          .read(backupServiceProvider)
-          .restoreBackupFile(File(filePath));
+      await ref.read(backupServiceProvider).restoreBackupFile(File(filePath));
       ref.invalidate(brandsProvider);
       ref.invalidate(shoesProvider);
       ref.invalidate(shoeByIdProvider);
@@ -148,13 +146,13 @@ class SettingsScreen extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.ios_share_outlined),
             title: const Text('バックアップを作成'),
-            subtitle: const Text('JSONファイルを保存・共有します（写真は対象外）'),
+            subtitle: const Text('コレクションデータを保存・共有します（写真は対象外）'),
             onTap: () => _createBackup(context, ref),
           ),
           ListTile(
             leading: const Icon(Icons.restore_outlined),
             title: const Text('バックアップから復元'),
-            subtitle: const Text('JSONファイルからコレクションを復元します'),
+            subtitle: const Text('保存したバックアップからコレクションを復元します'),
             onTap: () => _restoreBackup(context, ref),
           ),
           const Divider(),

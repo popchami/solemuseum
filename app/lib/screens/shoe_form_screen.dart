@@ -1,9 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../models/brand.dart';
+import '../models/photo.dart';
 import '../models/shoe.dart';
 import '../providers/brand_provider.dart';
+import '../providers/photo_provider.dart';
+import '../providers/photo_storage_provider.dart';
 import '../providers/shoe_provider.dart';
 
 class ShoeFormScreen extends ConsumerStatefulWidget {
@@ -16,17 +23,42 @@ class ShoeFormScreen extends ConsumerStatefulWidget {
 }
 
 class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
+  static final List<String> _sizeOptions = List.generate(
+    21,
+    (index) => (22 + index * 0.5).toStringAsFixed(1),
+  );
+
+  static const List<_ColorOption> _colorOptions = [
+    _ColorOption('ブラック', Colors.black),
+    _ColorOption('ホワイト', Colors.white),
+    _ColorOption('グレー', Colors.grey),
+    _ColorOption('レッド', Colors.red),
+    _ColorOption('ブルー', Colors.blue),
+    _ColorOption('グリーン', Colors.green),
+    _ColorOption('イエロー', Colors.yellow),
+    _ColorOption('ブラウン', Colors.brown),
+    _ColorOption('ベージュ', Color(0xFFD7C4A3)),
+    _ColorOption('ピンク', Colors.pink),
+    _ColorOption('パープル', Colors.purple),
+    _ColorOption('オレンジ', Colors.orange),
+    _ColorOption('マルチカラー', null),
+    _ColorOption('その他', null),
+  ];
+
   final _formKey = GlobalKey<FormState>();
   final _modelController = TextEditingController();
-  final _sizeController = TextEditingController();
-  final _colorController = TextEditingController();
   final _priceController = TextEditingController();
   final _storeController = TextEditingController();
   final _memoController = TextEditingController();
 
+  int _currentStep = 0;
   int? _brandId;
+  String? _selectedSize;
+  String? _selectedColor;
   DateTime? _purchaseDate;
   bool _isFavorite = false;
+  XFile? _pendingMainPhoto;
+  bool _saving = false;
 
   bool get _isEditing => widget.shoe != null;
 
@@ -37,62 +69,76 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
     if (shoe != null) {
       _brandId = shoe.brandId;
       _modelController.text = shoe.modelName;
-      _sizeController.text = shoe.size ?? '';
-      _colorController.text = shoe.color ?? '';
+      _selectedSize = shoe.size;
+      _selectedColor = shoe.color;
       _priceController.text = shoe.purchasePrice?.toString() ?? '';
       _storeController.text = shoe.purchaseStore ?? '';
       _memoController.text = shoe.memo ?? '';
       _purchaseDate = shoe.purchaseDate;
       _isFavorite = shoe.isFavorite;
+      _currentStep = 1;
     }
   }
 
   @override
   void dispose() {
     _modelController.dispose();
-    _sizeController.dispose();
-    _colorController.dispose();
     _priceController.dispose();
     _storeController.dispose();
     _memoController.dispose();
     super.dispose();
   }
 
+  Future<void> _pickMainPhoto() async {
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (picked != null && mounted) {
+      setState(() => _pendingMainPhoto = picked);
+    }
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate() || _brandId == null) {
+      setState(() => _currentStep = 1);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('ブランドとモデル名を入力してください')),
       );
       return;
     }
 
+    setState(() => _saving = true);
     final repository = ref.read(shoeRepositoryProvider);
     final priceText = _priceController.text.trim();
     final price = priceText.isEmpty ? null : int.tryParse(priceText);
 
     try {
+      late final int shoeId;
       if (_isEditing) {
         final current = widget.shoe!;
+        shoeId = current.id!;
         await repository.updateShoe(
-          current.copyWith(
-            brandId: _brandId,
+          Shoe(
+            id: current.id,
+            brandId: _brandId!,
             modelName: _modelController.text.trim(),
-            size: _emptyToNull(_sizeController.text),
-            color: _emptyToNull(_colorController.text),
+            size: _selectedSize,
+            color: _selectedColor,
             purchaseDate: _purchaseDate,
             purchasePrice: price,
             purchaseStore: _emptyToNull(_storeController.text),
             memo: _emptyToNull(_memoController.text),
             isFavorite: _isFavorite,
+            topOrder: current.topOrder,
+            createdAt: current.createdAt,
+            updatedAt: current.updatedAt,
           ),
         );
       } else {
-        await repository.insertShoe(
+        shoeId = await repository.insertShoe(
           Shoe.create(
             brandId: _brandId!,
             modelName: _modelController.text.trim(),
-            size: _emptyToNull(_sizeController.text),
-            color: _emptyToNull(_colorController.text),
+            size: _selectedSize,
+            color: _selectedColor,
             purchaseDate: _purchaseDate,
             purchasePrice: price,
             purchaseStore: _emptyToNull(_storeController.text),
@@ -102,17 +148,49 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
         );
       }
 
+      if (_pendingMainPhoto != null) {
+        await _saveMainPhoto(shoeId, _pendingMainPhoto!);
+      }
+
       ref.invalidate(shoesProvider);
+      ref.invalidate(shoeByIdProvider(shoeId));
       if (mounted) {
         Navigator.of(context).pop(true);
       }
-    } catch (error) {
+    } catch (_) {
       if (mounted) {
+        setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('保存に失敗しました')),
         );
       }
     }
+  }
+
+  Future<void> _saveMainPhoto(int shoeId, XFile pickedFile) async {
+    final storage = ref.read(photoStorageServiceProvider);
+    final filePath = await storage.savePhoto(
+      sourceFile: File(pickedFile.path),
+      shoeId: shoeId,
+      photoType: PhotoType.main,
+    );
+    final repository = ref.read(photoRepositoryProvider);
+    final previousPhotos = await repository.replaceMainPhoto(
+      Photo.create(
+        shoeId: shoeId,
+        photoType: PhotoType.main,
+        filePath: filePath,
+      ),
+    );
+    for (final previousPhoto in previousPhotos) {
+      try {
+        await storage.deletePhotoFile(previousPhoto.filePath);
+      } catch (_) {
+        // Database replacement already succeeded; cleanup is best effort.
+      }
+    }
+    ref.invalidate(photosByShoeIdProvider(shoeId));
+    ref.invalidate(mainPhotoProvider(shoeId));
   }
 
   Future<void> _pickDate() async {
@@ -124,9 +202,7 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
       lastDate: DateTime(now.year + 1),
     );
     if (selected != null) {
-      setState(() {
-        _purchaseDate = selected;
-      });
+      setState(() => _purchaseDate = selected);
     }
   }
 
@@ -135,115 +211,291 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
     return trimmed.isEmpty ? null : trimmed;
   }
 
+  void _continue() {
+    if (_currentStep == 3) {
+      _save();
+    } else {
+      setState(() => _currentStep += 1);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final brandsAsync = ref.watch(brandsProvider);
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'スニーカー編集' : 'スニーカー登録'),
-        actions: [
-          TextButton(
-            onPressed: _save,
-            child: const Text('保存'),
-          ),
-        ],
+        title: Text(_isEditing ? 'スニーカー編集' : 'スニーカーを登録'),
       ),
       body: brandsAsync.when(
-        data: (brands) => _buildForm(brands),
+        data: (brands) => Form(
+          key: _formKey,
+          child: Stepper(
+            currentStep: _currentStep,
+            onStepTapped: (step) => setState(() => _currentStep = step),
+            onStepContinue: _saving ? null : _continue,
+            onStepCancel: _currentStep == 0
+                ? null
+                : () => setState(() => _currentStep -= 1),
+            controlsBuilder: (context, details) => Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Row(
+                children: [
+                  FilledButton(
+                    onPressed: _saving ? null : details.onStepContinue,
+                    child: Text(
+                      _currentStep == 3
+                          ? _saving
+                              ? '保存中…'
+                              : '登録する'
+                          : '次へ',
+                    ),
+                  ),
+                  if (_currentStep > 0) ...[
+                    const SizedBox(width: 8),
+                    TextButton(
+                      onPressed: _saving ? null : details.onStepCancel,
+                      child: const Text('戻る'),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            steps: [
+              Step(
+                title: const Text('メイン写真'),
+                subtitle: const Text('あとから追加もできます'),
+                isActive: _currentStep >= 0,
+                content: _PhotoPickerCard(
+                  pickedFile: _pendingMainPhoto,
+                  onTap: _pickMainPhoto,
+                  onRemove: () => setState(() => _pendingMainPhoto = null),
+                ),
+              ),
+              Step(
+                title: const Text('基本情報'),
+                isActive: _currentStep >= 1,
+                content: _buildBasicInfo(brands),
+              ),
+              Step(
+                title: const Text('サイズ・カラー'),
+                isActive: _currentStep >= 2,
+                content: _buildAppearance(),
+              ),
+              Step(
+                title: const Text('購入情報・メモ'),
+                isActive: _currentStep >= 3,
+                content: _buildDetails(),
+              ),
+            ],
+          ),
+        ),
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, __) => const Center(child: Text('ブランドの読み込みに失敗しました')),
+        error: (_, __) => const Center(child: Text('ブランドを読み込めませんでした')),
       ),
     );
   }
 
-  Widget _buildForm(List<Brand> brands) {
-    return Form(
-      key: _formKey,
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          DropdownButtonFormField<int>(
-            initialValue: _brandId,
-            decoration: const InputDecoration(labelText: 'ブランド'),
-            items: brands
-                .map(
-                  (brand) => DropdownMenuItem<int>(
-                    value: brand.id,
-                    child: Text(brand.name),
-                  ),
-                )
-                .toList(),
-            onChanged: (value) {
-              setState(() {
-                _brandId = value;
-              });
-            },
-            validator: (value) => value == null ? 'ブランドを選択してください' : null,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _modelController,
-            decoration: const InputDecoration(labelText: 'モデル名'),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'モデル名を入力してください';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _sizeController,
-            decoration: const InputDecoration(labelText: 'サイズ'),
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _colorController,
-            decoration: const InputDecoration(labelText: 'カラー'),
-          ),
-          const SizedBox(height: 16),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('購入日'),
-            subtitle: Text(_purchaseDate == null
-                ? '未設定'
-                : '${_purchaseDate!.year}/${_purchaseDate!.month}/${_purchaseDate!.day}'),
-            trailing: const Icon(Icons.calendar_month_outlined),
-            onTap: _pickDate,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _priceController,
-            decoration: const InputDecoration(labelText: '購入価格'),
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _storeController,
-            decoration: const InputDecoration(labelText: '購入店'),
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _memoController,
-            decoration: const InputDecoration(labelText: 'メモ'),
-            maxLines: 4,
-            maxLength: 500,
-          ),
-          const SizedBox(height: 16),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
+  Widget _buildBasicInfo(List<Brand> brands) {
+    return Column(
+      children: [
+        DropdownButtonFormField<int>(
+          initialValue: _brandId,
+          decoration: const InputDecoration(labelText: 'ブランド'),
+          items: brands
+              .map(
+                (brand) => DropdownMenuItem<int>(
+                  value: brand.id,
+                  child: Text(brand.name),
+                ),
+              )
+              .toList(),
+          onChanged: (value) => setState(() => _brandId = value),
+          validator: (value) => value == null ? 'ブランドを選択してください' : null,
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _modelController,
+          decoration: const InputDecoration(labelText: 'モデル名'),
+          validator: (value) =>
+              value == null || value.trim().isEmpty ? 'モデル名を入力してください' : null,
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: SwitchListTile(
+            secondary: Icon(
+              _isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: _isFavorite ? Colors.red : null,
+            ),
             title: const Text('お気に入り'),
+            subtitle: const Text('お気に入りコレクションに追加'),
             value: _isFavorite,
-            onChanged: (value) {
-              setState(() {
-                _isFavorite = value;
-              });
-            },
+            onChanged: (value) => setState(() => _isFavorite = value),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+
+  Widget _buildAppearance() {
+    final sizes = [..._sizeOptions];
+    if (_selectedSize != null && !sizes.contains(_selectedSize)) {
+      sizes.add(_selectedSize!);
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownButtonFormField<String>(
+          initialValue: _selectedSize,
+          decoration: const InputDecoration(
+            labelText: 'サイズ',
+            suffixText: 'cm',
+          ),
+          items: sizes
+              .map(
+                (size) =>
+                    DropdownMenuItem(value: size, child: Text('$size cm')),
+              )
+              .toList(),
+          onChanged: (value) => setState(() => _selectedSize = value),
+        ),
+        const SizedBox(height: 24),
+        Text('カラー', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: _colorOptions.map((option) {
+            return ChoiceChip(
+              avatar: option.color == null
+                  ? const Icon(Icons.palette_outlined, size: 18)
+                  : CircleAvatar(
+                      backgroundColor: option.color,
+                      child: option.color == Colors.white
+                          ? const Icon(Icons.circle_outlined, size: 16)
+                          : null,
+                    ),
+              label: Text(option.label),
+              selected: _selectedColor == option.label,
+              onSelected: (_) => setState(() => _selectedColor = option.label),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetails() {
+    return Column(
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('購入日'),
+          subtitle: Text(
+            _purchaseDate == null
+                ? '未設定'
+                : '${_purchaseDate!.year}/${_purchaseDate!.month}/${_purchaseDate!.day}',
+          ),
+          trailing: const Icon(Icons.calendar_month_outlined),
+          onTap: _pickDate,
+        ),
+        const SizedBox(height: 12),
+        TextFormField(
+          controller: _priceController,
+          decoration: const InputDecoration(labelText: '購入価格', suffixText: '円'),
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _storeController,
+          decoration: const InputDecoration(labelText: '購入店'),
+        ),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _memoController,
+          decoration: const InputDecoration(labelText: 'メモ'),
+          maxLines: 4,
+          maxLength: 500,
+        ),
+      ],
+    );
+  }
+}
+
+class _PhotoPickerCard extends StatelessWidget {
+  final XFile? pickedFile;
+  final VoidCallback onTap;
+  final VoidCallback onRemove;
+
+  const _PhotoPickerCard({
+    required this.pickedFile,
+    required this.onTap,
+    required this.onRemove,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final file = pickedFile;
+    if (file == null) {
+      return InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Ink(
+          width: double.infinity,
+          height: 220,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.add_a_photo_outlined, size: 48),
+              SizedBox(height: 12),
+              Text('メイン写真を選択'),
+              SizedBox(height: 4),
+              Text('スキップできます'),
+            ],
+          ),
+        ),
+      );
+    }
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Image.file(
+            File(file.path),
+            height: 220,
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Positioned(
+          right: 8,
+          top: 8,
+          child: IconButton.filled(
+            onPressed: onRemove,
+            icon: const Icon(Icons.close),
+          ),
+        ),
+        Positioned(
+          right: 8,
+          bottom: 8,
+          child: FilledButton.icon(
+            onPressed: onTap,
+            icon: const Icon(Icons.photo_library_outlined),
+            label: const Text('選び直す'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ColorOption {
+  final String label;
+  final Color? color;
+
+  const _ColorOption(this.label, this.color);
 }

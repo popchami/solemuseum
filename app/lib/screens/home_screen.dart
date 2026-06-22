@@ -11,6 +11,7 @@ import '../widgets/museum_summary.dart';
 import '../widgets/recent_worn_section.dart';
 import '../widgets/shoe_card.dart';
 import '../widgets/top_five_section.dart';
+import '../widgets/today_worn_action.dart';
 import 'shoe_detail_screen.dart';
 import 'shoe_form_screen.dart';
 
@@ -58,7 +59,8 @@ class _HomeContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final recentShoes = shoes.take(3).toList();
     final brandNames = {
-      for (final brand in brands) if (brand.id != null) brand.id!: brand.name,
+      for (final brand in brands)
+        if (brand.id != null) brand.id!: brand.name,
     };
 
     return ListView(
@@ -66,7 +68,9 @@ class _HomeContent extends StatelessWidget {
       children: [
         Text('MY COLLECTION', style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 12),
-        MuseumSummary(shoes: shoes),
+        MuseumSummary(shoes: shoes, brands: brands),
+        const SizedBox(height: 16),
+        const TodayWornAction(),
         const SizedBox(height: 24),
         Text('最近追加', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
@@ -74,8 +78,8 @@ class _HomeContent extends StatelessWidget {
           EmptyState(
             icon: Icons.home_outlined,
             title: 'あなたのコレクションはまだありません',
-            description: '最初の一足を登録しましょう',
-            actionLabel: '最初の一足を登録',
+            description: '最初のスニーカーを登録しましょう',
+            actionLabel: '最初のスニーカーを登録',
             onAction: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const ShoeFormScreen()),
