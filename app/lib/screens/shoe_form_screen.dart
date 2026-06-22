@@ -441,6 +441,7 @@ class _PhotoPickerCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(20),
         child: Ink(
+          width: double.infinity,
           height: 220,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
