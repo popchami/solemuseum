@@ -229,55 +229,136 @@ class _CollectionContent extends StatelessWidget {
   }
 }
 
-class _ShoeGrid extends ConsumerWidget {
+class _ShoeGrid extends ConsumerStatefulWidget {
   final List<Shoe> shoes;
   final Map<int, String> brandNames;
 
   const _ShoeGrid({required this.shoes, required this.brandNames});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(12),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.64,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-      ),
-      itemCount: shoes.length,
-      itemBuilder: (context, index) {
-        final shoe = shoes[index];
-        final mainPhotoAsync = ref.watch(mainPhotoProvider(shoe.id!));
-        final imagePath = mainPhotoAsync.maybeWhen(
-          data: (photo) => photo?.filePath,
-          orElse: () => null,
-        );
+  ConsumerState<_ShoeGrid> createState() => _ShoeGridState();
+}
 
-        return ShoeCard(
-          brandName: brandNames[shoe.brandId] ?? 'Unknown',
-          modelName: shoe.modelName,
-          size: shoe.size ?? '-',
-          color: shoe.color ?? '',
-          imagePath: imagePath,
-          isFavorite: shoe.isFavorite,
-          archiveNumber: shoe.archiveNumber,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => ShoeDetailScreen(shoeId: shoe.id!),
+class _ShoeGridState extends ConsumerState<_ShoeGrid> {
+  static const int _minColumns = 2;
+  static const int _maxColumns = 5;
+
+  int _columns = 2;
+
+  void _zoomIn() {
+    setState(() {
+      _columns = (_columns - 1).clamp(_minColumns, _maxColumns);
+    });
+  }
+
+  void _zoomOut() {
+    setState(() {
+      _columns = (_columns + 1).clamp(_minColumns, _maxColumns);
+    });
+  }
+
+  double get _childAspectRatio {
+    switch (_columns) {
+      case 2:
+        return 0.64;
+      case 3:
+        return 0.62;
+      case 4:
+        return 0.58;
+      case 5:
+        return 0.54;
+      default:
+        return 0.64;
+    }
+  }
+
+  double get _gridSpacing {
+    switch (_columns) {
+      case 2:
+        return 12;
+      case 3:
+        return 10;
+      case 4:
+        return 8;
+      case 5:
+        return 6;
+      default:
+        return 12;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+          child: Row(
+            children: [
+              Text(
+                '${widget.shoes.length}足',
+                style: Theme.of(context).textTheme.labelLarge,
               ),
-            );
-          },
-          onFavoriteTap: () async {
-            await ref.read(shoeRepositoryProvider).toggleFavorite(
-                  shoe.id!,
-                  !shoe.isFavorite,
-                );
-            ref.invalidate(shoesProvider);
-          },
-        );
-      },
+              const Spacer(),
+              IconButton(
+                tooltip: '大きく表示',
+                onPressed: _columns == _minColumns ? null : _zoomIn,
+                icon: const Icon(Icons.zoom_in),
+              ),
+              Text('$_columns列'),
+              IconButton(
+                tooltip: '一覧を広く表示',
+                onPressed: _columns == _maxColumns ? null : _zoomOut,
+                icon: const Icon(Icons.zoom_out),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: GridView.builder(
+            padding: const EdgeInsets.all(12),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _columns,
+              childAspectRatio: _childAspectRatio,
+              mainAxisSpacing: _gridSpacing,
+              crossAxisSpacing: _gridSpacing,
+            ),
+            itemCount: widget.shoes.length,
+            itemBuilder: (context, index) {
+              final shoe = widget.shoes[index];
+              final mainPhotoAsync = ref.watch(mainPhotoProvider(shoe.id!));
+              final imagePath = mainPhotoAsync.maybeWhen(
+                data: (photo) => photo?.filePath,
+                orElse: () => null,
+              );
+
+              return ShoeCard(
+                brandName: widget.brandNames[shoe.brandId] ?? 'Unknown',
+                modelName: shoe.modelName,
+                size: shoe.size ?? '-',
+                color: shoe.color ?? '',
+                imagePath: imagePath,
+                isFavorite: shoe.isFavorite,
+                archiveNumber: shoe.archiveNumber,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ShoeDetailScreen(shoeId: shoe.id!),
+                    ),
+                  );
+                },
+                onFavoriteTap: () async {
+                  await ref.read(shoeRepositoryProvider).toggleFavorite(
+                        shoe.id!,
+                        !shoe.isFavorite,
+                      );
+                  ref.invalidate(shoesProvider);
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
