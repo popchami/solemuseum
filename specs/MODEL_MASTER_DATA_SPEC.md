@@ -1,4 +1,4 @@
-# Kick×Kick Model Master Data Spec v1.0
+# Kick×Kick Model Master Data Spec v1.1
 
 ## Purpose
 
@@ -32,7 +32,7 @@ MVPでは以下を採用する。
 ↓
 モデル入力
 ↓
-モデル名・Alias・searchKeywords の前方一致
+modelName / aliases / searchKeywords の前方一致
 ↓
 アルファベット順で最大5件表示
 ```
@@ -174,18 +174,31 @@ Mexico66
 
 ### searchKeywords
 
-数字検索や単語検索を補助するキーワード。
+数字検索や、モデル名の先頭ではない語で検索させたい場合の補助キーワード。
 
-モデル名の先頭ではない語でも検索対象にするために使う。
+searchKeywords は広く入れすぎない。
 
-例:
+悪い例:
+
+```text
+Air Max 95
+searchKeywords:
+- Air
+- Max
+```
+
+理由:
+
+```text
+A や M で不要な候補が増えすぎるため。
+```
+
+良い例:
 
 ```text
 Air Max 95
 searchKeywords:
 - 95
-- Air
-- Max
 - AirMax95
 - エアマックス95
 ```
@@ -194,15 +207,75 @@ searchKeywords:
 GT-2160
 searchKeywords:
 - 2160
-- GT
-- GT2160
+- ジーティー2160
 ```
 
 ```text
 GEL-1130
 searchKeywords:
 - 1130
-- GEL
+```
+
+---
+
+## Search Target Priority
+
+検索時の優先順位は以下。
+
+```text
+1. modelName 前方一致
+2. aliases 前方一致
+3. searchKeywords 前方一致
+```
+
+例:
+
+```text
+Nike / A
+```
+
+この場合は modelName 前方一致で Air 系モデルが出る。
+
+```text
+Nike / 95
+```
+
+この場合は modelName ではヒットしないため、searchKeywords の 95 で Air Max 95 が出る。
+
+---
+
+## searchKeywords Rule
+
+searchKeywords に入れてよいもの:
+
+```text
+- モデル名の途中にある数字
+- ハイフンやドットを除いた表記
+- 日本語でよく検索される正式寄りの表記
+- Aliasとは別に補助したい表記
+```
+
+searchKeywords に入れないもの:
+
+```text
+- 1文字だけの数字や英字
+- Air / Max / Gel / Cloud など広すぎる単語
+- 色名だけ
+- コラボ名だけ
+- SNS俗称だけ
+```
+
+例:
+
+```text
+OK: 95 -> Air Max 95
+OK: 2160 -> GT-2160
+OK: 1130 -> GEL-1130
+OK: AirMax95 -> Air Max 95
+NG: 9 -> 990v6
+NG: 99 -> 990v6
+NG: Air -> Air Max 95
+NG: Max -> Air Max 95
 ```
 
 ---
@@ -258,8 +331,6 @@ user_input
   ],
   "searchKeywords": [
     "95",
-    "Air",
-    "Max",
     "AirMax95",
     "エアマックス95"
   ],
@@ -283,10 +354,8 @@ user_input
     "990v6"
   ],
   "searchKeywords": [
-    "9",
-    "99",
     "990",
-    "v6"
+    "990v6"
   ],
   "category": "lifestyle",
   "source": "master"
@@ -308,8 +377,7 @@ user_input
   ],
   "searchKeywords": [
     "2160",
-    "GT",
-    "GT2160"
+    "ジーティー2160"
   ],
   "category": "lifestyle",
   "source": "master"
@@ -326,9 +394,10 @@ user_input
 1. 選択ブランド内のモデルだけを見る
 2. 入力が空なら modelName アルファベット順で最大5件
 3. 入力があるなら modelName / aliases / searchKeywords の前方一致を見る
-4. 表示は正式 modelName
-5. 候補は最大5件
-6. 候補がなければ自由入力fallback
+4. 検索優先順位は modelName -> aliases -> searchKeywords
+5. 表示は正式 modelName
+6. 候補は最大5件
+7. 候補がなければ自由入力fallback
 ```
 
 ---
@@ -355,7 +424,19 @@ ASICS / 1130 -> GEL-1130
 New Balance / 550 -> 550
 ```
 
-数字だけで見つけたいモデルは必ず searchKeywords に数字を入れる。
+数字だけで見つけたいモデルは searchKeywords に数字を入れる。
+
+ただし、1文字だけの数字は原則入れない。
+
+例:
+
+```text
+OK: 95
+OK: 990
+OK: 2160
+NG: 9
+NG: 1
+```
 
 ---
 
@@ -441,7 +522,7 @@ styleCode
 ```text
 Nike / A -> Air 系モデル
 Nike / 95 -> Air Max 95
-New Balance / 9 -> 990系など
+New Balance / 990 -> 990系
 ASICS / 2160 -> GT-2160
 Onitsuka Tiger / Mexico66 -> Mexico 66
 ```
