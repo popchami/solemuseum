@@ -1,8 +1,8 @@
-SoleMuseum Contributing Guide
+Kick×Kick Contributing Guide
 
 Purpose
 
-This document defines the development rules for SoleMuseum.
+This document defines the development rules for Kick×Kick.
 
 All contributors, AI assistants, and future developers should follow these guidelines.
 
@@ -10,12 +10,12 @@ All contributors, AI assistants, and future developers should follow these guide
 
 Development Philosophy
 
-SoleMuseum is a digital sneaker museum.
+Kick×Kick is a sneaker collection app focused on registering sneakers, creating stickers, and displaying them in shelves and boards.
 
 The goal is:
 
 - Collect
-- Record
+- Create
 - Exhibit
 
 The goal is NOT:
@@ -23,6 +23,7 @@ The goal is NOT:
 - Marketplace
 - Auction platform
 - Social network
+- Asset management service
 
 ---
 
@@ -198,6 +199,6 @@ Focus on:
 
 Definition of Success
 
-A collector can preserve their sneaker collection for years without depending on external services.
+A collector can enjoy, display, and preserve their sneaker collection for years without depending on external services.
 
 Every decision should support that goal.
