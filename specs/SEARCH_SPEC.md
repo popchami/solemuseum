@@ -1,71 +1,219 @@
-# Kick×Kick Search Spec v1.0
+# Kick×Kick Search Spec v2.0
 
 ## Purpose
 
-この仕様書は、Kick×Kick の検索挙動を定義する。
+この仕様書は、Kick×Kick の検索・サジェスト挙動を定義する。
 
-`SEARCH_DATA_SPEC.md` が検索データ構造を定義するのに対し、この仕様書ではユーザー入力に対してどのように候補を返すかを定義する。
+v2.0 では、登録体験をシンプルにするため、以下を採用する。
+
+```text
+ブランドを選ぶ
+↓
+そのブランド内のモデルをサジェストする
+```
+
+検索ボタンで探す体験ではなく、入力中に候補が自動で出るサジェスト体験を基本とする。
 
 ---
 
-## Search Goal
+## Core UX
 
-ユーザーが正式名称を知らなくても、ブランド・モデル候補に到達できること。
+ユーザーは検索したいのではなく、登録したい。
 
-重要な入力例:
-
-```text
-AJ1
-AF1
-AM95
-990
-NB550
-GT2160
-XT6
-エアマックス
-カヤノ
-```
-
----
-
-## Search Scope
-
-MVPで検索する対象は以下。
+そのため、モデル選択では以下を重視する。
 
 ```text
-Brand name
-Model name
-Alias
-Series
-```
-
-MVPでは以下は検索対象外。
-
-```text
-Colorway
-Style code
-Collaboration name
-Release year
-Shop name
-Market price
+1. ブランドを先に選ぶ
+2. モデル候補はブランド内に限定する
+3. 入力なしでも候補を表示する
+4. 1文字入力したら、その文字から始まる候補を出す
+5. 候補はアルファベット順でよい
+6. 候補がなければ自由入力できる
 ```
 
 ---
 
-## Search Flow
-
-ユーザー入力に対して以下の順で処理する。
+## Registration Search Flow
 
 ```text
-1. 入力値を正規化する
-2. 完全一致を探す
-3. Alias完全一致を探す
-4. 前方一致を探す
-5. 部分一致を探す
-6. シリーズ一致を探す
-7. 結果をランキングする
-8. 見つからなければ自由入力を提示する
+1. ブランド選択
+2. モデル入力欄を表示
+3. 入力なしなら、そのブランドのモデルを先頭から最大5件表示
+4. 1文字以上入力されたら、前方一致で候補を最大5件表示
+5. Alias一致があれば正式モデル名として候補に出す
+6. 候補がなければ自由入力fallbackを表示
 ```
+
+---
+
+## Brand Search
+
+ブランド検索はブランド名・ブランドAliasで行う。
+
+例:
+
+```text
+NB -> New Balance
+ニューバランス -> New Balance
+オニツカ -> Onitsuka Tiger
+```
+
+ブランド選択後、モデル検索はそのブランド内に限定する。
+
+---
+
+## Model Suggestion: Empty Input
+
+ブランド選択直後、モデル入力が空の場合は、そのブランドのモデル候補をアルファベット順で最大5件表示する。
+
+例:
+
+```text
+ブランド: Nike
+入力: 空
+候補:
+- Air Force 1
+- Air Max 1
+- Air Max 90
+- Air Max 95
+- Air Max 97
+```
+
+人気順やpriority順はMVPでは使わない。
+
+---
+
+## Model Suggestion: Prefix Input
+
+ユーザーが1文字以上入力したら、モデル名またはAliasの前方一致で候補を表示する。
+
+候補は最大5件。
+
+例:
+
+```text
+ブランド: Nike
+入力: A
+候補:
+- Air Force 1
+- Air Max 1
+- Air Max 90
+- Air Max 95
+- Air Max 97
+```
+
+例:
+
+```text
+ブランド: Nike
+入力: D
+候補:
+- Dunk High
+- Dunk Low
+- Dunk Low Retro
+- Dunk Low Twist
+- Dunk Mid
+```
+
+例:
+
+```text
+ブランド: New Balance
+入力: 9
+候補:
+- 990v1
+- 990v2
+- 990v3
+- 990v4
+- 990v5
+```
+
+---
+
+## Alias Suggestion
+
+Aliasは補助として使う。
+
+入力されたAliasが一致した場合、表示は正式モデル名にする。
+
+例:
+
+```text
+ブランド: Nike
+入力: AF1
+表示: Air Force 1
+```
+
+例:
+
+```text
+ブランド: Air Jordan
+入力: AJ1
+表示: Air Jordan 1
+```
+
+例:
+
+```text
+ブランド: ASICS
+入力: GT2160
+表示: GT-2160
+```
+
+---
+
+## Sorting Rule
+
+MVPではシンプルにする。
+
+モデル候補の基本並び順:
+
+```text
+1. モデル名のアルファベット順
+2. 同名・同系統は自然順
+3. Alias一致は正式モデル名として同じリストに混ぜる
+```
+
+priority / popular / featured はMVPでは使わない。
+
+---
+
+## Natural Sort Rule
+
+数字を含むモデルは自然順にする。
+
+例:
+
+```text
+Air Max 1
+Air Max 90
+Air Max 95
+Air Max 97
+```
+
+例:
+
+```text
+990v1
+990v2
+990v3
+990v4
+990v5
+990v6
+```
+
+---
+
+## Result Limit
+
+MVPでは候補表示は以下にする。
+
+```text
+ブランド候補: 最大5件
+モデル候補: 最大5件
+```
+
+候補が多い場合は、ユーザーが1文字ずつ入力することで絞り込む。
 
 ---
 
@@ -88,225 +236,12 @@ Market price
 例:
 
 ```text
+AF-1 -> AF1
 GT2160 -> GT-2160
-Airmax95 -> Air Max 95
 NB 550 -> NB550
 Cloud5 -> Cloud 5
-AF-1 -> AF1
 MB.01 -> MB01
-```
-
----
-
-## Match Types
-
-検索結果には一致タイプを持たせる。
-
-```text
-exact
-alias_exact
-prefix
-contains
-series
-normalized
-```
-
-優先順位:
-
-```text
-1. exact
-2. alias_exact
-3. prefix
-4. series
-5. contains
-6. normalized
-```
-
----
-
-## Exact Match
-
-正式名称と完全一致した場合。
-
-例:
-
-```text
-入力: Air Max 95
-結果: Nike Air Max 95
-```
-
----
-
-## Alias Exact Match
-
-Aliasと完全一致した場合。
-
-例:
-
-```text
-入力: AJ1
-結果: Air Jordan 1
-
-入力: NB550
-結果: New Balance 550
-```
-
-表示は必ず正式名称にする。
-
----
-
-## Prefix Match
-
-正式名称またはAliasが入力値で始まる場合。
-
-例:
-
-```text
-入力: Air Max
-結果:
-- Nike Air Max 1
-- Nike Air Max 90
-- Nike Air Max 95
-- Nike Air Max 97
-```
-
----
-
-## Contains Match
-
-正式名称またはAliasの一部に入力値を含む場合。
-
-例:
-
-```text
-入力: 990
-結果:
-- New Balance 990v6
-- New Balance 990v5
-- New Balance 990v4
-- New Balance 990v3
-- New Balance 990v2
-- New Balance 990v1
-```
-
----
-
-## Series Match
-
-シリーズ名に一致した場合、シリーズ内の代表モデルを出す。
-
-例:
-
-```text
-入力: Air Max
-結果:
-- Nike Air Max 1
-- Nike Air Max 90
-- Nike Air Max 95
-- Nike Air Max 97
-- Nike Air Max Plus
-```
-
-```text
-入力: 990
-結果:
-- New Balance 990v6
-- New Balance 990v5
-- New Balance 990v4
-- New Balance 990v3
-- New Balance 990v2
-- New Balance 990v1
-```
-
----
-
-## Japanese Alias Search
-
-日本語入力はAliasで対応する。
-
-必須例:
-
-```text
-エアフォース -> Air Force 1
-エアマックス -> Air Max Series
-ジョーダン -> Air Jordan
-カヤノ -> GEL-Kayano
-ボメロ -> Zoom Vomero 5
-ペガサス -> Pegasus
-ニューバランス -> New Balance
-オニツカ -> Onitsuka Tiger
-```
-
-日本語AliasはMVPで最低限対応する。
-
----
-
-## Brand Search
-
-ブランド名だけでも検索できる。
-
-例:
-
-```text
-入力: Nike
-結果:
-- Nike ブランド候補
-- Nike の代表モデル
-```
-
-ブランド候補はモデル候補より上に出してよい。
-
----
-
-## Brand + Model Search
-
-ブランド名とモデル名を一緒に入力した場合、該当ブランド内のモデルを優先する。
-
-例:
-
-```text
-入力: Nike 95
-結果:
-- Nike Air Max 95
-```
-
-```text
-入力: NB 550
-結果:
-- New Balance 550
-```
-
----
-
-## Ranking Rule
-
-検索結果は以下の順で並べる。
-
-```text
-1. matchType の優先度
-2. model priority
-3. brand tier
-4. 完全一致に近いもの
-5. 短い displayName
-6. アルファベット順
-```
-
----
-
-## Priority Examples
-
-重要モデルは上位に出す。
-
-例:
-
-```text
-Air Force 1: 100
-Air Jordan 1: 100
-Air Max 95: 95
-New Balance 990v6: 95
-ASICS GEL-Kayano 14: 90
-Salomon XT-6: 90
-Karhu Fusion 2.0: 70
+SP110 -> SP-110
 ```
 
 ---
@@ -319,20 +254,8 @@ Karhu Fusion 2.0: 70
 
 ```text
 候補が見つかりません
-自由入力で登録できます
+このモデル名で登録できます
 ```
-
-ボタン例:
-
-```text
-この内容で登録する
-```
-
----
-
-## Free Input Behavior
-
-自由入力の場合、候補マスターには存在しないが登録は可能にする。
 
 保存時の source:
 
@@ -342,34 +265,37 @@ user_input
 
 ---
 
-## Result Limit
+## Out of Scope for MVP
 
-MVPでは検索候補の表示上限を以下にする。
+MVPでは以下は対象外。
 
 ```text
-ブランド候補: 最大5件
-モデル候補: 最大20件
+- 人気順ランキング
+- market price
+- release year
+- colorway search
+- collaboration search
+- style code search
+- AI auto detection
 ```
-
-候補が多すぎる場合は、優先度と一致度で絞る。
 
 ---
 
-## Minimum MVP Test Queries
+## MVP Test Queries
 
-MVP検索は、最低限以下を通過すること。
+最低限以下を通過すること。
 
 ```text
-AF1 -> Nike Air Force 1
-AJ1 -> Air Jordan 1
-AM95 -> Nike Air Max 95
-990 -> New Balance 990 Series
-NB550 -> New Balance 550
-GT2160 -> ASICS GT-2160
-XT6 -> Salomon XT-6
-エアマックス -> Nike Air Max Series
-カヤノ -> ASICS GEL-Kayano Series
-ボメロ -> Nike Zoom Vomero 5
+ブランド Nike / 入力 空 -> Air Force 1, Air Max 1, Air Max 90, Air Max 95, Air Max 97
+ブランド Nike / 入力 A -> Air Force 1, Air Max 1, Air Max 90, Air Max 95, Air Max 97
+ブランド Nike / 入力 D -> Dunk 系候補
+ブランド Nike / 入力 AF1 -> Air Force 1
+ブランド Air Jordan / 入力 AJ1 -> Air Jordan 1
+ブランド New Balance / 入力 9 -> 990系候補
+ブランド New Balance / 入力 NB550 -> 550
+ブランド ASICS / 入力 GT2160 -> GT-2160
+ブランド Salomon / 入力 XT6 -> XT-6
+候補なし -> 自由入力fallback
 ```
 
 ---
@@ -379,9 +305,7 @@ XT6 -> Salomon XT-6
 検索品質の合格基準:
 
 ```text
-主要な略称・日本語名で検索して、3秒以内に目的候補へ到達できること。
+ブランドを選んだ後、1文字ずつ入力するだけで目的モデルが自然に候補へ出ること。
 ```
 
-検索で見つからない状態は、候補が存在しないのと同じ体験になる。
-
-そのため、モデル数を増やすだけでなく、検索で到達できることを重視する。
+候補数が多くても、ユーザーが1文字ずつ入力すれば絞り込めることを重視する。
