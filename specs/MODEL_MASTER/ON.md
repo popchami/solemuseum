@@ -101,10 +101,7 @@ Cloudboom -> Cloudboom Series
 
 ## Audit Notes
 
-On v1.1 fixes:
-
-- `n- Cloudboom Strike` typo
-- `n- The Roger Spin` typo
+On v1.1 fixes markdown list typos from the previous version.
 
 On v1.1 adds:
 
