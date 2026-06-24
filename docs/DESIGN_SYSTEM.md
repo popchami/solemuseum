@@ -1,668 +1,173 @@
-SoleMuseum Design System v1.0
+# Kick×Kick Design System v1.0
 
-Overview
+## Overview
 
-SoleMuseum is a digital museum for sneaker collections.
+Kick×Kick is a sneaker collection app focused on registering sneakers, creating digital stickers, and displaying collections in shelves and boards.
 
-It is not a marketplace.
+Kick×Kick is not a marketplace, price tracker, or asset management app.
 
-It is not a social network.
+## Tagline
 
-It is not an investment tracking application.
+貼って、飾って、コレクション。
 
-Its purpose is to help users collect, record, and exhibit their sneaker collections.
+## Product Concept
 
-Tagline
+The core experience is:
 
-Collect.
-Record.
-Exhibit.
+- Collect: スニーカーを登録する
+- Create: ステッカー化する
+- Exhibit: 棚やボードに飾る
 
----
+## Design Principles
 
-Brand
-
-Brand Concept
-
-SoleMuseum is a digital museum that preserves sneaker collections.
-
-Users do not simply own sneakers.
-
-Users archive and exhibit them.
-
-Brand Keywords
-
-Required
-
-- Museum
-- Archive
-- Premium
-- Minimal
-- Elegant
-
-Forbidden
-
-- Flashy
-- SNS-style
-- Marketplace-style
-- Gamified UI
-
----
-
-Design Principles
-
-Collection First
+### Collection First
 
 Show the collection before showing data.
 
-Photo First
+### Photo First
 
 Photos are more important than text.
 
-Museum Experience
+### Sticker First
 
-Every screen should feel like a museum experience.
+Sticker creation and placement should feel fun and easy.
 
-Quiet Premium
-
-Premium quality should be expressed through space and restraint.
-
-Offline First
+### Offline First
 
 The collection belongs to the user.
 
----
+## Visual Direction
 
-Color System
+Required keywords:
 
-Primary
-
-Museum Black
-
-"#111111"
-
-Secondary
-
-Archive Gray
-
-"#6B7280"
-
-Accent
-
-Gallery Gold
-
-"#C8A96B"
-
-Background
-
-Ivory White
-
-"#FAFAF8"
-
-Surface
-
-White
-
-"#FFFFFF"
-
-Error
-
-"#D32F2F"
-
----
-
-Typography
-
-Display Large
-
-32px Bold
-
-Headline
-
-28px SemiBold
-
-Title
-
-18px Medium
-
-Body
-
-16px Regular
-
-Caption
-
-12px Regular
-
----
-
-Layout System
-
-Grid
-
-8dp Grid System
-
-Spacing
-
-- 4dp
-- 8dp
-- 16dp
-- 24dp
-- 32dp
-
-Radius
-
-- 12dp
-- 16dp
-- 24dp
-
----
-
-Navigation
-
-Bottom Navigation
-
-Tabs
-
-- Home
+- Sticker
 - Collection
-- Settings
+- Display
+- Playful
+- Clean
+- Premium casual
 
-No additional root navigation items are allowed in v1.0.
+Avoid:
 
----
+- Marketplace-like UI
+- Existing brand-logo dependency
+- Heavy asset-management tone
+- Excessive gradients
 
-Home Screen
+## Color System
 
-Purpose
+Primary:
 
-Museum Entrance Hall
+```text
+Black
+White
+Gray
+```
 
-Structure
+Accent:
 
-1. Header
-2. Featured Exhibit
-3. Statistics
-4. Recent Gallery
+```text
+Orange
+```
 
-Header
+Orange is used for actions, sticker outlines, highlights, and app identity.
 
-Title:
+## Navigation
 
-SoleMuseum
+Bottom Navigation:
 
-Tagline:
+```text
+Home
+Collection
+Add
+Sticker
+Settings
+```
 
-Collect. Record. Exhibit.
+## Home
 
-Height:
+Purpose:
 
-120dp
+Collection entrance.
 
-Featured Exhibit
+Structure:
 
-Displays the latest sneaker.
+1. TOP5
+2. Collection
+3. Sticker
+4. Recently Added Sneakers
+5. Statistics
 
-Large hero image.
+## Collection
 
-Primary visual element of the Home screen.
+Purpose:
 
-Statistics
+Organized shelf display.
 
-- Total Shoes
-- Brands
-- Recently Added
+Rules:
 
-Recent Gallery
+- Collection is aligned display
+- Shoes snap to slots
+- Boxes are supporting elements
+- Price and purchase store are not shown on cards
 
-Latest six images.
+## Sticker
 
-3 columns × 2 rows.
+Purpose:
 
----
+Free placement board.
 
-Collection Screen
+Rules:
 
-Purpose
+- Sticker is free placement
+- Drag, scale, rotate, lock, duplicate, delete
+- Sticker Board is playful and flexible
 
-Museum Gallery
+## Registration
 
-Structure
-
-1. Header
-2. Search
-3. Brand Filter
-4. Collection Grid
-
-Grid
-
-Phone
-
-2 Columns
-
-Tablet
-
-3 Columns
-
-Shoe Card
-
-Content
+Required:
 
 - Photo
-- Model Name
-- Brand
-- Archive Number
-
-Example
-
-Air Jordan 1
-
-Nike
-
-SM-0012
-
-Important Rule
-
-Do not display:
-
-- Notes
-- Purchase Store
-- Price
-- Size
-
-inside collection cards.
-
----
-
-Shoe Detail Screen
-
-Purpose
-
-Museum Exhibit
-
-Structure
-
-1. Hero Image
-2. Model Information
-3. Information Card
-4. Notes
-5. Gallery
-
-Hero Image
-
-Height:
-
-320dp
-
-Ratio:
-
-4:3
-
-Radius:
-
-24dp
-
-Information
-
 - Brand
 - Model
-- Size
-- Purchase Date
-- Archive Number
-- Created Date
 
-Notes
-
-Maximum:
-
-500 characters
-
-Line breaks must be preserved.
-
-Gallery
-
-3-column grid.
-
-Fullscreen preview supported.
-
----
-
-Registration Screen
-
-Purpose
-
-Archive Registration
-
-Fields
-
-Required
-
-- Brand
-- Model Name
-
-Optional
+Optional:
 
 - Size
-- Purchase Date
-- Notes
-- Photos
-
-Save Button
-
-Label:
-
-Add To Collection
-
----
-
-Archive Number
-
-Every sneaker receives an archive number.
-
-Format:
-
-SM-0001
-SM-0002
-SM-0003
-
-Archive numbers are unique.
-
----
-
-Photography Guidelines
-
-Recommended
-
-- Side Profile
-- Three Quarter View
-- Clean Background
-- Natural Light
-
-Avoid
-
-- Dark Images
-- Heavy Shadows
-- Cluttered Backgrounds
-- Social Media Screenshots
-
----
-
-Empty States
-
-Collection
-
-Title:
-
-Your Museum Is Empty
-
-Subtitle:
-
-Add Your First Exhibit
-
-Generic Empty State
-
-Title:
-
-Your Museum Awaits.
-
-Subtitle:
-
-Start your collection today.
-
----
-
-App Icon
-
-Concept
-
-Sneaker archived inside a display case.
-
-Colors
-
-Background:
-
-Museum Black
-
-Frame:
-
-Gallery Gold
-
-Sneaker:
-
-White
-
-Style
-
-Minimal
-
-Premium
-
-Museum-inspired
-
----
-
-Splash Screen
-
-Background
-
-Museum Black
-
-Center
-
-Logo
-
-Bottom
-
-Collect. Record. Exhibit.
-
-Duration
-
-1200ms
-
-Fade
-
-300ms
-
----
-
-Dark Mode
-
-Background
-
-#121212
-
-Surface
-
-#1E1E1E
-
-Text
-
-#FFFFFF
-
-Accent
-
-Gallery Gold
-
----
-
-Accessibility
-
-Minimum Tap Target
-
-48dp
-
-Minimum Text Size
-
-12px
-
-Contrast
-
-WCAG AA
-
-Requirement
-
-Dark Mode support is mandatory.
-
----
-
-Product Boundaries
-
-SoleMuseum Is
-
-- Collection Archive
-- Collection Record
-- Collection Exhibition
-
-SoleMuseum Is Not
+- Color
+- Purchase date
+- Purchase price
+- Purchase store
+- Display Title
+- Sticker Text
+- Memo
+
+## Product Boundaries
+
+Kick×Kick is:
+
+- Sneaker collection app
+- Sticker creation app
+- Collection display space
+- Personal board app
+
+Kick×Kick is not:
 
 - Marketplace
-- Social Network
-- Price Tracker
-- Investment Tool
-- Authentication Service
+- Social network
+- Price tracker
+- Investment tool
 
----
+## Definition of Success
 
-Features Excluded From v1.0
+When users open Kick×Kick, they should feel:
 
-Marketplace
-
-Not allowed.
-
-Social Features
-
-Not allowed.
-
-Cloud Sync
-
-Not allowed.
-
-Firebase
-
-Not allowed.
-
-AI Authentication
-
-Not allowed.
-
----
-
-Data Model
-
-Brand
-
-- id
-- name
-
-Shoe
-
-- id
-- brandId
-- modelName
-- size
-- purchaseDate
-- notes
-- archiveNumber
-- createdAt
-
-Photo
-
-- id
-- shoeId
-- path
-- createdAt
-
-WearHistory
-
-- id
-- shoeId
-- wornDate
-- memo
-- createdAt
-
----
-
-Future Expansion
-
-Sprint 4
-
-Wear History
-
-- Wear Count
-- Last Worn
-- Wear Timeline
-
-Sprint 5
-
-Statistics
-
-Sprint 6
-
-Cloud Sync
-
-Not included in v1.0.
-
----
-
-Design Tokens
-
-Colors
-
-Museum Black
-
-#111111
-
-Gallery Gold
-
-#C8A96B
-
-Archive Gray
-
-#6B7280
-
-Ivory White
-
-#FAFAF8
-
-Surface White
-
-#FFFFFF
-
-Spacing
-
-4
-
-8
-
-16
-
-24
-
-32
-
-Radius
-
-12
-
-16
-
-24
-
-Animation
-
-Fast: 150ms
-
-Normal: 300ms
-
-Splash: 1200ms
-
----
-
-Definition of Success
-
-When users open SoleMuseum, they should feel:
-
-"I am viewing my collection."
+```text
+I am decorating my sneaker collection.
+```
 
 Not:
 
-"I am managing my shoes."
+```text
+I am managing my shoes.
+```
