@@ -19,7 +19,6 @@ class MuseumSummary extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final brandCount = shoes.map((shoe) => shoe.brandId).toSet().length;
-    final favoriteCount = shoes.where((shoe) => shoe.isFavorite).length;
 
     return Row(
       children: [
@@ -40,26 +39,12 @@ class MuseumSummary extends ConsumerWidget {
             onTap: () => _selectBrand(context, ref),
           ),
         ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _SummaryCard(
-            label: 'FAVORITES',
-            value: favoriteCount.toString(),
-            icon: Icons.favorite_outline,
-            onTap: () {
-              ref.read(collectionFilterProvider.notifier).state =
-                  const CollectionFilter(favoritesOnly: true);
-              ref.read(bottomNavigationIndexProvider.notifier).state = 1;
-            },
-          ),
-        ),
       ],
     );
   }
 
   void _openCollection(WidgetRef ref) {
-    ref.read(collectionFilterProvider.notifier).state =
-        const CollectionFilter();
+    ref.read(collectionFilterProvider.notifier).state = const CollectionFilter();
     ref.read(bottomNavigationIndexProvider.notifier).state = 1;
   }
 
