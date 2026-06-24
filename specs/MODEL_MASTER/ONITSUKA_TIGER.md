@@ -1,4 +1,4 @@
-# Kick×Kick Model Master: Onitsuka Tiger v1.0
+# Kick×Kick Model Master: Onitsuka Tiger v1.1
 
 ## Purpose
 
@@ -13,8 +13,10 @@ Onitsuka Tiger
 - Mexico 66
 - Mexico 66 SD
 - Mexico 66 Slip-On
+- Mexico 66 Sabot
 - Mexico Delegation
 - Mexico 66 Paraty
+- Mexico 66 SD PF
 
 ## Heritage Running
 
@@ -23,6 +25,8 @@ Onitsuka Tiger
 - California 78 EX
 - Tiger Corsair
 - Corsair
+- EDR 78
+- Horizonia
 
 ## Court / Lifestyle
 
@@ -30,41 +34,52 @@ Onitsuka Tiger
 - GSM SD
 - Lawnship
 - Lawnship 3.0
-
-## Modern Lifestyle
-
 - Tokuten
 - Tokuten SD
-- MEXICO 66 CACTFUL
-- EDR 78
-- Horizonia
+- Delegation EX
 
 ## Premium Series
 
 - Nippon Made Mexico 66
 - Nippon Made Corsair
 - Nippon Made Ultimate 81
+- Nippon Made GSM
 
-## Fashion / Contemporary
+## Contemporary
 
 - DENTIGRE LS
-- DENTIGRE PUFF BOOT
 - DELECITY
 - HMR Peak G-TX
+- Big Logo Trainer
+- Acromount
 
 ## Alias Candidates
 
+```text
 Mexico66 -> Mexico 66
 Mexico -> Mexico Series
 Serrano -> Serrano
 Corsair -> Tiger Corsair / Corsair
 GSM -> GSM
 Tokuten -> Tokuten
+Delegation -> Mexico Delegation / Delegation EX
 Dentigre -> DENTIGRE LS
+NipponMade -> Nippon Made Series
+```
+
+## Audit Notes
+
+Onitsuka Tiger v1.1 adds:
+
+- Mexico 66 Sabot / SD PF
+- Delegation EX
+- Nippon Made GSM
+- Big Logo Trainer / Acromount
+- richer aliases
 
 ## Notes
 
-Onitsuka Tiger users frequently search by Mexico 66, Serrano, GSM, Corsair, and Tokuten.
+Onitsuka Tiger users frequently search by Mexico 66, Serrano, GSM, Corsair, Tokuten, and Delegation.
 
 Future expansion:
 
