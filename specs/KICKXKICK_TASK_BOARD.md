@@ -1,4 +1,4 @@
-# Kick×Kick Task Board v1.1
+# Kick×Kick Task Board v1.2
 
 ## 目的
 
@@ -39,13 +39,19 @@ Kick×Kick開発の現在地を管理する。
 
 - [x] BRAND_MASTER.md 作成
 - [x] MODEL_MASTER 運用ルール作成
+- [x] MODEL_MASTER_DATA_SPEC.md 作成
 - [x] SEARCH_SPEC.md 作成
 - [x] SEARCH_DATA_SPEC.md 作成
 - [x] ALIAS_MASTER_SPEC.md 作成
+- [x] ALIAS_MASTER.md 作成
 - [x] REGISTRATION_FLOW_SPEC.md 作成
-- [ ] 検索用データ生成仕様の実装指示作成
+- [x] REGISTRATION_VALIDATION_SPEC.md 作成
+- [x] SEARCH_MVP_TEST_SPEC.md 作成
+- [ ] Tier Sモデルマスター育成
+- [ ] Canonical Name監査
+- [ ] searchKeywords監査
 - [ ] Alias横断監査
-- [ ] Search MVPテストケース作成
+- [ ] Search MVPテストケース実施
 - [ ] Plannedブランド追加
 
 ---
@@ -86,9 +92,14 @@ NEXT
 - [ ] Model search model
 - [ ] Alias search model
 - [ ] Search normalization
-- [ ] Search ranking
+- [ ] Brand-first model suggestion
+- [ ] Alphabetical suggestion limit 5
+- [ ] Number search via searchKeywords
+- [ ] Canonical modelName save
 - [ ] Brand candidate UI
 - [ ] Model candidate UI
+- [ ] Brand change resets model
+- [ ] Save validation for brand/model consistency
 - [ ] Free input fallback
 - [ ] Registration flow integration
 - [ ] Search MVP test cases
@@ -99,7 +110,11 @@ NEXT
 SEARCH_SPEC.md
 SEARCH_DATA_SPEC.md
 ALIAS_MASTER_SPEC.md
+ALIAS_MASTER.md
+MODEL_MASTER_DATA_SPEC.md
 REGISTRATION_FLOW_SPEC.md
+REGISTRATION_VALIDATION_SPEC.md
+SEARCH_MVP_TEST_SPEC.md
 BRAND_MASTER.md
 MODEL_MASTER/README.md
 ```
@@ -225,6 +240,8 @@ Premium / Backup / Export
 - [ ] ストア文言
 - [ ] Search MVPテスト通過
 - [ ] 自由入力fallback確認
+- [ ] ブランド変更時モデルリセット確認
+- [ ] 正式modelName保存確認
 
 ---
 
@@ -233,19 +250,19 @@ Premium / Backup / Export
 現在やること:
 
 ```text
-Search / Registration 実装準備
+Tier Sモデルマスター育成
 ```
 
 次:
 
 ```text
-Sprint1実装
+Search / Registration 実装準備
 ```
 
 その次:
 
 ```text
-Sprint2 Collection
+Sprint1実装
 ```
 
 最重要ルール:
