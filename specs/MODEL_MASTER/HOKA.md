@@ -119,9 +119,7 @@ Tecton -> Tecton X Series
 
 ## Audit Notes
 
-HOKA v1.1 fixes:
-
-- `n- Mafate X` typo
+HOKA v1.1 fixes markdown list typos from the previous version.
 
 HOKA v1.1 adds:
 
