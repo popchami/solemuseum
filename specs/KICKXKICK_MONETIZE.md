@@ -1,17 +1,112 @@
-# Kick×Kick Monetization
+# Kick×Kick Monetization Specification v1.1
 
-Free
-- 5足
-- Collection 1棚
-- Sticker Board 1枚
+## 1. 基本方針
 
-Premium
+Kick×KickのPremiumは買い切りモデルとする。
+
+Premium解除という概念はない。
+
+価格:
+
 - 500円買い切り
 
-強い誘導:
-1. 6足目登録
-2. 2枚目ステッカー作成
+課金導線は強くしすぎない。
 
-その他は軽い案内のみ。
+Kick×Kickの判断基準は、
 
-買い切りモデルを維持する。
+> コレクターが楽しく飾れるか
+
+である。
+
+## 2. Free
+
+Freeで利用できる内容:
+
+- スニーカー登録: 5足まで
+- Collection: 1棚
+- Sticker Board: 1枚
+- 1足につき1ステッカー
+- Freeテーマのみ
+- Freeフォントのみ
+
+## 3. Premium
+
+Premiumで解放される内容:
+
+- スニーカー無制限
+- Collection無制限
+- Sticker Board無制限
+- 複数ステッカー作成
+- PNG出力
+- バックアップ
+- 復元
+- 全テーマ
+- Premiumフォント
+
+将来Premium追加候補:
+
+- Chibi
+- Cartoon
+- Pixel
+- 特殊フチ
+- Outline
+- Hologram
+
+## 4. 強いPremium誘導
+
+強い誘導は2つだけ。
+
+1. 6足目を登録しようとした時
+2. 同じスニーカーで2つ目のステッカーを作ろうとした時
+
+## 5. 軽いPremium案内
+
+以下は強制的な誘導ではなく、軽い案内にする。
+
+- 2個目のCollection作成
+- 2枚目のSticker Board作成
+- PNG出力
+- バックアップ
+- Premiumテーマ
+- Premiumフォント
+
+## 6. ステッカーサイズ制限
+
+Free:
+
+- 75%〜150%
+
+Premium:
+
+- 50%〜250%
+
+## 7. PNG出力
+
+Premium限定。
+
+出力サイズ:
+
+- 512
+- 1024
+- 2048
+
+出力種別:
+
+- 靴ステッカー: 透過PNG
+- 箱ステッカー: 透過PNG
+- レイアウト: 背景ありPNG
+
+PNG出力はSNS共有だけが目的ではなく、スニーカーをデジタル素材化するための機能である。
+
+## 8. バックアップ / 復元
+
+Premium限定。
+
+バックアップと復元はPremium価値の一部として扱う。
+
+## 9. 課金体験の注意
+
+- 売買アプリのような資産管理課金にしない
+- 強すぎる広告や煽りは避ける
+- 「飾る楽しさ」を拡張する課金にする
+- FreeでもKick×Kickの価値を体験できるようにする
