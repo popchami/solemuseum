@@ -28,9 +28,9 @@ class HomeScreen extends ConsumerWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('SoleMuseum'),
+            const Text('Kick×Kick'),
             Text(
-              'Collect. Record. Exhibit.',
+              'Collect. Create. Exhibit.',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
