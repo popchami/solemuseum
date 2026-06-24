@@ -1,0 +1,36 @@
+{
+  "version": "0.1.0",
+  "updatedAt": "2026-06-25",
+  "items": [
+    {
+      "brandId": "nike",
+      "brandName": "Nike",
+      "tier": "S",
+      "isEnabled": true
+    },
+    {
+      "brandId": "air_jordan",
+      "brandName": "Air Jordan",
+      "tier": "S",
+      "isEnabled": true
+    },
+    {
+      "brandId": "adidas",
+      "brandName": "adidas",
+      "tier": "S",
+      "isEnabled": true
+    },
+    {
+      "brandId": "new_balance",
+      "brandName": "New Balance",
+      "tier": "S",
+      "isEnabled": true
+    },
+    {
+      "brandId": "asics",
+      "brandName": "ASICS",
+      "tier": "S",
+      "isEnabled": true
+    }
+  ]
+}
