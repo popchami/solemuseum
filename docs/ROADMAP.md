@@ -1,12 +1,45 @@
-# SoleMuseum Roadmap v1.0
+# Kick×Kick Roadmap v1.0
 
 ## v1.0 Goal
 
-SoleMuseum v1.0 は、スニーカーを「収蔵・記録・展示」できるデジタルミュージアムとして成立することを目標とする。
+Kick×Kick v1.0 は、スニーカーを「登録・ステッカー化・展示」できるコレクションアプリとして成立することを目標とする。
 
 ---
 
-## Sprint1: App Foundation
+## Current Source of Truth
+
+This roadmap is being migrated from older documents.
+
+Current app name and product direction:
+
+```text
+Kick×Kick
+```
+
+Current product focus:
+
+```text
+Collect
+Create
+Exhibit
+```
+
+Important current specs:
+
+```text
+specs/KICKXKICK_PRODUCT.md
+specs/KICKXKICK_UI_SPEC.md
+specs/KICKXKICK_DATA.md
+specs/KICKXKICK_DB_SPEC.md
+specs/KICKXKICK_BRAND_MODEL_CATALOG.md
+specs/BRAND_MASTER.md
+```
+
+---
+
+## Sprint Status
+
+### Sprint1: App Foundation
 
 Status: Completed
 
@@ -19,9 +52,7 @@ Status: Completed
 - Settings screen
 - Shared FAB
 
----
-
-## Sprint2: Collection CRUD
+### Sprint2: Collection CRUD
 
 Status: Code Review Completed
 
@@ -36,25 +67,10 @@ Status: Code Review Completed
 - Shoe detail
 - Shoe edit
 - Shoe delete
-- Favorite toggle
 
-Remaining:
-
-- flutter pub get
-- flutter analyze
-- flutter run
-
----
-
-## Sprint3: Exhibition Foundation
+### Sprint3: Photo Foundation
 
 Status: Code Complete — Runtime Verification Pending
-
-Purpose:
-
-- Turn SoleMuseum from a simple management app into a digital sneaker museum.
-
-Scope:
 
 - Photo model
 - Photos table
@@ -65,25 +81,10 @@ Scope:
 - Main photo
 - Gallery photos
 - Box photos
-- Collection thumbnail display
-- Detail gallery display
 
-Out of scope:
-
-- SNS sharing
-- Cloud sync
-- AI recognition
-- Backup
-- Pro purchase
-- Wear logs
-
----
-
-## Sprint4: History Foundation
+### Sprint4: Wear History Foundation
 
 Status: Code Complete — Runtime Verification Pending
-
-Scope:
 
 - Wear log model
 - wear_logs table
@@ -91,85 +92,60 @@ Scope:
 - Wear history on detail screen
 - Recent worn section on home screen
 
----
-
-## Sprint5: Museum Home
+### Sprint5: Home / TOP5 / Statistics
 
 Status: Code Complete — Runtime Verification Pending
 
-Scope:
-
-- MY TOP 5
+- TOP5
 - Recently added
 - Recently worn
 - Collection summary
 - Brand ownership summary
 
----
-
-## Sprint6: Backup Foundation
+### Sprint6: Backup Foundation
 
 Status: Code Complete — Runtime Verification Pending
-
-Scope:
 
 - JSON export
 - JSON import
 - Local backup
 - Restore confirmation
 
-ZIP backup is deferred.
-
 ---
 
-## Frozen Until After v1.0
+## Brand / Model Data Foundation
 
-The following features are intentionally deferred:
+Status: Specification Started
 
-- Cloud sync
-- Firebase
-- Login
-- SNS sharing
-- AI appraisal
-- Market price tracking
-- Release notifications
-- Pro subscription
-- Multi-device sync
+- Brand master
+- Brand aliases
+- Model master
+- Model aliases
+- Candidate selection
+- Free input fallback
 
 ---
 
 ## v1.0 Completion Criteria
 
-SoleMuseum v1.0 is complete when the following are available:
+Kick×Kick v1.0 is complete when users can:
 
-### Collect
-
-- Add shoes
-- Edit shoes
-- Delete shoes
+- Register sneakers
+- Add photos
 - View collection
-
-### Exhibit
-
-- Main photo
-- Gallery photos
-- MY TOP 5
-
-### Record
-
-- Today worn
-- Wear history
+- Track wear history
+- Set TOP5
+- Create and display stickers
+- Back up local data
 
 ---
 
 ## Development Principle
 
-Do not add new feature ideas until Sprint5 is complete.
-
 Priority order:
 
-1. Finish Sprint2 verification
-2. Implement Sprint3 photos
-3. Implement Sprint4 wear history
-4. Implement Sprint5 museum home
+1. Finish runtime verification
+2. Stabilize photo and wear history
+3. Stabilize TOP5 and Home
+4. Complete brand / model master foundation
 5. Prepare v1.0 release
