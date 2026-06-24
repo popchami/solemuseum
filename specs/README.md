@@ -28,6 +28,7 @@ SEARCH_DATA_SPEC.md
 ALIAS_MASTER_SPEC.md
 ALIAS_MASTER.md
 REGISTRATION_FLOW_SPEC.md
+REGISTRATION_VALIDATION_SPEC.md
 SEARCH_MVP_TEST_SPEC.md
 ```
 
@@ -69,6 +70,7 @@ SEARCH_DATA_SPEC.md
 ALIAS_MASTER_SPEC.md
 ALIAS_MASTER.md
 REGISTRATION_FLOW_SPEC.md
+REGISTRATION_VALIDATION_SPEC.md
 SEARCH_MVP_TEST_SPEC.md
 ```
 
@@ -103,6 +105,12 @@ REGISTRATION_FLOW_SPEC.md
 - モデル選択
 - 自由入力fallback
 - 保存データ
+
+REGISTRATION_VALIDATION_SPEC.md
+- ブランド変更時のモデルリセット
+- 保存時バリデーション
+- 自由入力例外
+- 正式表記保存ルール
 
 SEARCH_MVP_TEST_SPEC.md
 - MVP検索テストケース
@@ -188,6 +196,7 @@ Kick×Kickでは、以下を満たすことを重視する。
 3. 略称・日本語・数字検索で見つかる
 4. 候補がなくても自由入力で登録できる
 5. 登録後に編集できる
+6. ブランド変更時に不整合なモデルが残らない
 ```
 
 候補の完全網羅より、ユーザーが登録を完了できることを優先する。
@@ -205,6 +214,7 @@ ALIAS_MASTER_SPEC.md
 ALIAS_MASTER.md
 MODEL_MASTER_DATA_SPEC.md
 REGISTRATION_FLOW_SPEC.md
+REGISTRATION_VALIDATION_SPEC.md
 SEARCH_MVP_TEST_SPEC.md
 ```
 
