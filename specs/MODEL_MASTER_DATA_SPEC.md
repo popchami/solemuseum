@@ -1,4 +1,4 @@
-# Kick×Kick Model Master Data Spec v1.1
+# Kick×Kick Model Master Data Spec v1.2
 
 ## Purpose
 
@@ -70,6 +70,87 @@ aliases
 searchKeywords
 category
 source
+```
+
+---
+
+## Canonical Name Rule
+
+`modelName` は正式表記として扱う。
+
+`modelName` は以下に使う。
+
+```text
+- 検索候補の表示
+- 保存データ
+- 詳細画面表示
+- Collection / Sticker での表示
+```
+
+`aliases` と `searchKeywords` は検索補助であり、表示名・保存名には使わない。
+
+例:
+
+```text
+検索入力: GT2160
+表示: GT-2160
+保存: GT-2160
+```
+
+```text
+検索入力: P6000
+表示: P-6000
+保存: P-6000
+```
+
+```text
+検索入力: Mexico66
+表示: Mexico 66
+保存: Mexico 66
+```
+
+```text
+検索入力: Cloud5
+表示: Cloud 5
+保存: Cloud 5
+```
+
+```text
+検索入力: ClubC
+表示: Club C 85
+保存: Club C 85
+```
+
+---
+
+## Canonical Naming Examples
+
+正式表記は以下を基本とする。
+
+```text
+Air Force 1
+Air Max 95
+Air Jordan 1
+GT-2160
+GEL-1130
+P-6000
+XT-6
+Mexico 66
+Cloud 5
+Club C 85
+SP-110
+990v6
+```
+
+表記ゆれは `aliases` に入れる。
+
+```text
+GT2160 -> GT-2160
+P6000 -> P-6000
+XT6 -> XT-6
+Mexico66 -> Mexico 66
+Cloud5 -> Cloud 5
+SP110 -> SP-110
 ```
 
 ---
@@ -396,8 +477,9 @@ user_input
 3. 入力があるなら modelName / aliases / searchKeywords の前方一致を見る
 4. 検索優先順位は modelName -> aliases -> searchKeywords
 5. 表示は正式 modelName
-6. 候補は最大5件
-7. 候補がなければ自由入力fallback
+6. 保存は正式 modelName
+7. 候補は最大5件
+8. 候補がなければ自由入力fallback
 ```
 
 ---
@@ -488,6 +570,8 @@ Air Max 97
 }
 ```
 
+自由入力の場合は、入力された表記をそのまま保存してよい。
+
 ---
 
 ## Do Not Add for MVP
@@ -526,3 +610,5 @@ New Balance / 990 -> 990系
 ASICS / 2160 -> GT-2160
 Onitsuka Tiger / Mexico66 -> Mexico 66
 ```
+
+さらに、候補選択時は表示・保存が正式表記に統一されること。
