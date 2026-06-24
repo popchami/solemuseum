@@ -17,7 +17,7 @@ class AppDatabase {
 
   Future<Database> _initDatabase() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'solemuseum.db');
+    final path = join(dbPath, 'kickxkick.db');
 
     return openDatabase(
       path,
@@ -78,16 +78,13 @@ class AppDatabase {
   }
 
   Future<void> _createShoeIndexes(Database db) async {
-    await db.execute('CREATE INDEX idx_shoes_brand_id ON shoes(brand_id)');
-    await db.execute('CREATE INDEX idx_shoes_created_at ON shoes(created_at)');
-    await db.execute('CREATE INDEX idx_shoes_is_favorite ON shoes(is_favorite)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_shoes_brand_id ON shoes(brand_id)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_shoes_created_at ON shoes(created_at)');
     await _createTopOrderIndex(db);
   }
 
   Future<void> _createTopOrderIndex(Database db) async {
-    await db.execute(
-      'CREATE INDEX IF NOT EXISTS idx_shoes_top_order ON shoes(top_order)',
-    );
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_shoes_top_order ON shoes(top_order)');
   }
 
   Future<void> _createPhotosTable(Database db) async {
@@ -95,23 +92,15 @@ class AppDatabase {
       CREATE TABLE IF NOT EXISTS photos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         shoe_id INTEGER NOT NULL,
-        photo_type TEXT NOT NULL,
         file_path TEXT NOT NULL,
-        display_order INTEGER NOT NULL,
+        type TEXT NOT NULL,
         created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
         FOREIGN KEY (shoe_id) REFERENCES shoes(id) ON DELETE CASCADE
       )
     ''');
-
-    await db.execute(
-      'CREATE INDEX IF NOT EXISTS idx_photos_shoe_id ON photos(shoe_id)',
-    );
-    await db.execute(
-      'CREATE INDEX IF NOT EXISTS idx_photos_photo_type ON photos(photo_type)',
-    );
-    await db.execute(
-      'CREATE INDEX IF NOT EXISTS idx_photos_display_order ON photos(display_order)',
-    );
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_photos_shoe_id ON photos(shoe_id)');
+    await db.execute('CREATE UNIQUE INDEX IF NOT EXISTS idx_photos_shoe_type ON photos(shoe_id, type)');
   }
 
   Future<void> _createWearLogsTable(Database db) async {
@@ -122,48 +111,31 @@ class AppDatabase {
         worn_date TEXT NOT NULL,
         memo TEXT,
         created_at TEXT NOT NULL,
-        FOREIGN KEY (shoe_id) REFERENCES shoes(id) ON DELETE CASCADE,
-        UNIQUE (shoe_id, worn_date)
+        FOREIGN KEY (shoe_id) REFERENCES shoes(id) ON DELETE CASCADE
       )
     ''');
-
-    await db.execute(
-      'CREATE INDEX IF NOT EXISTS idx_wear_logs_shoe_id ON wear_logs(shoe_id)',
-    );
-    await db.execute(
-      'CREATE INDEX IF NOT EXISTS idx_wear_logs_worn_date ON wear_logs(worn_date)',
-    );
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_wear_logs_shoe_id ON wear_logs(shoe_id)');
+    await db.execute('CREATE INDEX IF NOT EXISTS idx_wear_logs_worn_date ON wear_logs(worn_date)');
   }
 
   Future<void> _insertInitialBrands(Database db) async {
-    const brands = [
+    final brands = [
       'Nike',
-      'Jordan',
-      'adidas',
+      'Adidas',
       'New Balance',
       'ASICS',
       'PUMA',
       'Converse',
       'Vans',
       'Reebok',
-      'Mizuno',
-      'On',
-      'HOKA',
-      'Salomon',
-      'Saucony',
-      'Y-3',
-      'その他',
+      'Other',
     ];
 
     for (var i = 0; i < brands.length; i++) {
-      await db.insert(
-        'brands',
-        {
-          'name': brands[i],
-          'sort_order': i + 1,
-        },
-        conflictAlgorithm: ConflictAlgorithm.ignore,
-      );
+      await db.insert('brands', {
+        'name': brands[i],
+        'sort_order': i,
+      });
     }
   }
 }
