@@ -1,394 +1,537 @@
-# Kick×Kick Model Master: Nike v1.1
+# Kick×Kick Model Master: Nike v2.0
 
 ## Purpose
 
 Nike model master for Kick×Kick sneaker registration.
 
-Goal:
-
-- Reduce model name variation
-- Improve search and filtering
-- Keep free input fallback available
-- Cover the models Nike users are most likely to search for
-
-## Brand
-
-Nike
-
-## Policy
-
-- Official candidate models are listed here.
-- Users can still enter models not listed here.
-- Brand logos are not included.
-- Colorways and style codes are not included in v1.
-- Alias support is planned separately.
-
----
-
-## Priority A: Core / High Frequency
-
-### Air Force
-
-- Air Force 1 Low
-- Air Force 1 Mid
-- Air Force 1 High
-- Air Force 1 '07
-- Air Force 1 React
-- Air Force 1 Shadow
-- Air Force 1 Pixel
-- Air Force 1 Luxe
-- Air Force 1 LV8
-- Air Force 1 Utility
-- Air Force 1 Gore-Tex
-- Air Force 1 Experimental
-- Air Force 1 Wild
-
-### Dunk
-
-- Dunk Low
-- Dunk High
-- Dunk Mid
-- Dunk Low Retro
-- Dunk High Retro
-- Dunk Low Premium
-- Dunk High Premium
-- Dunk Low Disrupt
-- Dunk Low Twist
-- SB Dunk Low
-- SB Dunk High
-- SB Dunk Mid
-- SB Dunk Low Pro
-- SB Dunk High Pro
-
-### Air Max
-
-- Air Max 1
-- Air Max 1 '86
-- Air Max 90
-- Air Max 95
-- Air Max 96
-- Air Max 97
-- Air Max 98
-- Air Max Plus
-- Air Max Plus 3
-- Air Max 180
-- Air Max 270
-- Air Max 720
-- Air Max 2013
-- Air Max 2017
-- Air Max 2090
-- Air Max DN
-- Air Max Dn8
-- Air Max Scorpion
-- Air Max Pulse
-- Air Max Sunder
-- Air Max Solo
-- Air Max Excee
-- Air Max AP
-- Air Max LTD 3
-- Air VaporMax
-- Air VaporMax Plus
-- VaporMax Flyknit
-
-### Cortez
-
-- Cortez
-- Classic Cortez
-- Cortez Nylon
-- Cortez Leather
-- Cortez Textile
-
-### Blazer
-
-- Blazer Low
-- Blazer Mid
-- Blazer Mid '77
-- Blazer Low '77
-- Blazer Low Platform
-- Blazer Mid Pro Club
-- SB Blazer Low
-- SB Blazer Mid
-
----
-
-## Priority B: Running / Lifestyle
-
-### Pegasus
-
-- Pegasus
-- Air Pegasus 83
-- Air Pegasus 89
-- Pegasus 39
-- Pegasus 40
-- Pegasus 41
-- Pegasus Trail
-- Pegasus Trail 4
-- Pegasus Trail 5
-- Pegasus Plus
-- Pegasus Premium
-
-### Vomero
-
-- Zoom Vomero 5
-- Vomero 16
-- Vomero 17
-- Vomero 18
-- Vomero Plus
-
-### Zoom / Structure / Invincible
-
-- Air Zoom Type
-- Air Zoom Spiridon
-- Zoom Spiridon Cage 2
-- Zoom Fly
-- Zoom Fly 5
-- Zoom Fly 6
-- ZoomX Vaporfly
-- Vaporfly 2
-- Vaporfly 3
-- Vaporfly 4
-- ZoomX Alphafly
-- Alphafly 2
-- Alphafly 3
-- ZoomX Invincible Run
-- Invincible 3
-- Structure
-- Structure 25
-- InfinityRN
-- InfinityRN 4
-- Motiva
-
-### React / Free / Training Running
-
-- React Element 55
-- React Element 87
-- React Vision
-- React Infinity Run
-- React Miler
-- Epic React Flyknit
-- Free Run
-- Free Run 5.0
-- Free RN
-- Flex Experience Run
-- Downshifter
-- Revolution
-- Winflo
-- Quest
-
-### Retro Running / Lifestyle
-
-- P-6000
-- V2K Run
-- Initiator
-- Waffle One
-- Waffle Trainer 2
-- LD-1000
-- Daybreak
-- Tailwind 79
-- Air Tailwind
-- Air Tailwind 92
-- Waffle Racer
-- Waffle Debut
-- LDV
-- Challenger OG
-
----
-
-## Priority C: Basketball / Retro
-
-### Retro Basketball
-
-- Air Ship
-- Air Flight 89
-- Air Flight Lite
-- Air More Uptempo
-- Air Max Uptempo
-- Air Penny 1
-- Air Penny 2
-- Air Penny 3
-- Air Penny 4
-- Air Foamposite One
-- Air Foamposite Pro
-- Air Force 180
-- Air Command Force
-- Terminator Low
-- Terminator High
-- Mac Attack
-
-### Signature Basketball
-
-- LeBron 20
-- LeBron 21
-- LeBron 22
-- LeBron NXXT Gen
-- Kobe 4 Protro
-- Kobe 5 Protro
-- Kobe 6 Protro
-- Kobe 8 Protro
-- Kobe 9 Protro
-- KD 16
-- KD 17
-- KD 18
-- Giannis Immortality
-- Giannis Freak
-- Zoom Freak
-- Ja 1
-- Ja 2
-- Sabrina 1
-- Sabrina 2
-- Book 1
-- GT Cut
-- GT Cut 2
-- GT Cut 3
-- GT Hustle
-- GT Jump
-
----
-
-## Priority D: Tennis / Court / Training
-
-### Court / Tennis / Soccer Lifestyle
-
-- Killshot 2
-- Killshot OG
-- Mac Attack
-- Field General
-- Gato
-- Gato LV8
-- C1TY
-- Full Force Low
-- Court Vision Low
-- Court Vision Mid
-- Grandstand II
-- Tennis Classic
-- Air Tech Challenge II
-
-### Training / Gym
-
-- Metcon
-- Metcon 8
-- Metcon 9
-- Free Metcon
-- Free Metcon 5
-- Free Metcon 6
-- Air Monarch IV
-- M2K Tekno
-
----
-
-## Priority E: Outdoor / ACG
-
-- ACG Mountain Fly
-- ACG Mountain Fly 2
-- ACG Moc
-- ACG Air Moc
-- ACG Rufus
-- ACG Torre Mid
-- ACG Lowcate
-- ACG Zoom Gaiadome
-- ACG Exploraid
-- ACG Air Exploraid
-- ACG Watercat+
-- ACG Izy
-- ACG Wildwood
-- ACG Terra Humara
-- ACG Ruckel Ridge
-- ACG Mowabb
-
----
-
-## Priority F: Other Lifestyle / Modern
-
-### Shox / Rift / ISPA
-
-- Tech Hera
-- Shox R4
-- Shox TL
-- Shox Ride 2
-- Shox NZ
-- Air Rift
-- Aqua Rift
-- Go FlyEase
-- ISPA Link
-- ISPA Universal
-- ISPA Sense Flyknit
-- ISPA MindBody
-
-### Slides / Sandals / Casual
-
-- Calm Slide
-- Calm Mule
-- Benassi
-- Victori One
-- Offline
-- Air Deschutz
-
----
-
-## Alias Candidates
-
-Alias handling is not implemented in v1, but the following should be considered later.
+v2.0 focuses on search-quality assets for MVP:
 
 ```text
-AF1 -> Air Force 1
-エアフォース -> Air Force 1
-エアフォース1 -> Air Force 1
-Dunk -> Dunk Low / Dunk High / SB Dunk
-ダンク -> Dunk
-SBDunk -> SB Dunk
-Airmax -> Air Max
-エアマックス -> Air Max
-AM1 -> Air Max 1
-AM90 -> Air Max 90
-AM95 -> Air Max 95
-AM97 -> Air Max 97
-TN -> Air Max Plus
-VaporMax -> Air VaporMax
-Vomero -> Zoom Vomero 5
-ボメロ -> Zoom Vomero 5
-Pegasus -> Pegasus
-ペガサス -> Pegasus
-Vaporfly -> ZoomX Vaporfly
-Alphafly -> ZoomX Alphafly
-Invincible -> ZoomX Invincible Run
-Shox -> Shox Series
-Metcon -> Metcon Series
-ACG -> ACG Series
-Foamposite -> Air Foamposite One / Air Foamposite Pro
-Uptempo -> Air More Uptempo
-Kobe -> Kobe Protro Series
-LeBron -> LeBron Series
-KD -> KD Series
-Giannis -> Giannis / Zoom Freak Series
-Ja -> Ja Series
-Sabrina -> Sabrina Series
-Book -> Book 1
+Canonical Name
+Aliases
+searchKeywords
+category
+```
+
+Policy:
+
+```text
+- modelName is the display/save name
+- aliases are search-only
+- searchKeywords are search-only
+- Free input fallback must always remain available
 ```
 
 ---
 
-## Audit Notes
+## Brand
 
-Nike v1.1 adds the following important coverage areas:
+```text
+brandId: nike
+brandName: Nike
+```
 
-- React family
-- Metcon family
-- Signature basketball models
-- ACG archive / outdoor models
-- VaporMax family
-- slides / sandals / casual models
-- additional Air Force 1, Dunk, Air Max, Pegasus, Vomero variants
+---
+
+# Priority S: MVP Required Models
+
+## Air Force 1
+
+```json
+{
+  "id": "nike_air_force_1",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Air Force 1",
+  "aliases": ["AF1", "AF-1"],
+  "searchKeywords": ["エアフォース", "エアフォース1"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Air Force 1 Low
+
+```json
+{
+  "id": "nike_air_force_1_low",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Air Force 1 Low",
+  "aliases": ["AF1 Low", "AF-1 Low"],
+  "searchKeywords": ["エアフォースロー"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Air Force 1 High
+
+```json
+{
+  "id": "nike_air_force_1_high",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Air Force 1 High",
+  "aliases": ["AF1 High", "AF-1 High"],
+  "searchKeywords": ["エアフォースハイ"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Air Max 1
+
+```json
+{
+  "id": "nike_air_max_1",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Air Max 1",
+  "aliases": ["AM1"],
+  "searchKeywords": ["AirMax1", "エアマックス1"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Air Max 90
+
+```json
+{
+  "id": "nike_air_max_90",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Air Max 90",
+  "aliases": ["AM90"],
+  "searchKeywords": ["90", "AirMax90", "エアマックス90"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Air Max 95
+
+```json
+{
+  "id": "nike_air_max_95",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Air Max 95",
+  "aliases": ["AM95", "Airmax95"],
+  "searchKeywords": ["95", "AirMax95", "エアマックス95"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Air Max 97
+
+```json
+{
+  "id": "nike_air_max_97",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Air Max 97",
+  "aliases": ["AM97", "Airmax97"],
+  "searchKeywords": ["97", "AirMax97", "エアマックス97"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Air Max Plus
+
+```json
+{
+  "id": "nike_air_max_plus",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Air Max Plus",
+  "aliases": ["AMPlus", "TN"],
+  "searchKeywords": ["AirMaxPlus", "エアマックスプラス"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Dunk Low
+
+```json
+{
+  "id": "nike_dunk_low",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Dunk Low",
+  "aliases": ["DunkLow"],
+  "searchKeywords": ["ダンクロー"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Dunk High
+
+```json
+{
+  "id": "nike_dunk_high",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Dunk High",
+  "aliases": ["DunkHigh"],
+  "searchKeywords": ["ダンクハイ"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## SB Dunk Low
+
+```json
+{
+  "id": "nike_sb_dunk_low",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "SB Dunk Low",
+  "aliases": ["SBDunk", "SBDunkLow"],
+  "searchKeywords": ["SBダンク", "SBダンクロー"],
+  "category": "skateboarding",
+  "source": "master"
+}
+```
+
+## P-6000
+
+```json
+{
+  "id": "nike_p_6000",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "P-6000",
+  "aliases": ["P6000"],
+  "searchKeywords": ["6000", "ピー6000"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Zoom Vomero 5
+
+```json
+{
+  "id": "nike_zoom_vomero_5",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Zoom Vomero 5",
+  "aliases": ["Vomero5", "Vomero"],
+  "searchKeywords": ["ボメロ", "ボメロ5"],
+  "category": "running",
+  "source": "master"
+}
+```
+
+## Pegasus
+
+```json
+{
+  "id": "nike_pegasus",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Pegasus",
+  "aliases": ["Peg"],
+  "searchKeywords": ["ペガサス"],
+  "category": "running",
+  "source": "master"
+}
+```
+
+## ZoomX Invincible Run
+
+```json
+{
+  "id": "nike_zoomx_invincible_run",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "ZoomX Invincible Run",
+  "aliases": ["Invincible"],
+  "searchKeywords": ["インヴィンシブル", "インビンシブル"],
+  "category": "running",
+  "source": "master"
+}
+```
+
+## Cortez
+
+```json
+{
+  "id": "nike_cortez",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Cortez",
+  "aliases": ["Classic Cortez"],
+  "searchKeywords": ["コルテッツ"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Shox R4
+
+```json
+{
+  "id": "nike_shox_r4",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Shox R4",
+  "aliases": ["ShoxR4"],
+  "searchKeywords": ["ショックスR4"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Shox TL
+
+```json
+{
+  "id": "nike_shox_tl",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Shox TL",
+  "aliases": ["ShoxTL"],
+  "searchKeywords": ["ショックスTL"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## TC 7900
+
+```json
+{
+  "id": "nike_tc_7900",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "TC 7900",
+  "aliases": ["TC7900"],
+  "searchKeywords": ["7900"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+---
+
+# Priority A: Useful Expansion
+
+## Air Max 98
+
+```json
+{
+  "id": "nike_air_max_98",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Air Max 98",
+  "aliases": ["AM98"],
+  "searchKeywords": ["98", "AirMax98", "エアマックス98"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Air Max DN
+
+```json
+{
+  "id": "nike_air_max_dn",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Air Max DN",
+  "aliases": ["AMDN", "AirMaxDN"],
+  "searchKeywords": ["エアマックスDN"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Air VaporMax
+
+```json
+{
+  "id": "nike_air_vapormax",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Air VaporMax",
+  "aliases": ["VaporMax"],
+  "searchKeywords": ["ヴェイパーマックス", "ベイパーマックス"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Blazer Mid '77
+
+```json
+{
+  "id": "nike_blazer_mid_77",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Blazer Mid '77",
+  "aliases": ["Blazer77", "BlazerMid77"],
+  "searchKeywords": ["ブレーザー77"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## Air More Uptempo
+
+```json
+{
+  "id": "nike_air_more_uptempo",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Air More Uptempo",
+  "aliases": ["MoreUptempo", "Uptempo"],
+  "searchKeywords": ["モアテン", "アップテンポ"],
+  "category": "basketball",
+  "source": "master"
+}
+```
+
+## Air Foamposite One
+
+```json
+{
+  "id": "nike_air_foamposite_one",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Air Foamposite One",
+  "aliases": ["Foamposite", "FoampositeOne"],
+  "searchKeywords": ["フォームポジット"],
+  "category": "basketball",
+  "source": "master"
+}
+```
+
+## Kobe 6 Protro
+
+```json
+{
+  "id": "nike_kobe_6_protro",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Kobe 6 Protro",
+  "aliases": ["Kobe6", "Kobe6Protro"],
+  "searchKeywords": ["コービー6"],
+  "category": "basketball",
+  "source": "master"
+}
+```
+
+## LeBron 21
+
+```json
+{
+  "id": "nike_lebron_21",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "LeBron 21",
+  "aliases": ["LeBron21"],
+  "searchKeywords": ["レブロン21"],
+  "category": "basketball",
+  "source": "master"
+}
+```
+
+## Ja 1
+
+```json
+{
+  "id": "nike_ja_1",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Ja 1",
+  "aliases": ["Ja1"],
+  "searchKeywords": ["ジャ1"],
+  "category": "basketball",
+  "source": "master"
+}
+```
+
+## Sabrina 2
+
+```json
+{
+  "id": "nike_sabrina_2",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Sabrina 2",
+  "aliases": ["Sabrina2"],
+  "searchKeywords": ["サブリナ2"],
+  "category": "basketball",
+  "source": "master"
+}
+```
+
+## Killshot 2
+
+```json
+{
+  "id": "nike_killshot_2",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "Killshot 2",
+  "aliases": ["Killshot2"],
+  "searchKeywords": ["キルショット2"],
+  "category": "lifestyle",
+  "source": "master"
+}
+```
+
+## ACG Mountain Fly 2
+
+```json
+{
+  "id": "nike_acg_mountain_fly_2",
+  "brandId": "nike",
+  "brandName": "Nike",
+  "modelName": "ACG Mountain Fly 2",
+  "aliases": ["MountainFly2", "ACGMountainFly2"],
+  "searchKeywords": ["マウンテンフライ2"],
+  "category": "outdoor",
+  "source": "master"
+}
+```
+
+---
+
+# Series Alias Notes
+
+Series aliases should return multiple candidates, not one fixed model.
+
+```text
+Dunk -> Dunk Low / Dunk High / SB Dunk Low
+Air Max -> Air Max 1 / 90 / 95 / 97 / Plus
+Shox -> Shox R4 / Shox TL
+Kobe -> Kobe series
+LeBron -> LeBron series
+```
+
+---
+
+# Audit Status
+
+```text
+Model Coverage: PASS for MVP
+Alias: WARNING - enough for MVP, expand after Tier S pass
+searchKeywords: PASS for MVP
+Canonical Name: PASS
+Status: WARNING
+```
 
 ## Notes
 
-This list is intentionally not exhaustive.
+Nike has many historical, regional, collaboration, and limited models.
 
-Kick×Kick must always allow free input fallback because Nike has many historic, regional, collaboration, and limited models.
-
-Future expansion:
-
-- Colorway master
-- Style code support
-- Series search
-- Alias search
-- User-submitted model candidates
+Kick×Kick must always allow free input fallback.
