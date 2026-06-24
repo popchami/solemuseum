@@ -22,9 +22,11 @@ Kick×Kick は、スニーカーを登録し、ステッカー化し、棚やボ
 KICKXKICK_*
 BRAND_MASTER.md
 MODEL_MASTER/*
+MODEL_MASTER_DATA_SPEC.md
 SEARCH_SPEC.md
 SEARCH_DATA_SPEC.md
 ALIAS_MASTER_SPEC.md
+ALIAS_MASTER.md
 REGISTRATION_FLOW_SPEC.md
 SEARCH_MVP_TEST_SPEC.md
 ```
@@ -65,6 +67,7 @@ KICKXKICK_ROUTING_SPEC.md
 SEARCH_SPEC.md
 SEARCH_DATA_SPEC.md
 ALIAS_MASTER_SPEC.md
+ALIAS_MASTER.md
 REGISTRATION_FLOW_SPEC.md
 SEARCH_MVP_TEST_SPEC.md
 ```
@@ -74,19 +77,25 @@ SEARCH_MVP_TEST_SPEC.md
 ```text
 SEARCH_SPEC.md
 - 検索挙動
-- 一致ルール
-- 並び順
+- ブランド選択後のモデルサジェスト
+- アルファベット順候補
+- 数字入力時の挙動
 - No Result時の挙動
 
 SEARCH_DATA_SPEC.md
 - 検索用データ構造
 - Brand / Model / Alias Object
-- priority / source / category
+- source / category
 
 ALIAS_MASTER_SPEC.md
 - Alias管理ルール
 - 略称・日本語・数字検索
 - Alias衝突時の扱い
+
+ALIAS_MASTER.md
+- Alias実データ
+- 主要ブランドの略称
+- 日本語Alias
 
 REGISTRATION_FLOW_SPEC.md
 - 登録フロー
@@ -107,6 +116,7 @@ SEARCH_MVP_TEST_SPEC.md
 ```text
 BRAND_MASTER.md
 MODEL_MASTER/README.md
+MODEL_MASTER_DATA_SPEC.md
 MODEL_MASTER/*.md
 ```
 
@@ -120,6 +130,12 @@ BRAND_MASTER.md
 
 MODEL_MASTER/README.md
 - モデルマスター運用ルール
+
+MODEL_MASTER_DATA_SPEC.md
+- モデルデータ構造
+- aliases
+- searchKeywords
+- 数字検索用キーワード
 
 MODEL_MASTER/*.md
 - ブランド別モデル候補
@@ -186,6 +202,8 @@ Kick×Kickでは、以下を満たすことを重視する。
 SEARCH_SPEC.md
 SEARCH_DATA_SPEC.md
 ALIAS_MASTER_SPEC.md
+ALIAS_MASTER.md
+MODEL_MASTER_DATA_SPEC.md
 REGISTRATION_FLOW_SPEC.md
 SEARCH_MVP_TEST_SPEC.md
 ```
