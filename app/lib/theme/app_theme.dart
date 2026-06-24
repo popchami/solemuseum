@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static const String appName = 'SoleMuseum';
-  static const String tagline = 'Collect. Record. Exhibit.';
+  static const String appName = 'KickxKick';
+  static const String tagline = 'Collect. Create. Exhibit.';
 
-  // Light Theme
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
@@ -12,19 +11,19 @@ class AppTheme {
       fontFamily: 'Noto Sans JP',
       fontFamilyFallback: const ['Noto Sans CJK JP', 'sans-serif'],
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF000000),
+        seedColor: const Color(0xFFFF7A1A),
         brightness: Brightness.light,
       ),
       scaffoldBackgroundColor: const Color(0xFFFAFAFA),
       appBarTheme: const AppBarTheme(
         elevation: 0,
         backgroundColor: Color(0xFFFAFAFA),
-        foregroundColor: Color(0xFF000000),
+        foregroundColor: Color(0xFF111111),
         centerTitle: false,
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: const Color(0xFFFAFAFA),
-        indicatorColor: const Color(0xFF000000).withValues(alpha: 0.1),
+        indicatorColor: const Color(0xFFFF7A1A).withValues(alpha: 0.16),
         labelTextStyle: WidgetStateProperty.all(
           const TextStyle(
             fontSize: 12,
@@ -33,7 +32,7 @@ class AppTheme {
         ),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: Color(0xFF000000),
+        backgroundColor: Color(0xFFFF7A1A),
         foregroundColor: Color(0xFFFFFFFF),
       ),
       cardTheme: const CardThemeData(
@@ -44,7 +43,6 @@ class AppTheme {
     );
   }
 
-  // Dark Theme
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
@@ -52,7 +50,7 @@ class AppTheme {
       fontFamily: 'Noto Sans JP',
       fontFamilyFallback: const ['Noto Sans CJK JP', 'sans-serif'],
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFFFFFFFF),
+        seedColor: const Color(0xFFFF7A1A),
         brightness: Brightness.dark,
       ),
       scaffoldBackgroundColor: const Color(0xFF121212),
@@ -64,7 +62,7 @@ class AppTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: const Color(0xFF1E1E1E),
-        indicatorColor: const Color(0xFFFFFFFF).withValues(alpha: 0.1),
+        indicatorColor: const Color(0xFFFF7A1A).withValues(alpha: 0.24),
         labelTextStyle: WidgetStateProperty.all(
           const TextStyle(
             fontSize: 12,
@@ -73,8 +71,8 @@ class AppTheme {
         ),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: Color(0xFFFFFFFF),
-        foregroundColor: Color(0xFF000000),
+        backgroundColor: Color(0xFFFF7A1A),
+        foregroundColor: Color(0xFFFFFFFF),
       ),
       cardTheme: const CardThemeData(
         elevation: 0,
