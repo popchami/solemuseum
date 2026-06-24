@@ -9,29 +9,29 @@ import 'screens/settings_screen.dart';
 import 'widgets/app_fab.dart';
 
 void main() {
-  runApp(const ProviderScope(child: SoleMuseumApp()));
+  runApp(const ProviderScope(child: KickxKickApp()));
 }
 
-class SoleMuseumApp extends ConsumerWidget {
-  const SoleMuseumApp({super.key});
+class KickxKickApp extends ConsumerWidget {
+  const KickxKickApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp(
-      title: 'SoleMuseum',
+      title: 'Kick×Kick',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
-      home: const SoleMuseumHome(),
+      home: const KickxKickHome(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class SoleMuseumHome extends ConsumerWidget {
-  const SoleMuseumHome({super.key});
+class KickxKickHome extends ConsumerWidget {
+  const KickxKickHome({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
