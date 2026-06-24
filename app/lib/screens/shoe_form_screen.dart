@@ -56,7 +56,6 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
   String? _selectedSize;
   String? _selectedColor;
   DateTime? _purchaseDate;
-  bool _isFavorite = false;
   XFile? _pendingMainPhoto;
   bool _saving = false;
 
@@ -75,7 +74,6 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
       _storeController.text = shoe.purchaseStore ?? '';
       _memoController.text = shoe.memo ?? '';
       _purchaseDate = shoe.purchaseDate;
-      _isFavorite = shoe.isFavorite;
       _currentStep = 1;
     }
   }
@@ -126,7 +124,7 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
             purchasePrice: price,
             purchaseStore: _emptyToNull(_storeController.text),
             memo: _emptyToNull(_memoController.text),
-            isFavorite: _isFavorite,
+            isFavorite: current.isFavorite,
             topOrder: current.topOrder,
             createdAt: current.createdAt,
             updatedAt: current.updatedAt,
@@ -143,7 +141,7 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
             purchasePrice: price,
             purchaseStore: _emptyToNull(_storeController.text),
             memo: _emptyToNull(_memoController.text),
-            isFavorite: _isFavorite,
+            isFavorite: false,
           ),
         );
       }
@@ -318,19 +316,6 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
           decoration: const InputDecoration(labelText: 'モデル名'),
           validator: (value) =>
               value == null || value.trim().isEmpty ? 'モデル名を入力してください' : null,
-        ),
-        const SizedBox(height: 12),
-        Card(
-          child: SwitchListTile(
-            secondary: Icon(
-              _isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: _isFavorite ? Colors.red : null,
-            ),
-            title: const Text('お気に入り'),
-            subtitle: const Text('お気に入りコレクションに追加'),
-            value: _isFavorite,
-            onChanged: (value) => setState(() => _isFavorite = value),
-          ),
         ),
       ],
     );
