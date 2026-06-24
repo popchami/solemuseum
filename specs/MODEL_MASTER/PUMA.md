@@ -1,4 +1,4 @@
-# Kick×Kick Model Master: PUMA v1.0
+# Kick×Kick Model Master: PUMA v1.1
 
 ## Purpose
 
@@ -16,23 +16,25 @@ PUMA
 - Suede XL
 - Suede VTG
 - Suede Skate
+- Suede Mayu
 
 ### Clyde Series
 
 - Clyde
 - Clyde OG
 - Clyde All-Pro
+- Clyde Hardwood
 
-### Palermo Series
+### Palermo / Easy Rider / Archive
 
 - Palermo
 - Palermo Vintage
 - Palermo Leather
-
-### Easy Rider Series
-
 - Easy Rider
 - Easy Rider Vintage
+- Arizona
+- Roma
+- Ralph Sampson
 
 ## Motorsport
 
@@ -41,12 +43,15 @@ PUMA
 - Speedcat OG
 - Speedcat Leather
 - Speedcat Archive
+- Speedcat Ballet
 
-### Future Cat Series
+### Future Cat / Drift Cat
 
 - Future Cat
 - Drift Cat
-n- BMW M Motorsport Series
+- BMW M Motorsport Series
+- Ferrari Motorsport Series
+- Porsche Legacy Series
 
 ## Basketball
 
@@ -64,6 +69,9 @@ n- BMW M Motorsport Series
 - Stewie 1
 - Stewie 2
 - Stewie 3
+- Scoot Zeros
+- Court Rider
+- Playmaker Pro
 
 ## Running
 
@@ -78,6 +86,9 @@ n- BMW M Motorsport Series
 - Magnify Nitro
 - ForeverRun Nitro
 - Fast-R Nitro Elite
+- Fast-R Nitro Elite 2
+- Fast-RB Nitro Elite
+- Liberate Nitro
 
 ## Lifestyle
 
@@ -86,20 +97,26 @@ n- BMW M Motorsport Series
 - RS-X Reinvention
 - RS-TRCK
 - CA Pro
+- CA Pro Classic
 - Slipstream
+- Slipstream Lo
 - Basket Classic
 - Carina
 - Mayze
+- Mayze Stack
 - Karmen
+- Mostro
 
 ## Outdoor / Trail
 
 - Voyage Nitro
 - Explore Nitro
-n- Fast-Trac Nitro
+- Fast-Trac Nitro
+- Evolve Trail
 
 ## Alias Candidates
 
+```text
 Suede -> Suede Series
 Palermo -> Palermo
 Clyde -> Clyde
@@ -108,11 +125,31 @@ RSX -> RS-X
 MB01 -> MB.01
 MB02 -> MB.02
 MB03 -> MB.03
+MB04 -> MB.04
 Nitro -> Nitro Family
+LaMelo -> MB Series
+Mostro -> Mostro
+```
+
+## Audit Notes
+
+PUMA v1.1 fixes:
+
+- `n- BMW M Motorsport Series` typo
+- `n- Fast-Trac Nitro` typo
+
+PUMA v1.1 adds:
+
+- Arizona, Roma, Ralph Sampson
+- Speedcat Ballet
+- Ferrari / Porsche motorsport lines
+- Scoot Zeros
+- Fast-R Nitro Elite 2 / Fast-RB Nitro Elite
+- Mayze Stack, Mostro
 
 ## Notes
 
-PUMA currently spans fashion, football culture, motorsport, basketball, and running categories.
+PUMA spans fashion, football culture, motorsport, basketball, running, and lifestyle categories.
 
 Future expansion:
 
