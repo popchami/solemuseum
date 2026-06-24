@@ -1,4 +1,4 @@
-# Kick×Kick Task Board v1.0
+# Kick×Kick Task Board v1.1
 
 ## 目的
 
@@ -35,6 +35,19 @@ Kick×Kick開発の現在地を管理する。
 - [ ] Sprint3実装
 - [ ] Sprint4実装
 
+## Master Data / Search
+
+- [x] BRAND_MASTER.md 作成
+- [x] MODEL_MASTER 運用ルール作成
+- [x] SEARCH_SPEC.md 作成
+- [x] SEARCH_DATA_SPEC.md 作成
+- [x] ALIAS_MASTER_SPEC.md 作成
+- [x] REGISTRATION_FLOW_SPEC.md 作成
+- [ ] 検索用データ生成仕様の実装指示作成
+- [ ] Alias横断監査
+- [ ] Search MVPテストケース作成
+- [ ] Plannedブランド追加
+
 ---
 
 # Sprint1
@@ -66,6 +79,30 @@ NEXT
 - [ ] Sneaker Provider
 - [ ] Sneaker Form
 - [ ] Sneaker Detail
+
+### Search / Registration
+
+- [ ] Brand search model
+- [ ] Model search model
+- [ ] Alias search model
+- [ ] Search normalization
+- [ ] Search ranking
+- [ ] Brand candidate UI
+- [ ] Model candidate UI
+- [ ] Free input fallback
+- [ ] Registration flow integration
+- [ ] Search MVP test cases
+
+参照仕様:
+
+```text
+SEARCH_SPEC.md
+SEARCH_DATA_SPEC.md
+ALIAS_MASTER_SPEC.md
+REGISTRATION_FLOW_SPEC.md
+BRAND_MASTER.md
+MODEL_MASTER/README.md
+```
 
 ### Photo
 
@@ -186,6 +223,8 @@ Premium / Backup / Export
 - [ ] 利用規約
 - [ ] プライバシーポリシー
 - [ ] ストア文言
+- [ ] Search MVPテスト通過
+- [ ] 自由入力fallback確認
 
 ---
 
@@ -194,19 +233,19 @@ Premium / Backup / Export
 現在やること:
 
 ```text
-Sprint1実装
+Search / Registration 実装準備
 ```
 
 次:
 
 ```text
-Sprint2 Collection
+Sprint1実装
 ```
 
 その次:
 
 ```text
-Sprint3 Sticker
+Sprint2 Collection
 ```
 
 最重要ルール:
