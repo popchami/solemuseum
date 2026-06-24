@@ -1,73 +1,64 @@
-SoleMuseum App Store Description
+# Kick×Kick App Store Description
 
-Short Description
+## Short Description
 
-Your personal sneaker museum.
+貼って、飾って、コレクション。
 
-Collect, record, and exhibit every pair.
+## Full Description
 
----
+Kick×Kick is a sneaker collection app that lets you register your sneakers, turn them into digital stickers, and display them in shelves and boards.
 
-Full Description
+More than a simple inventory app, Kick×Kick helps you enjoy every pair as part of your personal collection space.
 
-SoleMuseum is a digital museum built for sneaker collectors.
+Take photos, record basic details, track wear history, create stickers, and decorate your own sneaker board.
 
-More than a simple inventory app, SoleMuseum helps you preserve the stories behind every pair in your collection.
+Whether you own five pairs or five hundred, Kick×Kick helps you make your collection fun to look back on.
 
-Document purchase information, organize photos, track wear history, and create a personal exhibition of your favorite sneakers.
+## Features
 
-Whether you own five pairs or five hundred, SoleMuseum helps you build a collection worth remembering.
-
----
-
-Features
-
-Collection Management
+### Collection
 
 - Register sneakers
+- Add photos
 - Edit information
 - Organize your collection
-- Favorite important pairs
+- Set TOP5 pairs
 
-Exhibition
+### Sticker
 
-- Main display photos
-- Gallery photos
-- Box photos
-- Collection thumbnails
+- Create sneaker stickers
+- Decorate boards
+- Place stickers freely
+- Use text stickers
 
-Records
+### Records
 
 - Purchase information
 - Notes and memories
 - Wear history
 - Recently worn pairs
 
-Museum Home
+### Home
 
 - Collection overview
-- MY TOP 5
+- TOP5
 - Recently added
-- Recently worn
+- Statistics
 
----
+## Designed For Collectors
 
-Designed For Collectors
-
-SoleMuseum is built for people who love sneakers.
+Kick×Kick is built for people who love sneakers and want to enjoy their collection visually.
 
 Every pair has a story.
 
-Every collection deserves preservation.
+Every collection deserves a place to be displayed.
 
----
-
-Philosophy
+## Philosophy
 
 Collect.
 
-Record.
+Create.
 
 Exhibit.
 
-Build your personal sneaker museum.
+Decorate your sneaker collection.
