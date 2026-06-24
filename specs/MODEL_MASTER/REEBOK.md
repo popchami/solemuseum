@@ -1,4 +1,4 @@
-# Kick×Kick Model Master: Reebok v1.0
+# Kick×Kick Model Master: Reebok v1.1
 
 ## Purpose
 
@@ -50,26 +50,24 @@ Reebok
 - Question Low
 - Answer IV
 - Answer V
-n- Answer DMX
+- Answer DMX
 
 ### Shaq Line
 
 - Shaqnosis
-- Shaq Attaq
 - Shaq Victory Pump
 
 ### Other Basketball
 
 - BB 4000 II
-- Above The Rim
-n- Kamikaze II
+- Kamikaze II
 
 ## Running Heritage
 
 - DMX Run 10
 - DMX Trail Shadow
 - Premier Road Modern
-n- Zig Kinetica
+- Zig Kinetica
 
 ## Training
 
@@ -89,14 +87,20 @@ n- Zig Kinetica
 
 ## Alias Candidates
 
+```text
 ClubC -> Club C 85
 CL -> Classic Leather
 Pump -> Instapump Fury
 Question -> Question Mid
 Answer -> Answer Series
-Shaq -> Shaqnosis / Shaq Attaq
+Shaq -> Shaqnosis
 DMX -> DMX Run
 Nano -> Nano Series
+```
+
+## Audit Notes
+
+Reebok v1.1 fixes markdown list typos from the previous version.
 
 ## Notes
 
