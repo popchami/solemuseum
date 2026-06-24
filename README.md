@@ -1,152 +1,69 @@
-SoleMuseum
+# Kick×Kick
 
-A digital museum for sneaker collections.
+貼って、飾って、コレクション。
 
-Collect. Record. Exhibit.
+Kick×Kick is a sneaker collection app focused on turning sneakers into digital stickers and displaying them in shelves and boards.
 
----
+## Concept
 
-Overview
+Kick×Kick is not a resale app or an asset management app.
 
-SoleMuseum is a sneaker collection application designed for collectors.
+The core experience is:
 
-The goal is not buying and selling.
+- Collect: スニーカーを登録する
+- Create: ステッカー化する
+- Exhibit: 棚やボードに飾る
 
-The goal is preserving, recording, and exhibiting sneaker collections.
+## Product Direction
 
----
+Collection = 博物館 / 整列展示
 
-Vision
+Sticker = 机 / スクラップブック / 自由配置
 
-Create a personal sneaker museum for every collector.
+靴が主役。
+箱は補助演出。
+PNGは共有ではなく素材化。
 
----
+## Current Source of Truth
 
-Start Here
+All current product decisions are managed under:
 
-All contributors and AI coding assistants must read the following documents before implementation.
+```text
+specs/KICKXKICK_*
+```
 
-Required Reading Order
+Legacy SoleMuseum documents may remain in the repository for history, but they must not be used as implementation source of truth.
 
-1. "docs/DESIGN_SYSTEM.md"
-2. "docs/ARCHITECTURE.md"
-3. "specs/README.md"
-4. "specs/MVP_SPEC.md"
-5. "specs/IMPLEMENTATION_RULES.md"
+## Important Specs
 
-Implementation Rule
+```text
+specs/KICKXKICK_SPEC.md
+specs/KICKXKICK_PRODUCT.md
+specs/KICKXKICK_UI_SPEC.md
+specs/KICKXKICK_DATA.md
+specs/KICKXKICK_DB_SPEC.md
+specs/KICKXKICK_ROUTING_SPEC.md
+specs/KICKXKICK_SPRINT_PLAN.md
+specs/KICKXKICK_SPRINT1_INSTRUCTION.md
+```
 
-All code changes must follow:
+## Next Step
 
-- DESIGN_SYSTEM.md
-- ARCHITECTURE.md
-- All specifications under "/specs"
-- IMPLEMENTATION_RULES.md
+Start Sprint1 using:
 
----
+```text
+specs/KICKXKICK_SPRINT1_INSTRUCTION.md
+```
 
-Current Status
+Sprint1 goal:
 
-Sprint| Status
-Sprint 1| Complete
-Sprint 2| Reviewed
-Sprint 3| Specified
-Sprint 4| Planned
-Sprint 5| Planned
+- Sneaker registration
+- Sneaker detail
+- Main photo
+- TOP5
+- Wear history
+- Simple Home
 
-Current Phase
+## Repository Note
 
-MVP Implementation
-
----
-
-Core Features
-
-Collect
-
-- Register sneakers
-- Edit sneakers
-- Delete sneakers
-- Browse collection
-
-Record
-
-- Purchase information
-- Notes
-- Wear history (planned)
-
-Exhibit
-
-- Main photos
-- Gallery photos
-- MY TOP 5 (planned)
-
----
-
-Technology
-
-- Flutter
-- Dart
-- Riverpod
-- SQLite (Drift)
-- Material 3
-
----
-
-Documentation
-
-Architecture
-
-- docs/ARCHITECTURE.md
-- docs/DEVELOPMENT_WORKFLOW.md
-- docs/DECISIONS.md
-
-Specifications
-
-- specs/README.md
-- specs/MVP_SPEC.md
-- specs/HOME_SCREEN_SPEC.md
-- specs/COLLECTION_SCREEN_SPEC.md
-- specs/SHOE_DETAIL_SCREEN_SPEC.md
-- specs/SHOE_FORM_SCREEN_SPEC.md
-- specs/SETTINGS_SCREEN_SPEC.md
-- specs/DATABASE_SPEC.md
-- specs/NAVIGATION_SPEC.md
-- specs/STATE_MANAGEMENT_SPEC.md
-- specs/PROJECT_STRUCTURE_SPEC.md
-- specs/UI_COMPONENT_SPEC.md
-- specs/IMPLEMENTATION_RULES.md
-- specs/ROADMAP.md
-- specs/RELEASE_CHECKLIST.md
-
----
-
-Roadmap
-
-v0.1
-
-Collection CRUD
-
-v0.2
-
-Photo Exhibition System
-
-v0.3
-
-Wear History
-
-v0.4
-
-Museum Home
-
-v1.0
-
-Public Release
-
----
-
-Product Philosophy
-
-Every sneaker has a story.
-
-SoleMuseum exists to preserve those stories.
+The repository name may still be `solemuseum`, but the current app name and product direction are **Kick×Kick**.
