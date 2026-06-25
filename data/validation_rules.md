@@ -1,0 +1,276 @@
+# Kick×Kick Data Validation Rules v1.0
+
+## Purpose
+
+このファイルは、`data/` 配下のJSONデータを追加・更新する際の検証ルールを定義する。
+
+目的は、ブランド・モデル・Alias・検索キーワードの品質を維持し、検索UXを壊さないことである。
+
+---
+
+## 1. Canonical Name Rule
+
+保存名・表示名は必ず `models.json` の `modelName` を使う。
+
+Aliasや検索キーワードを保存名にしてはいけない。
+
+### OK
+
+```text
+Air Force 1
+Air Jordan 1
+Air Max 95
+GT-2160
+P-6000
+Mexico 66
+Cloud 5
+```
+
+### NG
+
+```text
+AF1
+AJ1
+AM95
+GT2160
+P6000
+Mexico66
+Cloud5
+```
+
+---
+
+## 2. Model ID Rule
+
+`models.json` の `id` は小文字スネークケースで統一する。
+
+形式:
+
+```text
+{brand_id}_{model_slug}
+```
+
+### OK
+
+```text
+nike_air_max_95
+new_balance_990v6
+asics_gt_2160
+air_jordan_1
+adidas_campus_00s
+```
+
+### NG
+
+```text
+NikeAirMax95
+newbalance990v6
+asics_gt2160
+AJ1
+```
+
+---
+
+## 3. Brand ID Rule
+
+`models.json` の `brandId` は必ず `brands.json` に存在すること。
+
+### OK
+
+```text
+brandId: nike
+brandId: new_balance
+brandId: asics
+```
+
+### NG
+
+```text
+brandId: nb
+brandId: jordan
+brandId: nike_sportswear
+```
+
+---
+
+## 4. Alias Rule
+
+Aliasは検索専用。
+
+表示名・保存名には使わない。
+
+### Aliasに入れてよいもの
+
+```text
+AF1
+AJ1
+AM95
+P6000
+GT2160
+NB550
+Campus00s
+SL72
+Kayano14
+```
+
+### Aliasに入れないもの
+
+```text
+Air
+Max
+GEL
+Jordan
+Nike
+New Balance
+```
+
+理由:
+
+```text
+広すぎるAliasは候補を増やしすぎ、サジェスト品質を落とすため。
+```
+
+---
+
+## 5. searchKeywords Rule
+
+searchKeywords は、モデル名・Aliasだけでは拾えない検索を補助する。
+
+### searchKeywordsに入れてよいもの
+
+```text
+95
+990
+2160
+1130
+AirMax95
+エアマックス95
+カヤノ14
+ジーティー2160
+```
+
+### searchKeywordsに入れないもの
+
+```text
+9
+1
+A
+Air
+Max
+GEL
+Cloud
+```
+
+理由:
+
+```text
+1文字だけの数字・英字や広すぎる単語は、不要な候補を増やすため。
+```
+
+---
+
+## 6. Number Search Rule
+
+数字だけで検索されやすいモデルは `search_keywords.json` に数字を入れる。
+
+### OK
+
+```text
+95 -> Air Max 95
+990 -> 990v1〜990v6
+2160 -> GT-2160
+1130 -> GEL-1130
+550 -> 550
+9060 -> 9060
+```
+
+### NG
+
+```text
+9 -> 990v6
+1 -> Air Jordan 1
+```
+
+ただし、`AJ1` のようにブランド内で明確なAliasとして成立する場合は `aliases.json` に入れてよい。
+
+---
+
+## 7. Duplicate Rule
+
+同一モデルを複数IDで登録しない。
+
+### NG
+
+```text
+asics_gt2160
+asics_gt_2160
+```
+
+### OK
+
+```text
+models.json
+id: asics_gt_2160
+modelName: GT-2160
+
+aliases.json
+modelId: asics_gt_2160
+alias: GT2160
+```
+
+---
+
+## 8. Cross File Reference Rule
+
+以下を必ず満たすこと。
+
+```text
+models.json.brandId -> brands.json.brandId に存在する
+aliases.json.modelId -> models.json.id に存在する
+search_keywords.json.modelId -> models.json.id に存在する
+```
+
+参照先が存在しないデータを追加してはいけない。
+
+---
+
+## 9. Free Input Rule
+
+アプリでは候補にないモデルでも自由入力で登録できる。
+
+ただし、自由入力値をマスターデータに追加する場合は、このValidation Rulesを通す。
+
+---
+
+## 10. Review Rule
+
+`data/` を更新したら、必要に応じて以下も更新する。
+
+```text
+specs/MODEL_MASTER_COVERAGE.md
+docs/AUDIT_TRACKER.md
+specs/KICKXKICK_TASK_BOARD.md
+```
+
+---
+
+## 11. Quality Gate
+
+Tier Sブランドは以下を満たすこと。
+
+```text
+Model Coverage: PASS
+Alias: PASS
+searchKeywords: PASS
+Canonical Name: PASS
+```
+
+Tier A以降も、同じ基準で順次育成する。
+
+---
+
+## 12. Final Principle
+
+候補の完全網羅より、ユーザーが登録を完了できることを優先する。
+
+ただし、マスターデータに入れるものは、検索品質を壊さないことを必須条件とする。
