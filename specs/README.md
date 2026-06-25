@@ -23,6 +23,7 @@ KICKXKICK_*
 BRAND_MASTER.md
 MODEL_MASTER/*
 MODEL_MASTER_DATA_SPEC.md
+MODEL_MASTER_COVERAGE.md
 SEARCH_SPEC.md
 SEARCH_DATA_SPEC.md
 ALIAS_MASTER_SPEC.md
@@ -30,6 +31,7 @@ ALIAS_MASTER.md
 REGISTRATION_FLOW_SPEC.md
 REGISTRATION_VALIDATION_SPEC.md
 SEARCH_MVP_TEST_SPEC.md
+../data/*.json
 ```
 
 旧SoleMuseum仕様書が残っていても、実装判断には使わない。
@@ -125,6 +127,7 @@ SEARCH_MVP_TEST_SPEC.md
 BRAND_MASTER.md
 MODEL_MASTER/README.md
 MODEL_MASTER_DATA_SPEC.md
+MODEL_MASTER_COVERAGE.md
 MODEL_MASTER/*.md
 ```
 
@@ -145,9 +148,43 @@ MODEL_MASTER_DATA_SPEC.md
 - searchKeywords
 - 数字検索用キーワード
 
+MODEL_MASTER_COVERAGE.md
+- モデルマスター整備状況
+- Tier別Coverage
+- PASS / WARNING / TODO管理
+
 MODEL_MASTER/*.md
 - ブランド別モデル候補
 - Alias Candidates
+```
+
+### Data Master
+
+```text
+../data/brands.json
+../data/models.json
+../data/aliases.json
+../data/search_keywords.json
+```
+
+役割:
+
+```text
+brands.json
+- Flutterが読み込むブランド実データ
+- brandId / brandName / tier / isEnabled
+
+models.json
+- Flutterが読み込むモデル実データ
+- id / brandId / modelName / category / source
+
+aliases.json
+- Flutterが読み込むAlias実データ
+- modelId / alias
+
+search_keywords.json
+- Flutterが読み込む検索キーワード実データ
+- modelId / keyword
 ```
 
 ### Monetize / Backup
@@ -216,6 +253,10 @@ MODEL_MASTER_DATA_SPEC.md
 REGISTRATION_FLOW_SPEC.md
 REGISTRATION_VALIDATION_SPEC.md
 SEARCH_MVP_TEST_SPEC.md
+../data/brands.json
+../data/models.json
+../data/aliases.json
+../data/search_keywords.json
 ```
 
 Sprint1実装開始時は以下を使う。
