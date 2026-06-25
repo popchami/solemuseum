@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../features/search/screens/search_demo_screen.dart';
 import '../providers/backup_provider.dart';
 import '../providers/brand_provider.dart';
 import '../providers/photo_provider.dart';
@@ -140,6 +141,18 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ],
             ),
+          ),
+          const Divider(),
+          const _SectionTitle(title: '開発'),
+          ListTile(
+            leading: const Icon(Icons.search_outlined),
+            title: const Text('検索デモ'),
+            subtitle: const Text('ブランド・モデル候補の動作を確認します'),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SearchDemoScreen()),
+              );
+            },
           ),
           const Divider(),
           const _SectionTitle(title: 'バックアップ'),
