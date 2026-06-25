@@ -1,88 +1,127 @@
-SoleMuseum Documentation
+# Kick×Kick Documentation
 
-Overview
+## 目的
 
-SoleMuseum is a digital museum for sneaker collections.
+この `docs/` は、Kick×Kickの開発方針・MVP範囲・リリース条件・リリース後の予定をまとめる場所。
 
-Core philosophy:
-
-Collect. Record. Exhibit.
+旧プロジェクト名の表記ではなく、Kick×Kickとして読むこと。
 
 ---
 
-Getting Started
+## 最初に読む文書
 
-If you are new to the project, read documents in the following order:
+Codex / Copilot / ChatGPTで作業を始める場合は、以下の順で読む。
 
-1. "ROADMAP" (ROADMAP.md)
-2. "USER_STORIES" (USER_STORIES.md)
-3. "SCREEN_SPEC" (SCREEN_SPEC.md)
-4. "ARCHITECTURE" (ARCHITECTURE.md)
-5. "CONTRIBUTING" (CONTRIBUTING.md)
-
----
-
-Product
-
-Document| Purpose
-"ROADMAP.md" (ROADMAP.md)| Product roadmap and sprint plan
-"RELEASE_PLAN.md" (RELEASE_PLAN.md)| v1.0 release requirements
-"USER_STORIES.md" (USER_STORIES.md)| Collector experience definition
+1. `docs/HANDOFF_KICKXKICK_MVP_2026-06-25.md`
+2. `docs/HANDOFF_BRAND_MODEL_SEARCH.md`
+3. `docs/MVP_RELEASE_CHECKLIST.md`
+4. `docs/RELEASE_PLAN.md`
+5. `docs/POST_RELEASE.md`
 
 ---
 
-Specifications
+## 今やること
 
-Document| Purpose
-"SCREEN_SPEC.md" (SCREEN_SPEC.md)| Screen specifications
-"../specs/MVP_SPEC.md" (../specs/MVP_SPEC.md)| MVP scope
-"../specs/SPRINT3_SPEC.md" (../specs/SPRINT3_SPEC.md)| Photo system specification
+MVPリリース前は、以下を優先する。
 
----
-
-Architecture
-
-Document| Purpose
-"ARCHITECTURE.md" (ARCHITECTURE.md)| System architecture
-"DECISIONS.md" (DECISIONS.md)| Architecture decisions
-"CONTRIBUTING.md" (CONTRIBUTING.md)| Development rules
-
----
-
-Brand
-
-Document| Purpose
-"BRAND_GUIDELINES.md" (BRAND_GUIDELINES.md)| Brand identity
-"APP_STORE_DESCRIPTION.md" (APP_STORE_DESCRIPTION.md)| Store listing content
+1. `app/` で `flutter pub get`
+2. `flutter analyze`
+3. `flutter run`
+4. DB migration version5確認
+5. 新規登録確認
+6. 編集確認
+7. 詳細画面確認
+8. 写真確認
+9. MY TOP5確認
+10. 着用履歴確認
+11. Collection確認
+12. Home確認
+13. Sticker最小実装確認
 
 ---
 
-Project Management
+## MVP関連文書
 
-Document| Purpose
-"CHANGELOG.md" (CHANGELOG.md)| Version history
-"ISSUES.md" (ISSUES.md)| Open issues
-
----
-
-Current Status
-
-Sprint| Status
-Sprint1| Complete
-Sprint2| Reviewed
-Sprint3| Specified
-Sprint4| Planned
-Sprint5| Planned
+| Document | Purpose |
+|---|---|
+| `HANDOFF_KICKXKICK_MVP_2026-06-25.md` | Kick×Kick本体MVP開発の最新引き継ぎ |
+| `HANDOFF_BRAND_MODEL_SEARCH.md` | ブランド・モデル・検索作業の完了引き継ぎ |
+| `MVP_RELEASE_CHECKLIST.md` | MVPリリース前の確認チェックリスト |
+| `RELEASE_PLAN.md` | Release 1.0の範囲・条件・不可条件 |
+| `POST_RELEASE.md` | MVP後に回す機能・ロードマップ |
 
 ---
 
-v1.0 Goal
+## 開発方針
 
-Allow sneaker collectors to:
+- Kick×Kickとして進める
+- ブランド・モデルFactory作業には戻らない
+- MVPリリースを優先する
+- Riverpod構成を維持する
+- Repository構成を維持する
+- SQLite中心で進める
+- 小さな差分で修正する
+- 各変更後に `flutter analyze` を確認する
+- 新機能は `POST_RELEASE.md` に退避する
 
-- Collect
-- Record
-- Exhibit
-- Preserve
+---
 
-their collection entirely offline.
+## Release 1.0 に含める主な機能
+
+- スニーカー登録
+- スニーカー編集
+- スニーカー詳細
+- ブランド・モデル検索
+- 自由入力ブランド
+- 自由入力モデル
+- メイン写真
+- MY TOP5
+- 着用履歴
+- Collection
+- Home
+- Sticker最小実装
+
+---
+
+## Release 1.0 に含めない主な機能
+
+- Premium課金
+- Google Driveバックアップ
+- クラウド同期
+- ログイン
+- SNS共有
+- AI機能
+- 複数写真ギャラリー
+- 箱管理
+- 高度な統計
+- Sticker自由配置
+- ブランド・モデルFactory拡張
+
+これらは `docs/POST_RELEASE.md` に回す。
+
+---
+
+## 現在の状態
+
+ブランド・モデル・検索作業はいったん終了。
+
+Kick×Kick本体MVP開発は、実機確認・`flutter analyze`・DB migration確認・主要導線確認のフェーズ。
+
+---
+
+## GitHub Issue
+
+MVP確認の中心Issue:
+
+- Issue #23: Kick×Kick MVP本体開発
+
+---
+
+## 最終判断
+
+リリース判断は以下を見る。
+
+- `docs/MVP_RELEASE_CHECKLIST.md`
+- `docs/RELEASE_PLAN.md`
+
+迷った場合は、新機能追加ではなく、起動・analyze・登録導線・実機確認を優先する。
