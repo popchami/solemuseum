@@ -7,10 +7,12 @@ class BrandSearchField extends ConsumerStatefulWidget {
   const BrandSearchField({
     super.key,
     required this.onSelected,
+    this.onTextChanged,
     this.initialText,
   });
 
   final ValueChanged<BrandMaster> onSelected;
+  final ValueChanged<String>? onTextChanged;
   final String? initialText;
 
   @override
@@ -51,6 +53,7 @@ class _BrandSearchFieldState extends ConsumerState<BrandSearchField> {
           textInputAction: TextInputAction.next,
           onChanged: (value) {
             setState(() => _query = value);
+            widget.onTextChanged?.call(value);
           },
         ),
         const SizedBox(height: 8),
@@ -70,6 +73,7 @@ class _BrandSearchFieldState extends ConsumerState<BrandSearchField> {
                   onTap: () {
                     _controller.text = suggestion.brand.brandName;
                     setState(() => _query = suggestion.brand.brandName);
+                    widget.onTextChanged?.call(suggestion.brand.brandName);
                     widget.onSelected(suggestion.brand);
                     FocusScope.of(context).nextFocus();
                   },
