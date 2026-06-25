@@ -8,11 +8,13 @@ class ModelSearchField extends ConsumerStatefulWidget {
     super.key,
     required this.brandId,
     required this.onSelected,
+    this.onTextChanged,
     this.initialText,
   });
 
   final String? brandId;
   final ValueChanged<ModelSuggestion> onSelected;
+  final ValueChanged<String>? onTextChanged;
   final String? initialText;
 
   @override
@@ -36,6 +38,7 @@ class _ModelSearchFieldState extends ConsumerState<ModelSearchField> {
     if (oldWidget.brandId != widget.brandId) {
       _controller.clear();
       setState(() => _query = '');
+      widget.onTextChanged?.call('');
     }
   }
 
@@ -64,6 +67,7 @@ class _ModelSearchFieldState extends ConsumerState<ModelSearchField> {
           textInputAction: TextInputAction.next,
           onChanged: (value) {
             setState(() => _query = value);
+            widget.onTextChanged?.call(value);
           },
         ),
         const SizedBox(height: 8),
@@ -76,11 +80,9 @@ class _ModelSearchFieldState extends ConsumerState<ModelSearchField> {
                 brandId: brandId,
                 query: _query,
               );
-
               if (suggestions.isEmpty) {
                 return const _SearchHint(text: '候補がありません。自由入力できます。');
               }
-
               return _SuggestionList(
                 children: suggestions.map((suggestion) {
                   return ListTile(
@@ -90,6 +92,7 @@ class _ModelSearchFieldState extends ConsumerState<ModelSearchField> {
                     onTap: () {
                       _controller.text = suggestion.canonicalName;
                       setState(() => _query = suggestion.canonicalName);
+                      widget.onTextChanged?.call(suggestion.canonicalName);
                       widget.onSelected(suggestion);
                       FocusScope.of(context).nextFocus();
                     },
@@ -98,21 +101,20 @@ class _ModelSearchFieldState extends ConsumerState<ModelSearchField> {
               );
             },
             loading: () => const _SearchHint(text: 'モデル候補を読み込み中...'),
-            error: (error, stackTrace) => _SearchHint(text: 'モデル候補を読み込めませんでした: $error'),
+            error: (_, __) => const _SearchHint(text: 'モデル候補を読み込めませんでした'),
           ),
       ],
     );
   }
 
   String _subtitleFor(ModelSuggestion suggestion) {
-    switch (suggestion.matchedBy) {
-      case 'alias':
-        return 'Alias: ${suggestion.matchedText}';
-      case 'searchKeyword':
-        return 'Keyword: ${suggestion.matchedText}';
-      default:
-        return suggestion.model.category;
+    if (suggestion.matchedBy == 'alias') {
+      return 'Alias: ${suggestion.matchedText}';
     }
+    if (suggestion.matchedBy == 'searchKeyword') {
+      return 'Keyword: ${suggestion.matchedText}';
+    }
+    return suggestion.model.category;
   }
 }
 
