@@ -1,4 +1,4 @@
-# Kick×Kick Task Board v1.3
+# Kick×Kick Task Board v1.4
 
 ## 目的
 
@@ -51,6 +51,8 @@ Kick×Kick開発の現在地を管理する。
 - [x] data/models.json 作成
 - [x] data/aliases.json 作成
 - [x] data/search_keywords.json 作成
+- [x] data validation script 作成
+- [x] data quality GitHub Actions 作成
 - [ ] Tier S data JSON監査
 - [ ] Canonical Name監査
 - [ ] searchKeywords監査
@@ -129,6 +131,7 @@ MODEL_MASTER/README.md
 ../data/models.json
 ../data/aliases.json
 ../data/search_keywords.json
+../docs/KICKXKICK_RELEASE_PRIORITY.md
 ```
 
 ### Photo
@@ -263,13 +266,13 @@ Premium / Backup / Export
 現在やること:
 
 ```text
-data JSON監査・Tier S補強
+Kick×Kick MVP実装準備
 ```
 
 次:
 
 ```text
-Search / Registration 実装準備
+Search / Registration 実装
 ```
 
 その次:
@@ -280,7 +283,10 @@ Sprint1実装
 
 最重要ルール:
 
-Kick×Kickは管理アプリではない。
+Kick×Kickの目的は、Factoryではなくアプリをリリースすること。
+
+Factory is support.
+Kick×Kick release is the goal.
 
 Collect.
 Create.
