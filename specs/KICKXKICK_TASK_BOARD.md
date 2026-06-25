@@ -1,4 +1,4 @@
-# Kick×Kick Task Board v1.5
+# Kick×Kick Task Board v1.6
 
 ## 目的
 
@@ -12,6 +12,7 @@ Kick×Kick開発の現在地を管理する。
 
 ```text
 ブランド・モデル・検索基盤はいったん終了。
+Tier S data JSON監査・検索補助の追加補強も完了。
 検索・登録はMVPリリース可能ライン。
 次はKick×Kick本体のMVP実装を進める。
 ```
@@ -82,16 +83,18 @@ PAUSED / MVP READY
 - [x] 自由入力ブランド保存
 - [x] data validation script 作成
 - [x] data quality GitHub Actions 作成
+- [x] Tier S data JSON監査
+- [x] Canonical Name監査
+- [x] searchKeywords監査
+- [x] Alias横断監査
+- [x] data/*.json と app/assets/data/*.json の手動同期
 
 保留:
 
-- [ ] Tier S data JSON監査
-- [ ] Canonical Name監査
-- [ ] searchKeywords監査
-- [ ] Alias横断監査
 - [ ] Search MVPテストケース実施
 - [ ] Plannedブランド追加
 - [ ] data/*.json と app/assets/data/*.json の同期自動化
+- [ ] Tier A/B/Cブランド追加
 
 ---
 
