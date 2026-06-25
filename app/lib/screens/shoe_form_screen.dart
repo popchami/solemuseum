@@ -54,6 +54,7 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
 
   int _currentStep = 0;
   int? _brandId;
+  String _brandText = '';
   String? _selectedSize;
   String? _selectedColor;
   DateTime? _purchaseDate;
@@ -96,7 +97,10 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
   }
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate() || _brandId == null) {
+    final modelName = _modelController.text.trim();
+    if (!_formKey.currentState!.validate() ||
+        (_brandId == null && _brandText.trim().isEmpty) ||
+        modelName.isEmpty) {
       setState(() => _currentStep = 1);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('ブランドとモデル名を入力してください')),
@@ -105,20 +109,24 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
     }
 
     setState(() => _saving = true);
-    final repository = ref.read(shoeRepositoryProvider);
+    final shoeRepository = ref.read(shoeRepositoryProvider);
+    final brandRepository = ref.read(brandRepositoryProvider);
     final priceText = _priceController.text.trim();
     final price = priceText.isEmpty ? null : int.tryParse(priceText);
 
     try {
+      final resolvedBrandId = _brandId ??
+          (await brandRepository.findOrCreateByName(_brandText.trim())).id!;
+
       late final int shoeId;
       if (_isEditing) {
         final current = widget.shoe!;
         shoeId = current.id!;
-        await repository.updateShoe(
+        await shoeRepository.updateShoe(
           Shoe(
             id: current.id,
-            brandId: _brandId!,
-            modelName: _modelController.text.trim(),
+            brandId: resolvedBrandId,
+            modelName: modelName,
             size: _selectedSize,
             color: _selectedColor,
             purchaseDate: _purchaseDate,
@@ -132,10 +140,10 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
           ),
         );
       } else {
-        shoeId = await repository.insertShoe(
+        shoeId = await shoeRepository.insertShoe(
           Shoe.create(
-            brandId: _brandId!,
-            modelName: _modelController.text.trim(),
+            brandId: resolvedBrandId,
+            modelName: modelName,
             size: _selectedSize,
             color: _selectedColor,
             purchaseDate: _purchaseDate,
@@ -151,6 +159,7 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
         await _saveMainPhoto(shoeId, _pendingMainPhoto!);
       }
 
+      ref.invalidate(brandsProvider);
       ref.invalidate(shoesProvider);
       ref.invalidate(shoeByIdProvider(shoeId));
       if (mounted) {
@@ -295,19 +304,23 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
   }
 
   Widget _buildBasicInfo(List<Brand> brands) {
+    final initialBrandName = _brandNameForId(brands, _brandId);
+    if (_brandText.isEmpty && initialBrandName != null) {
+      _brandText = initialBrandName;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SneakerMasterPicker(
-          initialBrandName: _brandNameForId(brands, _brandId),
+          initialBrandName: initialBrandName,
           initialModelName: _modelController.text,
           onChanged: (selection) {
             final matchedBrand = _findLocalBrand(brands, selection.brandName);
             setState(() {
-              _brandId = matchedBrand?.id ?? _brandId;
-              if (selection.modelName.trim().isNotEmpty) {
-                _modelController.text = selection.modelName.trim();
-              }
+              _brandText = selection.brandName;
+              _brandId = matchedBrand?.id;
+              _modelController.text = selection.modelName;
             });
           },
         ),
@@ -316,7 +329,7 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
           initialValue: _brandId,
           decoration: const InputDecoration(
             labelText: '保存するブランド',
-            helperText: '候補で合わない場合はここで選び直せます',
+            helperText: '自由入力の場合は未選択のままで保存できます',
           ),
           items: brands
               .map(
@@ -326,8 +339,13 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
                 ),
               )
               .toList(),
-          onChanged: (value) => setState(() => _brandId = value),
-          validator: (value) => value == null ? 'ブランドを選択してください' : null,
+          onChanged: (value) {
+            final brandName = _brandNameForId(brands, value) ?? _brandText;
+            setState(() {
+              _brandId = value;
+              _brandText = brandName;
+            });
+          },
         ),
         const SizedBox(height: 16),
         TextFormField(
