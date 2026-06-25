@@ -1,10 +1,26 @@
-# Kick×Kick Task Board v1.4
+# Kick×Kick Task Board v1.5
 
 ## 目的
 
 Kick×Kick開発の現在地を管理する。
 
 スマホのみ開発でも、次に何をやるべきか迷わない状態を維持する。
+
+---
+
+# Current Status
+
+```text
+ブランド・モデル・検索基盤はいったん終了。
+検索・登録はMVPリリース可能ライン。
+次はKick×Kick本体のMVP実装を進める。
+```
+
+引き継ぎ:
+
+```text
+docs/HANDOFF_BRAND_MODEL_SEARCH.md
+```
 
 ---
 
@@ -37,6 +53,12 @@ Kick×Kick開発の現在地を管理する。
 
 ## Master Data / Search
 
+状態:
+
+```text
+PAUSED / MVP READY
+```
+
 - [x] BRAND_MASTER.md 作成
 - [x] MODEL_MASTER 運用ルール作成
 - [x] MODEL_MASTER_DATA_SPEC.md 作成
@@ -51,14 +73,25 @@ Kick×Kick開発の現在地を管理する。
 - [x] data/models.json 作成
 - [x] data/aliases.json 作成
 - [x] data/search_keywords.json 作成
+- [x] app/assets/data/*.json 登録
+- [x] Search Engine 実装
+- [x] Search Repository / Provider 実装
+- [x] Brand / Model Search Widget 実装
+- [x] Search Demo Screen 実装
+- [x] ShoeFormScreen 接続
+- [x] 自由入力ブランド保存
 - [x] data validation script 作成
 - [x] data quality GitHub Actions 作成
+
+保留:
+
 - [ ] Tier S data JSON監査
 - [ ] Canonical Name監査
 - [ ] searchKeywords監査
 - [ ] Alias横断監査
 - [ ] Search MVPテストケース実施
 - [ ] Plannedブランド追加
+- [ ] data/*.json と app/assets/data/*.json の同期自動化
 
 ---
 
@@ -79,40 +112,49 @@ NEXT
 ### Foundation
 
 - [ ] Flutter起動確認
-- [ ] Material3適用
-- [ ] Riverpod適用
-- [ ] Bottom Navigation
-- [ ] FAB
+- [ ] flutter analyze
+- [ ] Material3確認
+- [ ] Riverpod確認
+- [ ] Bottom Navigation確認
+- [ ] FAB確認
 
 ### Sneaker
 
-- [ ] Sneaker Model
-- [ ] Sneaker Repository
-- [ ] Sneaker Provider
-- [ ] Sneaker Form
-- [ ] Sneaker Detail
+- [ ] Sneaker Model確認
+- [ ] Sneaker Repository確認
+- [ ] Sneaker Provider確認
+- [ ] ShoeForm 実機確認
+- [ ] Shoe Detail確認
 
 ### Search / Registration
 
-- [ ] Load data/brands.json
-- [ ] Load data/models.json
-- [ ] Load data/aliases.json
-- [ ] Load data/search_keywords.json
-- [ ] Brand search model
-- [ ] Model search model
-- [ ] Alias search model
-- [ ] Search normalization
-- [ ] Brand-first model suggestion
-- [ ] Alphabetical suggestion limit 5
-- [ ] Number search via searchKeywords
-- [ ] Canonical modelName save
-- [ ] Brand candidate UI
-- [ ] Model candidate UI
-- [ ] Brand change resets model
-- [ ] Save validation for brand/model consistency
-- [ ] Free input fallback
-- [ ] Registration flow integration
-- [ ] Search MVP test cases
+状態:
+
+```text
+IMPLEMENTED / NEEDS RUNTIME CHECK
+```
+
+- [x] Load app/assets/data/brands.json
+- [x] Load app/assets/data/models.json
+- [x] Load app/assets/data/aliases.json
+- [x] Load app/assets/data/search_keywords.json
+- [x] Brand search model
+- [x] Model search model
+- [x] Alias search model
+- [x] Search normalization
+- [x] Brand-first model suggestion
+- [x] Alphabetical suggestion limit 5
+- [x] Number search via searchKeywords
+- [x] Canonical modelName save
+- [x] Brand candidate UI
+- [x] Model candidate UI
+- [x] Brand change resets model
+- [x] Free input fallback
+- [x] Registration flow integration
+- [x] Free input brand local save
+- [ ] Search MVP test cases 実施
+- [ ] 実機で登録保存確認
+- [ ] 編集画面で誤入力修正確認
 
 参照仕様:
 
@@ -132,12 +174,14 @@ MODEL_MASTER/README.md
 ../data/aliases.json
 ../data/search_keywords.json
 ../docs/KICKXKICK_RELEASE_PRIORITY.md
+../docs/HANDOFF_BRAND_MODEL_SEARCH.md
 ```
 
 ### Photo
 
 - [ ] 写真登録
 - [ ] 写真表示
+- [ ] 写真削除
 
 ### TOP5
 
@@ -257,7 +301,7 @@ Premium / Backup / Export
 - [ ] 自由入力fallback確認
 - [ ] ブランド変更時モデルリセット確認
 - [ ] 正式modelName保存確認
-- [ ] data JSON読み込み確認
+- [ ] app/assets/data JSON読み込み確認
 
 ---
 
@@ -266,27 +310,29 @@ Premium / Backup / Export
 現在やること:
 
 ```text
-Kick×Kick MVP実装準備
+Kick×Kick本体MVP実装
 ```
 
 次:
 
 ```text
-Search / Registration 実装
+登録画面の実機確認 / flutter analyze
 ```
 
 その次:
 
 ```text
-Sprint1実装
+詳細画面・写真・TOP5
 ```
 
 最重要ルール:
 
-Kick×Kickの目的は、Factoryではなくアプリをリリースすること。
-
+```text
 Factory is support.
 Kick×Kick release is the goal.
+```
+
+ブランド・モデル・検索は一旦終了。
 
 Collect.
 Create.
