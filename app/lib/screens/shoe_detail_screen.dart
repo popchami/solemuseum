@@ -25,9 +25,10 @@ class ShoeDetailScreen extends ConsumerWidget {
     Shoe shoe,
   ) async {
     final shouldSelect = shoe.topOrder == null;
-    final updated = await ref
-        .read(shoeRepositoryProvider)
-        .setTopFive(shoe.id!, shouldSelect);
+    final updated = await ref.read(shoeRepositoryProvider).setTopFive(
+          shoe.id!,
+          shouldSelect,
+        );
 
     if (updated) {
       ref.invalidate(shoesProvider);
@@ -42,29 +43,18 @@ class ShoeDetailScreen extends ConsumerWidget {
                 ? shouldSelect
                     ? 'MY TOP 5に追加しました'
                     : 'MY TOP 5から外しました'
-                : shouldSelect
-                    ? 'MY TOP 5は5足までです'
-                    : 'MY TOP 5の更新に失敗しました',
+                : 'MY TOP 5は5足までです',
           ),
         ),
       );
     }
   }
 
-  Future<void> _addMainPhoto(
+  Future<void> _replaceMainPhoto(
     BuildContext context,
     WidgetRef ref,
     Shoe shoe,
   ) async {
-    final repository = ref.read(photoRepositoryProvider);
-    final currentMainPhoto = await repository.getMainPhoto(shoe.id!);
-    if (currentMainPhoto != null && context.mounted) {
-      final confirmed = await _confirmMainPhotoReplacement(context);
-      if (confirmed != true) {
-        return;
-      }
-    }
-
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile == null) {
       return;
@@ -76,99 +66,19 @@ class ShoeDetailScreen extends ConsumerWidget {
             shoeId: shoe.id!,
             photoType: PhotoType.main,
           );
-
-      final previousPhotos = await repository.replaceMainPhoto(
-        Photo.create(
-          shoeId: shoe.id!,
-          photoType: PhotoType.main,
-          filePath: filePath,
-        ),
-      );
-
-      for (final previousPhoto in previousPhotos) {
-        try {
-          await ref
-              .read(photoStorageServiceProvider)
-              .deletePhotoFile(previousPhoto.filePath);
-        } catch (_) {
-          // Database replacement already succeeded; cleanup is best effort.
-        }
-      }
-
+      await ref.read(photoRepositoryProvider).replaceMainPhoto(
+            Photo.create(
+              shoeId: shoe.id!,
+              photoType: PhotoType.main,
+              filePath: filePath,
+            ),
+          );
       ref.invalidate(photosByShoeIdProvider(shoe.id!));
       ref.invalidate(mainPhotoProvider(shoe.id!));
-
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('メイン写真を更新しました')),
-        );
-      }
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('写真の追加に失敗しました')),
-        );
-      }
-    }
-  }
-
-  Future<bool?> _confirmMainPhotoReplacement(BuildContext context) {
-    return showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('メイン写真を変更しますか？'),
-        content: const Text('新しい写真を選ぶと、現在のメイン写真は削除されます。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('キャンセル'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('写真を変更'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _deleteShoe(
-    BuildContext context,
-    WidgetRef ref,
-    Shoe shoe,
-  ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('削除しますか？'),
-        content: const Text('このスニーカーを削除しますか？\nこの操作は取り消せません。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('キャンセル'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('削除'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed != true) {
-      return;
-    }
-
-    try {
-      await ref.read(shoeRepositoryProvider).deleteShoe(shoe.id!);
-      ref.invalidate(shoesProvider);
-      if (context.mounted) {
-        Navigator.of(context).pop();
-      }
-    } catch (_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('削除に失敗しました')),
+          const SnackBar(content: Text('写真の更新に失敗しました')),
         );
       }
     }
@@ -189,7 +99,11 @@ class ShoeDetailScreen extends ConsumerWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text(shoe.modelName),
+            title: Text(
+              shoe.displayTitle?.isNotEmpty == true
+                  ? shoe.displayTitle!
+                  : shoe.modelName,
+            ),
             actions: [
               IconButton(
                 tooltip: shoe.topOrder == null ? 'MY TOP 5に追加' : 'MY TOP 5から外す',
@@ -211,24 +125,20 @@ class ShoeDetailScreen extends ConsumerWidget {
                   ref.invalidate(shoeByIdProvider(shoeId));
                 },
               ),
-              IconButton(
-                icon: const Icon(Icons.delete_outline),
-                onPressed: () => _deleteShoe(context, ref, shoe),
-              ),
             ],
           ),
           body: brandsAsync.when(
             data: (brands) => _DetailBody(
               shoe: shoe,
               brand: _findBrand(brands, shoe.brandId),
-              onAddMainPhoto: () => _addMainPhoto(context, ref, shoe),
+              onReplaceMainPhoto: () => _replaceMainPhoto(context, ref, shoe),
               onToggleTopFive: () => _toggleTopFive(context, ref, shoe),
             ),
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (_, __) => _DetailBody(
               shoe: shoe,
               brand: null,
-              onAddMainPhoto: () => _addMainPhoto(context, ref, shoe),
+              onReplaceMainPhoto: () => _replaceMainPhoto(context, ref, shoe),
               onToggleTopFive: () => _toggleTopFive(context, ref, shoe),
             ),
           ),
@@ -252,13 +162,13 @@ class ShoeDetailScreen extends ConsumerWidget {
 class _DetailBody extends ConsumerWidget {
   final Shoe shoe;
   final Brand? brand;
-  final VoidCallback onAddMainPhoto;
+  final VoidCallback onReplaceMainPhoto;
   final VoidCallback onToggleTopFive;
 
   const _DetailBody({
     required this.shoe,
     required this.brand,
-    required this.onAddMainPhoto,
+    required this.onReplaceMainPhoto,
     required this.onToggleTopFive,
   });
 
@@ -272,7 +182,7 @@ class _DetailBody extends ConsumerWidget {
         mainPhotoAsync.when(
           data: (photo) => _MainPhoto(
             photo: photo,
-            onAddOrChange: onAddMainPhoto,
+            onAddOrChange: onReplaceMainPhoto,
           ),
           loading: () => const _PhotoPlaceholder(label: '写真を読み込み中'),
           error: (_, __) => const _PhotoPlaceholder(label: '写真を読み込めませんでした'),
@@ -282,7 +192,9 @@ class _DetailBody extends ConsumerWidget {
           child: ListTile(
             leading: const Icon(Icons.emoji_events_outlined),
             title: Text(shoe.topOrder == null ? 'MY TOP 5に追加' : 'MY TOP 5登録済み'),
-            subtitle: Text(shoe.topOrder == null ? 'Home上部に表示する5足へ登録します' : 'No. ${shoe.topOrder}'),
+            subtitle: Text(
+              shoe.topOrder == null ? 'Home上部に表示する5足へ登録します' : 'No. ${shoe.topOrder}',
+            ),
             trailing: const Icon(Icons.chevron_right),
             onTap: onToggleTopFive,
           ),
@@ -292,7 +204,10 @@ class _DetailBody extends ConsumerWidget {
         const SizedBox(height: 24),
         _InfoTile(label: 'ブランド', value: brand?.name ?? 'Unknown'),
         _InfoTile(label: 'アーカイブ番号', value: shoe.archiveNumber),
+        _InfoTile(label: 'Display Title', value: shoe.displayTitle),
         _InfoTile(label: 'モデル名', value: shoe.modelName),
+        _InfoTile(label: 'ステッカーテキスト', value: shoe.stickerText),
+        _InfoTile(label: '状態', value: shoe.statusLabel),
         _InfoTile(label: 'サイズ', value: shoe.size),
         _InfoTile(label: 'カラー', value: shoe.color),
         _InfoTile(label: '購入日', value: _formatDate(shoe.purchaseDate)),
@@ -394,20 +309,7 @@ class _PhotoPlaceholder extends StatelessWidget {
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.image_outlined,
-              size: 64,
-              color: Theme.of(context).colorScheme.outline,
-            ),
-            const SizedBox(height: 12),
-            Text(label),
-          ],
-        ),
-      ),
+      child: Center(child: Text(label)),
     );
   }
 }
