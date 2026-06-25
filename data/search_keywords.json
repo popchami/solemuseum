@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.1",
   "updatedAt": "2026-06-25",
   "items": [
     {"modelId":"nike_air_force_1","keyword":"エアフォース"},
@@ -24,13 +24,13 @@
     {"modelId":"nike_pegasus","keyword":"ペガサス"},
     {"modelId":"nike_tc_7900","keyword":"7900"},
 
-    {"modelId":"air_jordan_1","keyword":"1"},
-    {"modelId":"air_jordan_3","keyword":"3"},
-    {"modelId":"air_jordan_4","keyword":"4"},
     {"modelId":"air_jordan_11","keyword":"11"},
     {"modelId":"air_jordan_12","keyword":"12"},
     {"modelId":"air_jordan_13","keyword":"13"},
     {"modelId":"air_jordan_14","keyword":"14"},
+    {"modelId":"air_jordan_1","keyword":"Jordan1"},
+    {"modelId":"air_jordan_3","keyword":"Jordan3"},
+    {"modelId":"air_jordan_4","keyword":"Jordan4"},
     {"modelId":"air_jordan_1","keyword":"ジョーダン1"},
     {"modelId":"air_jordan_4","keyword":"ジョーダン4"},
     {"modelId":"air_jordan_11","keyword":"ジョーダン11"},
