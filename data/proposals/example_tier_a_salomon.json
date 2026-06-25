@@ -1,0 +1,42 @@
+{
+  "version": "0.1.0",
+  "createdAt": "2026-06-25",
+  "scope": "example_tier_a_salomon",
+  "status": "proposal",
+  "brands": [
+    {
+      "brandId": "salomon",
+      "brandName": "Salomon",
+      "tier": "A",
+      "isEnabled": true
+    }
+  ],
+  "models": [
+    {
+      "id": "salomon_xt_6",
+      "brandId": "salomon",
+      "modelName": "XT-6",
+      "category": "trail",
+      "source": "master"
+    }
+  ],
+  "aliases": [
+    {
+      "modelId": "salomon_xt_6",
+      "alias": "XT6"
+    }
+  ],
+  "searchKeywords": [
+    {
+      "modelId": "salomon_xt_6",
+      "keyword": "XT-6"
+    }
+  ],
+  "audit": {
+    "risk": "low",
+    "notes": [
+      "Example proposal for AI Data Factory flow.",
+      "Do not merge as production data without review."
+    ]
+  }
+}
