@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../features/search/search.dart';
 import '../models/brand.dart';
 import '../models/photo.dart';
 import '../models/shoe.dart';
@@ -295,10 +296,28 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
 
   Widget _buildBasicInfo(List<Brand> brands) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SneakerMasterPicker(
+          initialBrandName: _brandNameForId(brands, _brandId),
+          initialModelName: _modelController.text,
+          onChanged: (selection) {
+            final matchedBrand = _findLocalBrand(brands, selection.brandName);
+            setState(() {
+              _brandId = matchedBrand?.id ?? _brandId;
+              if (selection.modelName.trim().isNotEmpty) {
+                _modelController.text = selection.modelName.trim();
+              }
+            });
+          },
+        ),
+        const SizedBox(height: 16),
         DropdownButtonFormField<int>(
           initialValue: _brandId,
-          decoration: const InputDecoration(labelText: 'ブランド'),
+          decoration: const InputDecoration(
+            labelText: '保存するブランド',
+            helperText: '候補で合わない場合はここで選び直せます',
+          ),
           items: brands
               .map(
                 (brand) => DropdownMenuItem<int>(
@@ -313,12 +332,33 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
         const SizedBox(height: 16),
         TextFormField(
           controller: _modelController,
-          decoration: const InputDecoration(labelText: 'モデル名'),
+          decoration: const InputDecoration(
+            labelText: '保存するモデル名',
+            helperText: '候補がない場合は自由入力できます',
+          ),
           validator: (value) =>
               value == null || value.trim().isEmpty ? 'モデル名を入力してください' : null,
         ),
       ],
     );
+  }
+
+  Brand? _findLocalBrand(List<Brand> brands, String brandName) {
+    final normalized = brandName.trim().toLowerCase();
+    for (final brand in brands) {
+      if (brand.name.trim().toLowerCase() == normalized) {
+        return brand;
+      }
+    }
+    return null;
+  }
+
+  String? _brandNameForId(List<Brand> brands, int? brandId) {
+    if (brandId == null) return null;
+    for (final brand in brands) {
+      if (brand.id == brandId) return brand.name;
+    }
+    return null;
   }
 
   Widget _buildAppearance() {
