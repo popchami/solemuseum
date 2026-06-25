@@ -1,4 +1,4 @@
-# Kick×Kick Task Board v1.2
+# Kick×Kick Task Board v1.3
 
 ## 目的
 
@@ -47,7 +47,11 @@ Kick×Kick開発の現在地を管理する。
 - [x] REGISTRATION_FLOW_SPEC.md 作成
 - [x] REGISTRATION_VALIDATION_SPEC.md 作成
 - [x] SEARCH_MVP_TEST_SPEC.md 作成
-- [ ] Tier Sモデルマスター育成
+- [x] data/brands.json 作成
+- [x] data/models.json 作成
+- [x] data/aliases.json 作成
+- [x] data/search_keywords.json 作成
+- [ ] Tier S data JSON監査
 - [ ] Canonical Name監査
 - [ ] searchKeywords監査
 - [ ] Alias横断監査
@@ -88,6 +92,10 @@ NEXT
 
 ### Search / Registration
 
+- [ ] Load data/brands.json
+- [ ] Load data/models.json
+- [ ] Load data/aliases.json
+- [ ] Load data/search_keywords.json
 - [ ] Brand search model
 - [ ] Model search model
 - [ ] Alias search model
@@ -117,6 +125,10 @@ REGISTRATION_VALIDATION_SPEC.md
 SEARCH_MVP_TEST_SPEC.md
 BRAND_MASTER.md
 MODEL_MASTER/README.md
+../data/brands.json
+../data/models.json
+../data/aliases.json
+../data/search_keywords.json
 ```
 
 ### Photo
@@ -242,6 +254,7 @@ Premium / Backup / Export
 - [ ] 自由入力fallback確認
 - [ ] ブランド変更時モデルリセット確認
 - [ ] 正式modelName保存確認
+- [ ] data JSON読み込み確認
 
 ---
 
@@ -250,7 +263,7 @@ Premium / Backup / Export
 現在やること:
 
 ```text
-Tier Sモデルマスター育成
+data JSON監査・Tier S補強
 ```
 
 次:
