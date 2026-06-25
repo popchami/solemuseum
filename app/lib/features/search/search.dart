@@ -4,3 +4,6 @@ export 'search_normalizer.dart';
 export 'search_providers.dart';
 export 'search_repository.dart';
 export 'search_service.dart';
+export 'widgets/brand_search_field.dart';
+export 'widgets/model_search_field.dart';
+export 'widgets/sneaker_master_picker.dart';
