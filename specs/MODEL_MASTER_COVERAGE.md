@@ -1,4 +1,4 @@
-# Kick×Kick Model Master Coverage v1.2
+# Kick×Kick Model Master Coverage v1.3
 
 ## Purpose
 
@@ -51,6 +51,17 @@ BLOCKED
 | adidas | 12 | PASS | PASS | PASS | PASS | PASS | Samba / Gazelle / Campus / Forum / Adimatic / Ultraboost などを補強済み。 |
 | New Balance | 20 | PASS | PASS | PASS | PASS | PASS | 530 / 550 / 574 / 9060 / 990v1〜v6 / 2002R / 1906R を補強済み。 |
 | ASICS | 12 | PASS | PASS | PASS | PASS | PASS | GT-2160 / GEL-1130 / GEL-Kayano 14 / GEL-NYC / Novablast / Superblast などを補強済み。 |
+
+---
+
+## Tier A Coverage
+
+| Brand | Priority A Models | Model Coverage | Alias | searchKeywords | Canonical Name | Status | Notes |
+|---|---:|---:|---|---|---|---|---|
+| PUMA | 6 | PASS | PASS | PASS | PASS | PASS | Suede / Palermo / Speedcat / Clyde / RS-X / Basket を高確度で追加。 |
+| Converse | 6 | PASS | PASS | PASS | PASS | PASS | Chuck Taylor All Star / Chuck 70 / One Star / Jack Purcell / Weapon / Run Star Hike を追加。 |
+| Vans | 6 | PASS | PASS | PASS | PASS | PASS | Old Skool / Authentic / Classic Slip-On / Sk8-Hi / Era / Knu Skool を追加。 |
+| Reebok | 6 | PASS | PASS | PASS | PASS | PASS | Club C / Classic Leather / Instapump Fury / Workout Plus / Freestyle / Question を追加。 |
 
 ---
 
@@ -155,6 +166,54 @@ Japan S
 
 ---
 
+## Tier A Priority Model Targets
+
+### PUMA
+
+```text
+Suede
+Palermo
+Speedcat
+Clyde
+RS-X
+Basket
+```
+
+### Converse
+
+```text
+Chuck Taylor All Star
+Chuck 70
+One Star
+Jack Purcell
+Weapon
+Run Star Hike
+```
+
+### Vans
+
+```text
+Old Skool
+Authentic
+Classic Slip-On
+Sk8-Hi
+Era
+Knu Skool
+```
+
+### Reebok
+
+```text
+Club C
+Classic Leather
+Instapump Fury
+Workout Plus
+Freestyle
+Question
+```
+
+---
+
 ## Review Checklist
 
 各モデルは以下を満たすこと。
@@ -166,43 +225,6 @@ Japan S
 - searchKeywords に広すぎる語を入れていない
 - brandId が正しい
 - 同一モデルが重複登録されていない
-```
-
----
-
-## Good Data Example
-
-```json
-{
-  "id": "nike_air_max_95",
-  "brandId": "nike",
-  "brandName": "Nike",
-  "modelName": "Air Max 95",
-  "aliases": ["AM95", "Airmax95"],
-  "searchKeywords": ["95", "AirMax95", "エアマックス95"],
-  "category": "lifestyle",
-  "source": "master"
-}
-```
-
----
-
-## Bad Data Example
-
-```json
-{
-  "modelName": "Air Max 95",
-  "aliases": [],
-  "searchKeywords": ["Air", "Max", "9"]
-}
-```
-
-理由:
-
-```text
-- Alias不足
-- Air / Max が広すぎる
-- 9 が広すぎる
 ```
 
 ---
@@ -221,6 +243,12 @@ Japan S
 - app/assets/data/aliases.json と app/assets/data/search_keywords.json を同期
 - Tier S 5ブランドをMVP基準でPASSに更新
 - 低確度モデル追加は行わず、既存Tier Sモデルの検索補助を補強
+
+2026-06-26 v0.2.0
+- Tier A 4ブランドを追加
+- PUMA / Converse / Vans / Reebok の代表モデルを各6件追加
+- Tier A Alias / searchKeywords を追加
+- 低確度モデル、色名、コラボ名、広すぎる検索語は追加なし
 ```
 
 ---
@@ -228,17 +256,18 @@ Japan S
 ## Next Work
 
 ```text
-1. Search MVPテストケースを実機またはFlutterテストで実施
-2. data/*.json と app/assets/data/*.json の同期自動化
-3. Tier Aブランド候補を別PR/別作業で追加検討
-4. Tier Sの追加モデルは実ユーザー入力ログが溜まってから判断
+1. app/assets/data/aliases.json の同期更新
+2. Search MVPテストケースを実機またはFlutterテストで実施
+3. data/*.json と app/assets/data/*.json の同期自動化
+4. Tier B/Cブランド候補を別作業で追加検討
+5. Tier S/Aの追加モデルは実ユーザー入力ログが溜まってから判断
 ```
 
 ---
 
 ## Quality Goal
 
-Tier S ブランドについて、ユーザーが以下の入力で目的モデルへ到達できること。
+Tier S / Tier A ブランドについて、ユーザーが以下の入力で目的モデルへ到達できること。
 
 ```text
 95 -> Air Max 95
@@ -261,4 +290,12 @@ Campus -> Campus 00s
 ForumLow -> Forum Low
 フォーラムロー -> Forum Low
 ゲルNYC -> GEL-NYC
+Suede -> Suede
+Speedcat -> Speedcat
+ChuckTaylor -> Chuck Taylor All Star
+チャック70 -> Chuck 70
+OldSkool -> Old Skool
+スリッポン -> Classic Slip-On
+ClubC -> Club C
+ポンプフューリー -> Instapump Fury
 ```
