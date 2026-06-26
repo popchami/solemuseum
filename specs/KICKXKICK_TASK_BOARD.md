@@ -1,4 +1,4 @@
-# Kick×Kick Task Board v1.6
+# Kick×Kick Task Board v1.7
 
 ## 目的
 
@@ -14,7 +14,8 @@ Kick×Kick開発の現在地を管理する。
 ブランド・モデル・検索基盤はいったん終了。
 Tier S data JSON監査・検索補助の追加補強も完了。
 検索・登録はMVPリリース可能ライン。
-次はKick×Kick本体のMVP実装を進める。
+実機で写真保存まで確認済み。
+次はTOP5・着用履歴・詳細確認を進める。
 ```
 
 引き継ぎ:
@@ -103,7 +104,7 @@ PAUSED / MVP READY
 状態:
 
 ```text
-NEXT
+IN PROGRESS / RUNTIME CHECK STARTED
 ```
 
 目的:
@@ -114,19 +115,19 @@ NEXT
 
 ### Foundation
 
-- [ ] Flutter起動確認
+- [x] Flutter起動確認
 - [ ] flutter analyze
-- [ ] Material3確認
-- [ ] Riverpod確認
-- [ ] Bottom Navigation確認
-- [ ] FAB確認
+- [x] Material3確認
+- [x] Riverpod確認
+- [x] Bottom Navigation確認
+- [x] FAB確認
 
 ### Sneaker
 
-- [ ] Sneaker Model確認
-- [ ] Sneaker Repository確認
-- [ ] Sneaker Provider確認
-- [ ] ShoeForm 実機確認
+- [x] Sneaker Model確認
+- [x] Sneaker Repository確認
+- [x] Sneaker Provider確認
+- [x] ShoeForm 実機確認
 - [ ] Shoe Detail確認
 
 ### Search / Registration
@@ -134,7 +135,7 @@ NEXT
 状態:
 
 ```text
-IMPLEMENTED / NEEDS RUNTIME CHECK
+IMPLEMENTED / PHOTO SAVE CHECKED
 ```
 
 - [x] Load app/assets/data/brands.json
@@ -156,7 +157,7 @@ IMPLEMENTED / NEEDS RUNTIME CHECK
 - [x] Registration flow integration
 - [x] Free input brand local save
 - [ ] Search MVP test cases 実施
-- [ ] 実機で登録保存確認
+- [x] 実機で登録保存確認
 - [ ] 編集画面で誤入力修正確認
 
 参照仕様:
@@ -182,8 +183,8 @@ MODEL_MASTER/README.md
 
 ### Photo
 
-- [ ] 写真登録
-- [ ] 写真表示
+- [x] 写真登録
+- [x] 写真表示
 - [ ] 写真削除
 
 ### TOP5
@@ -293,7 +294,7 @@ Premium / Backup / Export
 ## Before Release
 
 - [ ] flutter analyze
-- [ ] 実機確認
+- [x] 実機確認
 - [ ] クラッシュ確認
 - [ ] アイコン完成
 - [ ] スクリーンショット完成
@@ -304,7 +305,37 @@ Premium / Backup / Export
 - [ ] 自由入力fallback確認
 - [ ] ブランド変更時モデルリセット確認
 - [ ] 正式modelName保存確認
-- [ ] app/assets/data JSON読み込み確認
+- [x] app/assets/data JSON読み込み確認
+
+---
+
+# Runtime Check Log
+
+```text
+2026-06-27: 実機確認で写真保存まで確認済み。
+```
+
+確認済み:
+
+```text
+- アプリ起動
+- 登録画面
+- 登録保存
+- 写真保存
+```
+
+未確認:
+
+```text
+- flutter analyze
+- 編集画面で誤入力修正
+- Shoe Detail全体確認
+- TOP5登録/解除
+- 着用履歴
+- 写真削除
+- Collection
+- Sticker
+```
 
 ---
 
@@ -313,19 +344,19 @@ Premium / Backup / Export
 現在やること:
 
 ```text
-Kick×Kick本体MVP実装
+写真保存後のMVP確認
 ```
 
 次:
 
 ```text
-登録画面の実機確認 / flutter analyze
+詳細画面確認 / TOP5 / 着用履歴
 ```
 
 その次:
 
 ```text
-詳細画面・写真・TOP5
+Collection / Sticker
 ```
 
 最重要ルール:
