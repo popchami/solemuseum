@@ -1,4 +1,4 @@
-# Kick×Kick Data Validation Rules v1.0
+# Kick×Kick Data Validation Rules v1.1
 
 ## Purpose
 
@@ -22,8 +22,9 @@ Air Jordan 1
 Air Max 95
 GT-2160
 P-6000
-Mexico 66
-Cloud 5
+Chuck Taylor All Star
+Old Skool
+Club C
 ```
 
 ### NG
@@ -34,8 +35,9 @@ AJ1
 AM95
 GT2160
 P6000
-Mexico66
-Cloud5
+ChuckTaylor
+OldSkool
+ClubC
 ```
 
 ---
@@ -58,6 +60,9 @@ new_balance_990v6
 asics_gt_2160
 air_jordan_1
 adidas_campus_00s
+puma_speedcat
+vans_old_skool
+reebok_club_c
 ```
 
 ### NG
@@ -67,6 +72,7 @@ NikeAirMax95
 newbalance990v6
 asics_gt2160
 AJ1
+OldSkool
 ```
 
 ---
@@ -81,6 +87,10 @@ AJ1
 brandId: nike
 brandId: new_balance
 brandId: asics
+brandId: puma
+brandId: converse
+brandId: vans
+brandId: reebok
 ```
 
 ### NG
@@ -89,6 +99,7 @@ brandId: asics
 brandId: nb
 brandId: jordan
 brandId: nike_sportswear
+brandId: converse_all_star
 ```
 
 ---
@@ -111,6 +122,9 @@ NB550
 Campus00s
 SL72
 Kayano14
+OldSkool
+Sk8Hi
+ClubC
 ```
 
 ### Aliasに入れないもの
@@ -122,6 +136,10 @@ GEL
 Jordan
 Nike
 New Balance
+Old
+Classic
+Star
+Club
 ```
 
 理由:
@@ -147,6 +165,9 @@ AirMax95
 エアマックス95
 カヤノ14
 ジーティー2160
+チャック70
+オールドスクール
+ポンプフューリー
 ```
 
 ### searchKeywordsに入れないもの
@@ -159,6 +180,10 @@ Air
 Max
 GEL
 Cloud
+Old
+Classic
+Star
+Club
 ```
 
 理由:
@@ -234,7 +259,22 @@ search_keywords.json.modelId -> models.json.id に存在する
 
 ---
 
-## 9. Free Input Rule
+## 9. Asset Sync Rule
+
+`data/*.json` を更新した場合、Flutterが読む `app/assets/data/*.json` へ同期する。
+
+```text
+data/brands.json -> app/assets/data/brands.json
+data/models.json -> app/assets/data/models.json
+data/aliases.json -> app/assets/data/aliases.json
+data/search_keywords.json -> app/assets/data/search_keywords.json
+```
+
+同期できなかった場合は、`data/CHANGELOG.md` と `specs/KICKXKICK_TASK_BOARD.md` に残課題として明記する。
+
+---
+
+## 10. Free Input Rule
 
 アプリでは候補にないモデルでも自由入力で登録できる。
 
@@ -242,19 +282,19 @@ search_keywords.json.modelId -> models.json.id に存在する
 
 ---
 
-## 10. Review Rule
+## 11. Review Rule
 
 `data/` を更新したら、必要に応じて以下も更新する。
 
 ```text
 specs/MODEL_MASTER_COVERAGE.md
-docs/AUDIT_TRACKER.md
+data/CHANGELOG.md
 specs/KICKXKICK_TASK_BOARD.md
 ```
 
 ---
 
-## 11. Quality Gate
+## 12. Quality Gate
 
 Tier Sブランドは以下を満たすこと。
 
@@ -269,7 +309,7 @@ Tier A以降も、同じ基準で順次育成する。
 
 ---
 
-## 12. Final Principle
+## 13. Final Principle
 
 候補の完全網羅より、ユーザーが登録を完了できることを優先する。
 
