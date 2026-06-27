@@ -1,4 +1,4 @@
-# Kick×Kick Model Master Coverage v1.3
+# Kick×Kick Model Master Coverage v1.4
 
 ## Purpose
 
@@ -9,8 +9,6 @@
 ---
 
 ## Coverage Policy
-
-Kick×Kick では、モデルマスターを以下の観点で育てる。
 
 ```text
 1. 主要モデルが候補に出る
@@ -65,151 +63,41 @@ BLOCKED
 
 ---
 
+## Tier B Coverage
+
+| Brand | Priority B Models | Model Coverage | Alias | searchKeywords | Canonical Name | Status | Notes |
+|---|---:|---:|---|---|---|---|---|
+| HOKA | 6 | PASS | TODO | TODO | PASS | WARNING | Bondi 9 / Clifton 10 / Speedgoat 7 / Arahi 8 / Transport 2 / Challenger 8 を公式確認ベースで追加。Alias/searchKeywordsは未追加。 |
+
+---
+
 ## Tier S Priority Model Targets
 
-### Nike
-
 ```text
-Air Force 1
-Air Max 1
-Air Max 90
-Air Max 95
-Air Max 97
-Air Max Plus
-Dunk Low
-Dunk High
-SB Dunk Low
-P-6000
-Zoom Vomero 5
-Pegasus
-Invincible
-Cortez
-Shox
-TC 7900
-```
-
-### Air Jordan
-
-```text
-Air Jordan 1
-Air Jordan 2
-Air Jordan 3
-Air Jordan 4
-Air Jordan 5
-Air Jordan 6
-Air Jordan 11
-Air Jordan 12
-Air Jordan 13
-Air Jordan 14
-Jordan Spizike
-Jordan Legacy 312
-```
-
-### adidas
-
-```text
-Samba
-Gazelle
-Campus 00s
-Superstar
-Stan Smith
-Handball Spezial
-SL 72
-Forum Low
-Forum Mid
-Adimatic
-Ultraboost
-Yeezy 350
-```
-
-### New Balance
-
-```text
-530
-550
-574
-576
-580
-327
-725
-740
-9060
-2002R
-1906R
-990v1
-990v2
-990v3
-990v4
-990v5
-990v6
-991
-992
-993
-```
-
-### ASICS
-
-```text
-GT-2160
-GEL-1130
-GEL-1090
-GEL-Kayano 14
-GEL-NYC
-GEL-Nimbus 9
-GEL-Lyte III
-GEL-Lyte V
-Novablast
-Superblast
-EX89
-Japan S
+Nike: Air Force 1 / Air Max 1 / Air Max 90 / Air Max 95 / Air Max 97 / Air Max Plus / Dunk Low / Dunk High / SB Dunk Low / P-6000 / Zoom Vomero 5 / Pegasus / ZoomX Invincible Run / Cortez / Shox R4 / TC 7900
+Air Jordan: Air Jordan 1 / 2 / 3 / 4 / 5 / 6 / 11 / 12 / 13 / 14 / Jordan Spizike / Jordan Legacy 312
+adidas: Samba / Gazelle / Campus 00s / Superstar / Stan Smith / Handball Spezial / SL 72 / Forum Low / Forum Mid / Adimatic / Ultraboost / Yeezy 350
+New Balance: 530 / 550 / 574 / 576 / 580 / 327 / 725 / 740 / 9060 / 2002R / 1906R / 990v1〜990v6 / 991 / 992 / 993
+ASICS: GT-2160 / GEL-1130 / GEL-1090 / GEL-Kayano 14 / GEL-NYC / GEL-Nimbus 9 / GEL-Lyte III / GEL-Lyte V / Novablast / Superblast / EX89 / Japan S
 ```
 
 ---
 
 ## Tier A Priority Model Targets
 
-### PUMA
-
 ```text
-Suede
-Palermo
-Speedcat
-Clyde
-RS-X
-Basket
+PUMA: Suede / Palermo / Speedcat / Clyde / RS-X / Basket
+Converse: Chuck Taylor All Star / Chuck 70 / One Star / Jack Purcell / Weapon / Run Star Hike
+Vans: Old Skool / Authentic / Classic Slip-On / Sk8-Hi / Era / Knu Skool
+Reebok: Club C / Classic Leather / Instapump Fury / Workout Plus / Freestyle / Question
 ```
 
-### Converse
+---
+
+## Tier B Priority Model Targets
 
 ```text
-Chuck Taylor All Star
-Chuck 70
-One Star
-Jack Purcell
-Weapon
-Run Star Hike
-```
-
-### Vans
-
-```text
-Old Skool
-Authentic
-Classic Slip-On
-Sk8-Hi
-Era
-Knu Skool
-```
-
-### Reebok
-
-```text
-Club C
-Classic Leather
-Instapump Fury
-Workout Plus
-Freestyle
-Question
+HOKA: Bondi 9 / Clifton 10 / Speedgoat 7 / Arahi 8 / Transport 2 / Challenger 8
 ```
 
 ---
@@ -233,22 +121,22 @@ Question
 
 ```text
 2026-06-25
-- MODEL_MASTER/NIKE.md を v2.0 に更新
-- Canonical Name / Alias / searchKeywords / category / source を追加
-- Nike を MVP基準で WARNING まで引き上げ
+- Tier S ブランド・モデル初期登録
 
 2026-06-26
-- data/aliases.json を v0.1.1 に更新
-- data/search_keywords.json を v0.1.2 に更新
-- app/assets/data/aliases.json と app/assets/data/search_keywords.json を同期
+- Tier S Alias / searchKeywords 補強
 - Tier S 5ブランドをMVP基準でPASSに更新
-- 低確度モデル追加は行わず、既存Tier Sモデルの検索補助を補強
 
 2026-06-26 v0.2.0
 - Tier A 4ブランドを追加
 - PUMA / Converse / Vans / Reebok の代表モデルを各6件追加
 - Tier A Alias / searchKeywords を追加
-- 低確度モデル、色名、コラボ名、広すぎる検索語は追加なし
+
+2026-06-28 v0.3.0
+- Tier BとしてHOKAを追加
+- HOKAの高確度代表モデル6件を追加
+- HOKA Alias / searchKeywordsは未追加のためWARNING
+- app/assets/data/aliases.json は実ファイル確認上、data/aliases.json と同期済みだった
 ```
 
 ---
@@ -256,7 +144,7 @@ Question
 ## Next Work
 
 ```text
-1. app/assets/data/aliases.json の同期更新
+1. HOKA Alias / searchKeywords追加
 2. Search MVPテストケースを実機またはFlutterテストで実施
 3. data/*.json と app/assets/data/*.json の同期自動化
 4. Tier B/Cブランド候補を別作業で追加検討
@@ -267,35 +155,6 @@ Question
 
 ## Quality Goal
 
-Tier S / Tier A ブランドについて、ユーザーが以下の入力で目的モデルへ到達できること。
+Tier S / Tier A ブランドについて、ユーザーが主要な略称・数字・日本語入力で目的モデルへ到達できること。
 
-```text
-95 -> Air Max 95
-97 -> Air Max 97
-AF1 -> Air Force 1
-P6000 -> P-6000
-Vomero5 -> Zoom Vomero 5
-AJ1 -> Air Jordan 1
-Jordan11 -> Air Jordan 11
-550 -> 550
-990 -> 990v1〜990v6
-NB990v6 -> 990v6
-9060 -> 9060
-2160 -> GT-2160
-1130 -> GEL-1130
-Kayano14 -> GEL-Kayano 14
-GelKayano14 -> GEL-Kayano 14
-Samba -> Samba
-Campus -> Campus 00s
-ForumLow -> Forum Low
-フォーラムロー -> Forum Low
-ゲルNYC -> GEL-NYC
-Suede -> Suede
-Speedcat -> Speedcat
-ChuckTaylor -> Chuck Taylor All Star
-チャック70 -> Chuck 70
-OldSkool -> Old Skool
-スリッポン -> Classic Slip-On
-ClubC -> Club C
-ポンプフューリー -> Instapump Fury
-```
+Tier Bは段階育成とし、モデル追加後にAlias/searchKeywordsを追加してPASSへ引き上げる。
