@@ -19,6 +19,21 @@ search_keywords.json
 
 ---
 
+## Current Coverage
+
+```text
+Tier S: Nike / Air Jordan / adidas / New Balance / ASICS
+Tier A: PUMA / Converse / Vans / Reebok
+```
+
+Tier SはMVP基準でPASS。
+
+Tier Aは代表モデルのみ高確度で追加済み。
+
+Tier B/Cは未追加。
+
+---
+
 ## File Roles
 
 ### brands.json
@@ -98,6 +113,8 @@ P6000 -> P-6000
 Mexico66 -> Mexico 66
 AF1 -> Air Force 1
 AJ1 -> Air Jordan 1
+OldSkool -> Old Skool
+ClubC -> Club C
 ```
 
 `aliases.json` や `search_keywords.json` の値を保存名にしてはいけない。
@@ -122,6 +139,9 @@ new_balance_990v6
 asics_gt_2160
 air_jordan_1
 adidas_campus_00s
+puma_speedcat
+vans_old_skool
+reebok_club_c
 ```
 
 ---
@@ -147,6 +167,8 @@ P6000
 GT2160
 NB550
 Campus00s
+OldSkool
+ClubC
 ```
 
 Aliasに入れないもの:
@@ -180,6 +202,9 @@ searchKeywordsに入れてよいもの:
 AirMax95
 エアマックス95
 カヤノ14
+チャック70
+オールドスクール
+ポンプフューリー
 ```
 
 searchKeywordsに入れないもの:
@@ -187,6 +212,7 @@ searchKeywordsに入れないもの:
 ```text
 - 1文字だけの数字や英字
 - Air / Max / GEL / Cloud など広すぎる単語
+- Old / Classic / Star / Club など広すぎる単語
 - 色名だけ
 - コラボ名だけ
 ```
@@ -252,8 +278,10 @@ alias: GT2160
 2. models.json にモデルを追加
 3. aliases.json にAliasを追加
 4. search_keywords.json に必要な検索語を追加
-5. specs/MODEL_MASTER_COVERAGE.md を更新
-6. docs/AUDIT_TRACKER.md に監査ログを残す
+5. app/assets/data/*.json に同期
+6. specs/MODEL_MASTER_COVERAGE.md を更新
+7. data/CHANGELOG.md に監査ログを残す
+8. specs/KICKXKICK_TASK_BOARD.md を更新
 ```
 
 ---
@@ -268,5 +296,7 @@ Alias: PASS
 searchKeywords: PASS
 Canonical Name: PASS
 ```
+
+Tier A以降も、追加する場合は同じ基準で育成する。
 
 候補の完全網羅より、ユーザーが登録を完了できることを優先する。
