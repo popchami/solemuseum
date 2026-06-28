@@ -1,4 +1,4 @@
-# Kick×Kick Task Board v1.9
+# Kick×Kick Task Board v2.0
 
 ## 目的
 
@@ -13,10 +13,9 @@ Kick×Kick開発の現在地を管理する。
 ```text
 ブランド・モデル・検索基盤はMVPリリース可能ライン。
 Tier S / Tier A はPASS。
-Tier BとしてHOKAを追加開始。
-HOKAはブランド・モデル登録済み、Alias / searchKeywordsは未追加。
+Tier BとしてHOKAを追加し、Alias / searchKeywords までPASS化済み。
 実機で写真保存まで確認済み。
-次はSearch MVPテスト、HOKA検索補助、TOP5・着用履歴・詳細確認を進める。
+次はSearch MVPテスト、TOP5・着用履歴・詳細確認を進める。
 ```
 
 引き継ぎ:
@@ -59,7 +58,7 @@ docs/HANDOFF_BRAND_MODEL_SEARCH.md
 状態:
 
 ```text
-ACTIVE / TIER B PARTIAL
+ACTIVE / MVP DATA PASS
 ```
 
 - [x] BRAND_MASTER.md 作成
@@ -96,8 +95,9 @@ ACTIVE / TIER B PARTIAL
 - [x] app/assets/data/aliases.json 同期確認
 - [x] Tier Bブランド追加: HOKA
 - [x] Tier Bモデル追加: HOKA 6件
-- [ ] HOKA Alias追加
-- [ ] HOKA searchKeywords追加
+- [x] HOKA Alias追加
+- [x] HOKA searchKeywords追加
+- [x] app/assets/data/aliases.json / search_keywords.json 同期更新
 
 保留:
 
@@ -352,6 +352,7 @@ Premium / Backup / Export
 ```text
 2026-06-26: Tier AとしてPUMA / Converse / Vans / Reebokを追加。
 2026-06-28: Tier BとしてHOKAを追加開始。ブランド・モデル6件を追加。
+2026-06-28: HOKA Alias / searchKeywordsを追加し、Tier B HOKAをPASS化。
 ```
 
 確認済み:
@@ -359,19 +360,19 @@ Premium / Backup / Export
 ```text
 - data/brands.json v0.3.0
 - data/models.json v0.3.0
-- data/aliases.json v0.2.0
-- data/search_keywords.json v0.2.0
+- data/aliases.json v0.3.1
+- data/search_keywords.json v0.3.1
 - app/assets/data/brands.json v0.3.0
 - app/assets/data/models.json v0.3.0
-- app/assets/data/aliases.json v0.2.0
-- app/assets/data/search_keywords.json v0.2.0
+- app/assets/data/aliases.json v0.3.1
+- app/assets/data/search_keywords.json v0.3.1
 ```
 
 未完了:
 
 ```text
-- HOKA Alias追加
-- HOKA searchKeywords追加
+- Search MVPテストケース実施
+- data/*.json と app/assets/data/*.json の同期自動化
 ```
 
 ---
@@ -381,13 +382,13 @@ Premium / Backup / Export
 現在やること:
 
 ```text
-Search MVPテスト / HOKA Alias・searchKeywords追加 / 写真保存後のMVP確認
+Search MVPテスト / 写真保存後のMVP確認 / 詳細画面確認
 ```
 
 次:
 
 ```text
-詳細画面確認 / TOP5 / 着用履歴
+TOP5 / 着用履歴
 ```
 
 その次:
