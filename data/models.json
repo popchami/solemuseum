@@ -1,6 +1,6 @@
 {
-  "version": "0.3.0",
-  "updatedAt": "2026-06-28",
+  "version": "0.4.0",
+  "updatedAt": "2026-06-29",
   "items": [
     {"id":"nike_air_force_1","brandId":"nike","modelName":"Air Force 1","category":"lifestyle","source":"master"},
     {"id":"nike_air_max_1","brandId":"nike","modelName":"Air Max 1","category":"lifestyle","source":"master"},
@@ -112,6 +112,20 @@
     {"id":"hoka_speedgoat_7","brandId":"hoka","modelName":"Speedgoat 7","category":"trail_running","source":"master"},
     {"id":"hoka_arahi_8","brandId":"hoka","modelName":"Arahi 8","category":"running","source":"master"},
     {"id":"hoka_transport_2","brandId":"hoka","modelName":"Transport 2","category":"lifestyle","source":"master"},
-    {"id":"hoka_challenger_8","brandId":"hoka","modelName":"Challenger 8","category":"trail_running","source":"master"}
+    {"id":"hoka_challenger_8","brandId":"hoka","modelName":"Challenger 8","category":"trail_running","source":"master"},
+
+    {"id":"saucony_ride_19","brandId":"saucony","modelName":"Ride 19","category":"running","source":"master"},
+    {"id":"saucony_triumph_24","brandId":"saucony","modelName":"Triumph 24","category":"running","source":"master"},
+    {"id":"saucony_guide_19","brandId":"saucony","modelName":"Guide 19","category":"running","source":"master"},
+    {"id":"saucony_hurricane_25","brandId":"saucony","modelName":"Hurricane 25","category":"running","source":"master"},
+    {"id":"saucony_progrid_omni_9","brandId":"saucony","modelName":"ProGrid Omni 9","category":"lifestyle","source":"master"},
+    {"id":"saucony_progrid_guide_7","brandId":"saucony","modelName":"ProGrid Guide 7","category":"lifestyle","source":"master"},
+
+    {"id":"salomon_xt_6","brandId":"salomon","modelName":"XT-6","category":"lifestyle","source":"master"},
+    {"id":"salomon_xt_whisper","brandId":"salomon","modelName":"XT-WHISPER","category":"lifestyle","source":"master"},
+    {"id":"salomon_xa_pro","brandId":"salomon","modelName":"XA PRO","category":"trail_running","source":"master"},
+    {"id":"salomon_speedcross","brandId":"salomon","modelName":"SPEEDCROSS","category":"trail_running","source":"master"},
+    {"id":"salomon_x_ultra","brandId":"salomon","modelName":"X ULTRA","category":"hiking","source":"master"},
+    {"id":"salomon_xt_4","brandId":"salomon","modelName":"XT-4","category":"lifestyle","source":"master"}
   ]
 }
