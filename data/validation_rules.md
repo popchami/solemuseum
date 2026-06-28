@@ -1,10 +1,42 @@
-# Kick×Kick Data Validation Rules v1.1
+# Kick×Kick Data Validation Rules v1.2
 
 ## Purpose
 
 このファイルは、`data/` 配下のJSONデータを追加・更新する際の検証ルールを定義する。
 
 目的は、ブランド・モデル・Alias・検索キーワードの品質を維持し、検索UXを壊さないことである。
+
+---
+
+## 0. Market Reference Rule
+
+Kick×Kickのモデル追加は、国内ユーザーが実際に探す可能性を重視する。
+
+追加候補の優先順位:
+
+```text
+1. ABC-MARTなど国内大手販売サイトに掲載されるブランド・モデル
+2. ブランド公式サイトで正式表記を確認できるモデル
+3. 公式情報ではないが、信頼できる大手販売店で複数確認できるモデル
+```
+
+### OK
+
+```text
+- ABC-MARTにブランド掲載があり、公式サイトでモデル名を確認できる
+- 公式サイトの定番モデル一覧に掲載されている
+- 国内流通が明確で、検索される可能性が高い
+```
+
+### NG
+
+```text
+- 色名だけ
+- コラボ名だけ
+- 低確度の噂モデル
+- 公式表記が不明な略称だけ
+- 商品画像や説明文のコピー
+```
 
 ---
 
@@ -25,6 +57,8 @@ P-6000
 Chuck Taylor All Star
 Old Skool
 Club C
+Ride 19
+XT-6
 ```
 
 ### NG
@@ -38,6 +72,8 @@ P6000
 ChuckTaylor
 OldSkool
 ClubC
+Ride19
+XT6
 ```
 
 ---
@@ -63,6 +99,8 @@ adidas_campus_00s
 puma_speedcat
 vans_old_skool
 reebok_club_c
+saucony_ride_19
+salomon_xt_6
 ```
 
 ### NG
@@ -73,6 +111,7 @@ newbalance990v6
 asics_gt2160
 AJ1
 OldSkool
+XT6
 ```
 
 ---
@@ -91,6 +130,8 @@ brandId: puma
 brandId: converse
 brandId: vans
 brandId: reebok
+brandId: saucony
+brandId: salomon
 ```
 
 ### NG
@@ -100,6 +141,7 @@ brandId: nb
 brandId: jordan
 brandId: nike_sportswear
 brandId: converse_all_star
+brandId: salomon_sportstyle
 ```
 
 ---
@@ -125,6 +167,9 @@ Kayano14
 OldSkool
 Sk8Hi
 ClubC
+Ride19
+XT6
+XAPro
 ```
 
 ### Aliasに入れないもの
@@ -140,6 +185,10 @@ Old
 Classic
 Star
 Club
+Ride
+Guide
+XT
+Pro
 ```
 
 理由:
@@ -168,6 +217,8 @@ AirMax95
 チャック70
 オールドスクール
 ポンプフューリー
+ライド19
+エックスティー6
 ```
 
 ### searchKeywordsに入れないもの
@@ -180,10 +231,14 @@ Air
 Max
 GEL
 Cloud
+XT
+Pro
 Old
 Classic
 Star
 Club
+Ride
+Guide
 ```
 
 理由:
@@ -212,11 +267,12 @@ Club
 ### NG
 
 ```text
-9 -> 990v6
+9 -> ProGrid Omni 9
+6 -> XT-6
 1 -> Air Jordan 1
 ```
 
-ただし、`AJ1` のようにブランド内で明確なAliasとして成立する場合は `aliases.json` に入れてよい。
+ただし、`AJ1` や `XT6` のようにブランド内で明確なAliasとして成立する場合は `aliases.json` に入れてよい。
 
 ---
 
@@ -229,6 +285,8 @@ Club
 ```text
 asics_gt2160
 asics_gt_2160
+salomon_xt6
+salomon_xt_6
 ```
 
 ### OK
