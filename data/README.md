@@ -31,7 +31,7 @@ Tier SはMVP基準でPASS。
 
 Tier Aは代表モデルのみ高確度で追加済み。
 
-Tier BはHOKAの高確度モデルを追加開始。2026-06-28時点では `brands.json` / `models.json` と app assets は同期済み。Alias / searchKeywords は未追加。
+Tier BはHOKAの高確度モデル6件、Alias、searchKeywordsを追加済み。2026-06-28時点では `data/*.json` と `app/assets/data/*.json` は同期済み。
 
 Tier Cは未追加。
 
@@ -120,6 +120,7 @@ OldSkool -> Old Skool
 ClubC -> Club C
 Bondi9 -> Bondi 9
 Clifton10 -> Clifton 10
+Speedgoat7 -> Speedgoat 7
 ```
 
 `aliases.json` や `search_keywords.json` の値を保存名にしてはいけない。
