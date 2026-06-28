@@ -1,4 +1,4 @@
-# Kick×Kick Model Master Coverage v1.5
+# Kick×Kick Model Master Coverage v1.6
 
 ## Purpose
 
@@ -11,12 +11,13 @@
 ## Coverage Policy
 
 ```text
-1. 主要モデルが候補に出る
-2. Aliasで見つかる
-3. 数字検索で見つかる
-4. 日本語検索で見つかる
-5. 保存名が正式表記に統一される
-6. ブランドとモデルの整合性が保たれる
+1. 国内流通リファレンスを確認する
+2. 主要モデル・流通モデルが候補に出る
+3. Aliasで見つかる
+4. 数字検索で見つかる
+5. 日本語検索で見つかる
+6. 保存名が正式表記に統一される
+7. ブランドとモデルの整合性が保たれる
 ```
 
 ---
@@ -44,11 +45,11 @@ BLOCKED
 
 | Brand | Priority S Models | Model Coverage | Alias | searchKeywords | Canonical Name | Status | Notes |
 |---|---:|---:|---|---|---|---|---|
-| Nike | 16 | PASS | PASS | PASS | PASS | PASS | Air Force 1 / Air Max / Dunk / P-6000 / Vomero 5 などMVP主要検索を補強済み。 |
+| Nike | 16 | PASS | PASS | PASS | PASS | PASS | Air Force 1 / Air Max / Dunk / P-6000 / Vomero 5 などMVP主要検索を補強済み。ABC-MART差分監査は継続。 |
 | Air Jordan | 12 | PASS | PASS | PASS | PASS | PASS | AJ/J/Jordan連結表記と日本語検索を補強済み。1桁数字単体は追加しない。 |
-| adidas | 12 | PASS | PASS | PASS | PASS | PASS | Samba / Gazelle / Campus / Forum / Adimatic / Ultraboost などを補強済み。 |
-| New Balance | 20 | PASS | PASS | PASS | PASS | PASS | 530 / 550 / 574 / 9060 / 990v1〜v6 / 2002R / 1906R を補強済み。 |
-| ASICS | 12 | PASS | PASS | PASS | PASS | PASS | GT-2160 / GEL-1130 / GEL-Kayano 14 / GEL-NYC / Novablast / Superblast などを補強済み。 |
+| adidas | 12 | PASS | PASS | PASS | PASS | PASS | Samba / Gazelle / Campus / Forum / Adimatic / Ultraboost などを補強済み。ABC-MART差分監査は継続。 |
+| New Balance | 20 | PASS | PASS | PASS | PASS | PASS | 530 / 550 / 574 / 9060 / 990v1〜v6 / 2002R / 1906R を補強済み。ABC-MART差分監査は継続。 |
+| ASICS | 12 | PASS | PASS | PASS | PASS | PASS | GT-2160 / GEL-1130 / GEL-Kayano 14 / GEL-NYC / Novablast / Superblast などを補強済み。ABC-MART差分監査は継続。 |
 
 ---
 
@@ -56,10 +57,10 @@ BLOCKED
 
 | Brand | Priority A Models | Model Coverage | Alias | searchKeywords | Canonical Name | Status | Notes |
 |---|---:|---:|---|---|---|---|---|
-| PUMA | 6 | PASS | PASS | PASS | PASS | PASS | Suede / Palermo / Speedcat / Clyde / RS-X / Basket を高確度で追加。 |
-| Converse | 6 | PASS | PASS | PASS | PASS | PASS | Chuck Taylor All Star / Chuck 70 / One Star / Jack Purcell / Weapon / Run Star Hike を追加。 |
-| Vans | 6 | PASS | PASS | PASS | PASS | PASS | Old Skool / Authentic / Classic Slip-On / Sk8-Hi / Era / Knu Skool を追加。 |
-| Reebok | 6 | PASS | PASS | PASS | PASS | PASS | Club C / Classic Leather / Instapump Fury / Workout Plus / Freestyle / Question を追加。 |
+| PUMA | 6 | PASS | PASS | PASS | PASS | PASS | Suede / Palermo / Speedcat / Clyde / RS-X / Basket を高確度で追加。ABC-MART差分監査は継続。 |
+| Converse | 6 | PASS | PASS | PASS | PASS | PASS | Chuck Taylor All Star / Chuck 70 / One Star / Jack Purcell / Weapon / Run Star Hike を追加。ABC-MART差分監査は継続。 |
+| Vans | 6 | PASS | PASS | PASS | PASS | PASS | Old Skool / Authentic / Classic Slip-On / Sk8-Hi / Era / Knu Skool を追加。ABC-MART差分監査は継続。 |
+| Reebok | 6 | PASS | PASS | PASS | PASS | PASS | Club C / Classic Leather / Instapump Fury / Workout Plus / Freestyle / Question を追加。ABC-MART差分監査は継続。 |
 
 ---
 
@@ -68,6 +69,8 @@ BLOCKED
 | Brand | Priority B Models | Model Coverage | Alias | searchKeywords | Canonical Name | Status | Notes |
 |---|---:|---:|---|---|---|---|---|
 | HOKA | 6 | PASS | PASS | PASS | PASS | PASS | Bondi 9 / Clifton 10 / Speedgoat 7 / Arahi 8 / Transport 2 / Challenger 8 にAliasと日本語検索を追加済み。 |
+| Saucony | 6 | PASS | PASS | PASS | PASS | PASS | Ride 19 / Triumph 24 / Guide 19 / Hurricane 25 / ProGrid Omni 9 / ProGrid Guide 7 を公式確認し、Aliasと日本語検索を追加済み。 |
+| SALOMON | 6 | PASS | PASS | PASS | PASS | PASS | XT-6 / XT-WHISPER / XA PRO / SPEEDCROSS / X ULTRA / XT-4 を公式定番モデルから追加し、Aliasと日本語検索を追加済み。 |
 
 ---
 
@@ -98,6 +101,8 @@ Reebok: Club C / Classic Leather / Instapump Fury / Workout Plus / Freestyle / Q
 
 ```text
 HOKA: Bondi 9 / Clifton 10 / Speedgoat 7 / Arahi 8 / Transport 2 / Challenger 8
+Saucony: Ride 19 / Triumph 24 / Guide 19 / Hurricane 25 / ProGrid Omni 9 / ProGrid Guide 7
+SALOMON: XT-6 / XT-WHISPER / XA PRO / SPEEDCROSS / X ULTRA / XT-4
 ```
 
 ---
@@ -140,6 +145,12 @@ HOKA: Bondi 9 / Clifton 10 / Speedgoat 7 / Arahi 8 / Transport 2 / Challenger 8
 - HOKA Alias / searchKeywords を追加
 - HOKAをPASSに更新
 - app/assets/data/aliases.json / search_keywords.json を同期更新
+
+2026-06-29 v0.4.0
+- Tier BとしてSaucony / SALOMONを追加
+- Saucony / SALOMON の高確度モデルを各6件追加
+- Saucony / SALOMON Alias / searchKeywords を追加
+- ABC-MARTなど国内流通リファレンスを見る運用をdata/README.mdとvalidation_rules.mdへ反映
 ```
 
 ---
@@ -149,8 +160,8 @@ HOKA: Bondi 9 / Clifton 10 / Speedgoat 7 / Arahi 8 / Transport 2 / Challenger 8
 ```text
 1. Search MVPテストケースを実機またはFlutterテストで実施
 2. data/*.json と app/assets/data/*.json の同期自動化
-3. Tier B/Cブランド候補を別作業で追加検討
-4. Tier S/A/Bの追加モデルは実ユーザー入力ログが溜まってから判断
+3. Tier S / A / B のABC-MART差分監査を継続
+4. Tier B/Cブランド候補を国内流通・公式確認ベースで追加検討
 ```
 
 ---
@@ -159,4 +170,4 @@ HOKA: Bondi 9 / Clifton 10 / Speedgoat 7 / Arahi 8 / Transport 2 / Challenger 8
 
 Tier S / Tier A / Tier B ブランドについて、ユーザーが主要な略称・数字・日本語入力で目的モデルへ到達できること。
 
-Tier BはHOKAをPASS化済み。次のTier B/Cは、低確度モデルを避けて段階追加する。
+ABC-MARTなど国内流通リファレンスに追従しながら、低確度モデルや広すぎるAlias/searchKeywordsを避けて段階育成する。
