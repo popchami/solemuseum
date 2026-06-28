@@ -1,4 +1,4 @@
-# Kick×Kick Task Board v2.0
+# Kick×Kick Task Board v2.1
 
 ## 目的
 
@@ -13,7 +13,8 @@ Kick×Kick開発の現在地を管理する。
 ```text
 ブランド・モデル・検索基盤はMVPリリース可能ライン。
 Tier S / Tier A はPASS。
-Tier BとしてHOKAを追加し、Alias / searchKeywords までPASS化済み。
+Tier BはHOKA / Saucony / SALOMONを追加し、Alias / searchKeywords までPASS化済み。
+ABC-MARTなど国内流通リファレンスを基準に、今後もデータ資産を継続育成する。
 実機で写真保存まで確認済み。
 次はSearch MVPテスト、TOP5・着用履歴・詳細確認を進める。
 ```
@@ -58,7 +59,7 @@ docs/HANDOFF_BRAND_MODEL_SEARCH.md
 状態:
 
 ```text
-ACTIVE / MVP DATA PASS
+ACTIVE / MVP DATA PASS / MARKET REFERENCE GROWTH
 ```
 
 - [x] BRAND_MASTER.md 作成
@@ -98,11 +99,20 @@ ACTIVE / MVP DATA PASS
 - [x] HOKA Alias追加
 - [x] HOKA searchKeywords追加
 - [x] app/assets/data/aliases.json / search_keywords.json 同期更新
+- [x] Tier Bブランド追加: Saucony / SALOMON
+- [x] Tier Bモデル追加: Saucony 6件 / SALOMON 6件
+- [x] Saucony / SALOMON Alias追加
+- [x] Saucony / SALOMON searchKeywords追加
+- [x] app/assets/data/*.json v0.4.0 同期更新
+- [x] data/README.md Market Reference Policy 更新
+- [x] data/validation_rules.md v1.2 更新
+- [x] MODEL_MASTER_COVERAGE v1.6 更新
 
 保留:
 
 - [ ] Search MVPテストケース実施
 - [ ] data/*.json と app/assets/data/*.json の同期自動化
+- [ ] Tier S / A / B のABC-MART差分監査
 - [ ] Tier B/Cブランド追加
 
 ---
@@ -143,7 +153,7 @@ IN PROGRESS / RUNTIME CHECK STARTED
 状態:
 
 ```text
-IMPLEMENTED / PHOTO SAVE CHECKED
+IMPLEMENTED / PHOTO SAVE CHECKED / DATA v0.4.0 SYNCED
 ```
 
 - [x] Load app/assets/data/brands.json
@@ -353,19 +363,23 @@ Premium / Backup / Export
 2026-06-26: Tier AとしてPUMA / Converse / Vans / Reebokを追加。
 2026-06-28: Tier BとしてHOKAを追加開始。ブランド・モデル6件を追加。
 2026-06-28: HOKA Alias / searchKeywordsを追加し、Tier B HOKAをPASS化。
+2026-06-29: ABC-MART掲載ブランドからSaucony / SALOMONをTier B追加。各6モデル、Alias、searchKeywordsを追加。
 ```
 
 確認済み:
 
 ```text
-- data/brands.json v0.3.0
-- data/models.json v0.3.0
-- data/aliases.json v0.3.1
-- data/search_keywords.json v0.3.1
-- app/assets/data/brands.json v0.3.0
-- app/assets/data/models.json v0.3.0
-- app/assets/data/aliases.json v0.3.1
-- app/assets/data/search_keywords.json v0.3.1
+- data/brands.json v0.4.0
+- data/models.json v0.4.0
+- data/aliases.json v0.4.0
+- data/search_keywords.json v0.4.0
+- app/assets/data/brands.json v0.4.0
+- app/assets/data/models.json v0.4.0
+- app/assets/data/aliases.json v0.4.0
+- app/assets/data/search_keywords.json v0.4.0
+- data/README.md Market Reference Policy
+- data/validation_rules.md v1.2
+- specs/MODEL_MASTER_COVERAGE.md v1.6
 ```
 
 未完了:
@@ -373,6 +387,7 @@ Premium / Backup / Export
 ```text
 - Search MVPテストケース実施
 - data/*.json と app/assets/data/*.json の同期自動化
+- Tier S / A / B のABC-MART差分監査
 ```
 
 ---
@@ -382,7 +397,7 @@ Premium / Backup / Export
 現在やること:
 
 ```text
-Search MVPテスト / 写真保存後のMVP確認 / 詳細画面確認
+Search MVPテスト / ABC-MART差分監査 / 写真保存後のMVP確認 / 詳細画面確認
 ```
 
 次:
