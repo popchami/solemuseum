@@ -1081,7 +1081,7 @@ class _StickerSelectionToolbar extends StatelessWidget {
   }
 }
 
-class _StickerArtwork extends StatelessWidget {
+class _StickerArtwork extends StatefulWidget {
   const _StickerArtwork({
     required this.asset,
     this.size = 120,
@@ -1093,11 +1093,50 @@ class _StickerArtwork extends StatelessWidget {
   final ValueChanged<Offset>? onTextPositionChanged;
 
   @override
+  State<_StickerArtwork> createState() => _StickerArtworkState();
+}
+
+class _StickerArtworkState extends State<_StickerArtwork> {
+  ui.Image? _image;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  @override
+  void didUpdateWidget(_StickerArtwork oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.asset.displayPath != widget.asset.displayPath) {
+      _image = null;
+      _loadImage();
+    }
+  }
+
+  @override
+  void dispose() {
+    _image?.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadImage() async {
+    final bytes = await File(widget.asset.displayPath).readAsBytes();
+    // 案C: targetWidth: 150 でデコードサイズを制限
+    final codec = await ui.instantiateImageCodec(bytes, targetWidth: 150);
+    final frame = await codec.getNextFrame();
+    if (mounted) {
+      _image?.dispose();
+      setState(() => _image = frame.image);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final image = File(asset.displayPath);
+    final asset = widget.asset;
+    final size = widget.size;
     final text = asset.stickerText?.trim() ?? '';
     final height = size * .72;
-    final imageHeight = height;
     final width = size * 1.25;
     final fontSize = size * 0.0288 * asset.textScale;
     final estimatedTextWidth =
@@ -1109,6 +1148,7 @@ class _StickerArtwork extends StatelessWidget {
     final maxY = 1 - minY;
     final textX = asset.textX.clamp(minX, maxX);
     final textY = asset.textY.clamp(minY, maxY);
+
     return SizedBox(
       width: width,
       height: height,
@@ -1116,50 +1156,17 @@ class _StickerArtwork extends StatelessWidget {
         clipBehavior: Clip.none,
         alignment: Alignment.topCenter,
         children: [
-          if (asset.shadowEnabled)
-            Positioned(
-              top: 7,
-              width: size * 1.08,
-              height: imageHeight,
-              child: ImageFiltered(
-                imageFilter: ui.ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-                child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    Colors.black.withValues(alpha: .55),
-                    BlendMode.srcIn,
-                  ),
-                  child: Image.file(
-                    image,
-                    fit: BoxFit.contain,
-                    filterQuality: FilterQuality.high,
-                  ),
-                ),
+          // 案A: 38個の Image.file を1つの CustomPaint に集約
+          if (_image != null)
+            CustomPaint(
+              size: Size(width, height),
+              painter: _StickerArtworkPainter(
+                image: _image!,
+                shadowEnabled: asset.shadowEnabled,
+                outerBorderColor: Color(asset.outerBorderColor),
+                innerBorderColor: Color(asset.innerBorderColor),
               ),
             ),
-          ..._outlineLayers(
-            image,
-            imageHeight,
-            radius: 6,
-            color: Color(asset.outerBorderColor),
-            count: 20,
-          ),
-          ..._outlineLayers(
-            image,
-            imageHeight,
-            radius: 3,
-            color: Color(asset.innerBorderColor),
-            count: 16,
-          ),
-          Positioned(
-            top: 0,
-            width: size * 1.08,
-            height: imageHeight,
-            child: Image.file(
-              image,
-              fit: BoxFit.contain,
-              filterQuality: FilterQuality.high,
-            ),
-          ),
           if (text.isNotEmpty)
             Positioned(
               left: textX * width - estimatedTextWidth / 2,
@@ -1167,10 +1174,10 @@ class _StickerArtwork extends StatelessWidget {
               width: estimatedTextWidth,
               height: textHeight,
               child: GestureDetector(
-                onPanUpdate: onTextPositionChanged == null
+                onPanUpdate: widget.onTextPositionChanged == null
                     ? null
                     : (details) {
-                        onTextPositionChanged!(Offset(
+                        widget.onTextPositionChanged!(Offset(
                           (textX + details.delta.dx / width).clamp(minX, maxX),
                           (textY + details.delta.dy / height).clamp(minY, maxY),
                         ));
@@ -1178,9 +1185,9 @@ class _StickerArtwork extends StatelessWidget {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    _stickerText(text, Color(asset.outerBorderColor), PaintingStyle.stroke, 8),
-                    _stickerText(text, Color(asset.innerBorderColor), PaintingStyle.stroke, 5),
-                    _stickerText(text, Color(asset.textColor), PaintingStyle.fill, 0),
+                    _stickerText(text, Color(asset.outerBorderColor), PaintingStyle.stroke, 8, size, asset.textScale),
+                    _stickerText(text, Color(asset.innerBorderColor), PaintingStyle.stroke, 5, size, asset.textScale),
+                    _stickerText(text, Color(asset.textColor), PaintingStyle.fill, 0, size, asset.textScale),
                   ],
                 ),
               ),
@@ -1190,46 +1197,20 @@ class _StickerArtwork extends StatelessWidget {
     );
   }
 
-  List<Widget> _outlineLayers(
-    File image,
-    double height, {
-    required double radius,
-    required Color color,
-    required int count,
-  }) {
-    return List.generate(count, (index) {
-      final angle = index * 2 * 3.141592653589793 / count;
-      return Positioned(
-        top: 0,
-        width: size * 1.08,
-        height: height,
-        child: Transform.translate(
-          offset: Offset(radius * math.cos(angle), radius * math.sin(angle)),
-          child: ColorFiltered(
-            colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-            child: Image.file(
-              image,
-              fit: BoxFit.contain,
-              filterQuality: FilterQuality.high,
-            ),
-          ),
-        ),
-      );
-    });
-  }
-
   Widget _stickerText(
     String text,
     Color color,
     PaintingStyle style,
     double strokeWidth,
+    double size,
+    double textScale,
   ) {
     return Text(
       text,
       maxLines: 1,
       style: TextStyle(
         fontFamily: 'NotoSansJP',
-        fontSize: size * 0.0288 * asset.textScale,
+        fontSize: size * 0.0288 * textScale,
         fontWeight: FontWeight.w900,
         height: 1,
         foreground: Paint()
@@ -1240,6 +1221,95 @@ class _StickerArtwork extends StatelessWidget {
       ),
     );
   }
+}
+
+class _StickerArtworkPainter extends CustomPainter {
+  const _StickerArtworkPainter({
+    required this.image,
+    required this.shadowEnabled,
+    required this.outerBorderColor,
+    required this.innerBorderColor,
+  });
+
+  final ui.Image image;
+  final bool shadowEnabled;
+  final Color outerBorderColor;
+  final Color innerBorderColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 画像エリアは幅の 1.08/1.25、高さはフル
+    final imgAreaW = size.width * (1.08 / 1.25);
+    final imgAreaH = size.height;
+    final centerX = (size.width - imgAreaW) / 2;
+
+    // BoxFit.contain: 画像を imgAreaW × imgAreaH に収まるようスケール
+    final imgW = image.width.toDouble();
+    final imgH = image.height.toDouble();
+    final scale = math.min(imgAreaW / imgW, imgAreaH / imgH);
+    final drawW = imgW * scale;
+    final drawH = imgH * scale;
+    final drawX = centerX + (imgAreaW - drawW) / 2;
+    final drawY = (imgAreaH - drawH) / 2;
+    final srcRect = Rect.fromLTWH(0, 0, imgW, imgH);
+
+    // 1. シャドウ（MaskFilter.blur でガウスぼかし）
+    if (shadowEnabled) {
+      final shadowPaint = Paint()
+        ..colorFilter = ColorFilter.mode(
+          Colors.black.withValues(alpha: .55),
+          BlendMode.srcIn,
+        )
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+      canvas.drawImageRect(
+        image, srcRect,
+        Rect.fromLTWH(drawX, drawY + 7, drawW, drawH),
+        shadowPaint,
+      );
+    }
+
+    // 2. 外枠: radius=6 で 20 方向に描画
+    final outerPaint = Paint()
+      ..colorFilter = ColorFilter.mode(outerBorderColor, BlendMode.srcIn);
+    for (var i = 0; i < 20; i++) {
+      final angle = i * 2 * math.pi / 20;
+      canvas.drawImageRect(
+        image, srcRect,
+        Rect.fromLTWH(
+          drawX + 6 * math.cos(angle),
+          drawY + 6 * math.sin(angle),
+          drawW, drawH,
+        ),
+        outerPaint,
+      );
+    }
+
+    // 3. 内枠: radius=3 で 16 方向に描画
+    final innerPaint = Paint()
+      ..colorFilter = ColorFilter.mode(innerBorderColor, BlendMode.srcIn);
+    for (var i = 0; i < 16; i++) {
+      final angle = i * 2 * math.pi / 16;
+      canvas.drawImageRect(
+        image, srcRect,
+        Rect.fromLTWH(
+          drawX + 3 * math.cos(angle),
+          drawY + 3 * math.sin(angle),
+          drawW, drawH,
+        ),
+        innerPaint,
+      );
+    }
+
+    // 4. 本体画像
+    canvas.drawImageRect(image, srcRect, Rect.fromLTWH(drawX, drawY, drawW, drawH), Paint());
+  }
+
+  @override
+  bool shouldRepaint(_StickerArtworkPainter old) =>
+      old.image != image ||
+      old.shadowEnabled != shadowEnabled ||
+      old.outerBorderColor != outerBorderColor ||
+      old.innerBorderColor != innerBorderColor;
 }
 
 class _StickerDesignerPage extends StatefulWidget {
