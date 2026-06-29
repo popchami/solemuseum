@@ -60,6 +60,13 @@ class StickerBoardItem {
     required this.scale,
     required this.rotation,
     required this.zIndex,
+    this.textEnabled = false,
+    this.textContent = '',
+    this.textColor = '#FFFFFF',
+    this.textSize = 0.025,
+    this.textFont = '',
+    this.textX = 0.7,
+    this.textY = 0.75,
   });
 
   final int id;
@@ -70,6 +77,13 @@ class StickerBoardItem {
   final double scale;
   final double rotation;
   final int zIndex;
+  final bool textEnabled;
+  final String textContent;
+  final String textColor;
+  final double textSize;
+  final String textFont;
+  final double textX;
+  final double textY;
 
   factory StickerBoardItem.fromMap(Map<String, Object?> map) => StickerBoardItem(
         id: map['id'] as int,
@@ -80,5 +94,44 @@ class StickerBoardItem {
         scale: (map['scale'] as num).toDouble(),
         rotation: (map['rotation'] as num).toDouble(),
         zIndex: map['z_index'] as int,
+        textEnabled: (map['text_enabled'] as int? ?? 0) == 1,
+        textContent: map['text_content'] as String? ?? '',
+        textColor: map['text_color'] as String? ?? '#FFFFFF',
+        textSize: (map['text_size'] as num? ?? 0.025).toDouble(),
+        textFont: map['text_font'] as String? ?? '',
+        textX: (map['text_x'] as num? ?? 0.7).toDouble(),
+        textY: (map['text_y'] as num? ?? 0.75).toDouble(),
+      );
+
+  StickerBoardItem copyWith({
+    double? x,
+    double? y,
+    double? scale,
+    double? rotation,
+    int? zIndex,
+    bool? textEnabled,
+    String? textContent,
+    String? textColor,
+    double? textSize,
+    String? textFont,
+    double? textX,
+    double? textY,
+  }) =>
+      StickerBoardItem(
+        id: id,
+        boardId: boardId,
+        stickerId: stickerId,
+        x: x ?? this.x,
+        y: y ?? this.y,
+        scale: scale ?? this.scale,
+        rotation: rotation ?? this.rotation,
+        zIndex: zIndex ?? this.zIndex,
+        textEnabled: textEnabled ?? this.textEnabled,
+        textContent: textContent ?? this.textContent,
+        textColor: textColor ?? this.textColor,
+        textSize: textSize ?? this.textSize,
+        textFont: textFont ?? this.textFont,
+        textX: textX ?? this.textX,
+        textY: textY ?? this.textY,
       );
 }

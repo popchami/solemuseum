@@ -178,7 +178,15 @@ class StickerRepository {
     final existing = await db.query('sticker_board_items', where: 'board_id = ? AND sticker_id = ?', whereArgs: [boardId, stickerId], limit: 1);
     if (existing.isNotEmpty) return;
     final count = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM sticker_board_items WHERE board_id = ?', [boardId])) ?? 0;
-    await db.insert('sticker_board_items', {'board_id': boardId, 'sticker_id': stickerId, 'x': 0.12 + (count % 3) * 0.25, 'y': 0.12 + (count ~/ 3) * 0.25, 'scale': 1.0, 'rotation': 0.0, 'z_index': count});
+    final sx = 0.12 + (count % 3) * 0.25;
+    final sy = 0.12 + (count ~/ 3) * 0.25;
+    await db.insert('sticker_board_items', {
+      'board_id': boardId, 'sticker_id': stickerId,
+      'x': sx, 'y': sy, 'scale': 1.0, 'rotation': 0.0, 'z_index': count,
+      'text_enabled': 0, 'text_content': '', 'text_color': '#FFFFFF',
+      'text_size': 0.025, 'text_font': '',
+      'text_x': (sx + 0.18).clamp(0.0, 0.9), 'text_y': (sy + 0.24).clamp(0.0, 0.9),
+    });
   }
 
   Future<int> getBoardItemCount(int boardId) async {
@@ -235,29 +243,48 @@ class StickerRepository {
 
   Future<void> updateBoardItem(StickerBoardItem item) async {
     final db = await AppDatabase.instance.database;
-    await db.update('sticker_board_items', {'x': item.x, 'y': item.y, 'scale': item.scale, 'rotation': item.rotation, 'z_index': item.zIndex}, where: 'id = ?', whereArgs: [item.id]);
+    await db.update('sticker_board_items', {
+      'x': item.x, 'y': item.y, 'scale': item.scale, 'rotation': item.rotation, 'z_index': item.zIndex,
+      'text_enabled': item.textEnabled ? 1 : 0,
+      'text_content': item.textContent,
+      'text_color': item.textColor,
+      'text_size': item.textSize,
+      'text_font': item.textFont,
+      'text_x': item.textX,
+      'text_y': item.textY,
+    }, where: 'id = ?', whereArgs: [item.id]);
   }
 
   Future<StickerBoardItem> duplicateBoardItem(StickerBoardItem source) async {
     final db = await AppDatabase.instance.database;
+    final nx = (source.x + .05).clamp(0.0, .78);
+    final ny = (source.y + .05).clamp(0.0, .82);
     final id = await db.insert('sticker_board_items', {
       'board_id': source.boardId,
       'sticker_id': source.stickerId,
-      'x': (source.x + .05).clamp(0, .78),
-      'y': (source.y + .05).clamp(0, .82),
-      'scale': source.scale,
-      'rotation': source.rotation,
-      'z_index': source.zIndex + 1,
+      'x': nx, 'y': ny,
+      'scale': source.scale, 'rotation': source.rotation, 'z_index': source.zIndex + 1,
+      'text_enabled': source.textEnabled ? 1 : 0,
+      'text_content': source.textContent,
+      'text_color': source.textColor,
+      'text_size': source.textSize,
+      'text_font': source.textFont,
+      'text_x': (source.textX + .05).clamp(0.0, 0.9),
+      'text_y': (source.textY + .05).clamp(0.0, 0.9),
     });
     return StickerBoardItem(
       id: id,
       boardId: source.boardId,
       stickerId: source.stickerId,
-      x: (source.x + .05).clamp(0, .78),
-      y: (source.y + .05).clamp(0, .82),
-      scale: source.scale,
-      rotation: source.rotation,
-      zIndex: source.zIndex + 1,
+      x: nx, y: ny,
+      scale: source.scale, rotation: source.rotation, zIndex: source.zIndex + 1,
+      textEnabled: source.textEnabled,
+      textContent: source.textContent,
+      textColor: source.textColor,
+      textSize: source.textSize,
+      textFont: source.textFont,
+      textX: (source.textX + .05).clamp(0.0, 0.9),
+      textY: (source.textY + .05).clamp(0.0, 0.9),
     );
   }
 

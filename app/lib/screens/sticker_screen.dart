@@ -97,11 +97,7 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
                   _ => null,
                 };
                 if (action != null) {
-                  await _editSticker(
-                    asset,
-                    shoes,
-                    action: action,
-                  );
+                  await _editSticker(asset, shoes, action: action);
                 }
               }
             },
@@ -122,9 +118,7 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
                 PopupMenuItem(
                   enabled: false,
                   child: Text(
-                    _selectedSticker == null
-                        ? 'ステッカー未選択'
-                        : '選択中のステッカー',
+                    _selectedSticker == null ? 'ステッカー未選択' : '選択中のステッカー',
                   ),
                 ),
               if (_editMode && _selectedSticker != null) ...[
@@ -157,19 +151,16 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
                     brandName.toLowerCase().contains(query) ||
                     (shoe.displayTitle?.toLowerCase().contains(query) ?? false) ||
                     (shoe.stickerText?.toLowerCase().contains(query) ?? false);
-                final matchesBrand = _selectedBrandId == null ||
-                    shoe.brandId == _selectedBrandId;
-                final matchesStatus = _selectedStatus == null ||
-                    shoe.status == _selectedStatus;
+                final matchesBrand =
+                    _selectedBrandId == null || shoe.brandId == _selectedBrandId;
+                final matchesStatus =
+                    _selectedStatus == null || shoe.status == _selectedStatus;
                 final matchesColor = _selectedColor == null ||
                     (shoe.color ?? '')
                         .split(',')
                         .map((color) => color.trim())
                         .contains(_selectedColor);
-                return matchesQuery &&
-                    matchesBrand &&
-                    matchesStatus &&
-                    matchesColor;
+                return matchesQuery && matchesBrand && matchesStatus && matchesColor;
               })
               .map((shoe) => shoe.id)
               .toSet();
@@ -211,10 +202,8 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
                           child: IconButton(
                             icon: const Icon(Icons.tune),
                             tooltip: '絞り込み',
-                            onPressed: () => _showFilters(
-                              brands: brands,
-                              colors: colors,
-                            ),
+                            onPressed: () =>
+                                _showFilters(brands: brands, colors: colors),
                           ),
                         ),
                         const SizedBox(width: 4),
@@ -235,30 +224,28 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
                             return const Center(child: CircularProgressIndicator());
                           }
                           final data = snapshot.data!;
-              return _StickerBoard(
-                key: _boardKey,
-                stickers: visibleStickers,
-                items: data.items,
-                editMode: _editMode,
-                selectedItemId: _selectedBoardItem?.id,
-                onPaste: (position) => _pasteStickerAt(
-                  data.boardId,
-                  stickers,
-                  position,
-                ),
-                onChanged: (item) => ref.read(stickerRepositoryProvider).updateBoardItem(item),
-                onEdit: (asset, item) => setState(() {
-                  _selectedSticker = asset;
-                  _selectedBoardItem = item;
-                }),
-                onDesign: (asset, item) => _editSticker(
-                  asset,
-                  shoes,
-                  action: _StickerEditAction.design,
-                ),
-                onToolAction: (asset, item, action) =>
-                    _handleStickerTool(asset, item, action),
-              );
+                          return _StickerBoard(
+                            key: _boardKey,
+                            stickers: visibleStickers,
+                            items: data.items,
+                            editMode: _editMode,
+                            selectedItemId: _selectedBoardItem?.id,
+                            onPaste: (position) => _pasteStickerAt(
+                              data.boardId,
+                              stickers,
+                              position,
+                            ),
+                            onChanged: (item) =>
+                                ref.read(stickerRepositoryProvider).updateBoardItem(item),
+                            onEdit: (asset, item) => setState(() {
+                              _selectedSticker = asset;
+                              _selectedBoardItem = item;
+                            }),
+                            onDesign: (asset, item) =>
+                                _editSticker(asset, shoes, action: _StickerEditAction.design),
+                            onToolAction: (asset, item, action) =>
+                                _handleStickerTool(asset, item, action),
+                          );
                         },
                       ),
               ),
@@ -386,9 +373,7 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
       }
     }
     if (selected == null || !mounted) return;
-    await ref
-        .read(stickerRepositoryProvider)
-        .pasteToBoard(
+    await ref.read(stickerRepositoryProvider).pasteToBoard(
           boardId,
           selected.id,
           x: position.dx,
@@ -410,7 +395,9 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
             itemBuilder: (context, index) {
               final shoe = shoes[index];
               return ListTile(
-                title: Text(shoe.displayTitle?.isNotEmpty == true ? shoe.displayTitle! : shoe.modelName),
+                title: Text(shoe.displayTitle?.isNotEmpty == true
+                    ? shoe.displayTitle!
+                    : shoe.modelName),
                 onTap: () => Navigator.pop(context, shoe),
               );
             },
@@ -463,24 +450,22 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
       loadingOpen = true;
       final repository = ref.read(stickerRepositoryProvider);
       final stickerId = await repository.saveSticker(
-            shoeId: shoe.id!,
-            sourcePath: photo.filePath,
-            stickerPath: cutoutPath,
-            stickerText: design.text,
-            textColor: design.textColor,
-            innerBorderColor: design.innerBorderColor,
-            outerBorderColor: design.outerBorderColor,
-            shadowEnabled: design.shadowEnabled,
-            textScale: design.textScale,
-            textX: design.textX,
-            textY: design.textY,
-          );
+        shoeId: shoe.id!,
+        sourcePath: photo.filePath,
+        stickerPath: cutoutPath,
+        stickerText: design.text,
+        textColor: design.textColor,
+        innerBorderColor: design.innerBorderColor,
+        outerBorderColor: design.outerBorderColor,
+        shadowEnabled: design.shadowEnabled,
+        textScale: design.textScale,
+        textX: design.textX,
+        textY: design.textY,
+      );
       final boardId = await repository.ensureDefaultBoard();
       final count = await repository.getBoardItemCount(boardId);
-      final isPremium = await ref
-              .read(settingsRepositoryProvider)
-              .getValue('is_premium') ==
-          'true';
+      final isPremium =
+          await ref.read(settingsRepositoryProvider).getValue('is_premium') == 'true';
       final limit = isPremium
           ? StickerRepository.premiumBoardItemLimit
           : StickerRepository.freeBoardItemLimit;
@@ -521,16 +506,9 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
     var textX = existing?.textX ?? .5;
     var textY = existing?.textY ?? .55;
     const colors = <int>[
-      0xFFFFFFFF,
-      0xFF111111,
-      0xFFFF6A00,
-      0xFFFFC400,
-      0xFFE53935,
-      0xFFEC407A,
-      0xFF7E57C2,
-      0xFF1E88E5,
-      0xFF00ACC1,
-      0xFF43A047,
+      0xFFFFFFFF, 0xFF111111, 0xFFFF6A00, 0xFFFFC400,
+      0xFFE53935, 0xFFEC407A, 0xFF7E57C2, 0xFF1E88E5,
+      0xFF00ACC1, 0xFF43A047,
     ];
     return showDialog<_StickerDesign>(
       context: context,
@@ -581,9 +559,7 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
                             ? Icon(
                                 Icons.check,
                                 size: 17,
-                                color: value == 0xFFFFFFFF
-                                    ? Colors.black
-                                    : Colors.white,
+                                color: value == 0xFFFFFFFF ? Colors.black : Colors.white,
                               )
                             : null,
                       ),
@@ -610,8 +586,7 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
                         labelText: 'ステッカーテキスト',
                         helperText: '靴詳細の文字を初期値として使用します',
                       ),
-                      onChanged: (value) =>
-                          setLocalState(() => text = value),
+                      onChanged: (value) => setLocalState(() => text = value),
                     ),
                     Container(
                       height: 180,
@@ -640,29 +615,19 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
                             min: .6,
                             max: 1.6,
                             divisions: 20,
-                            onChanged: (value) =>
-                                setLocalState(() => textScale = value),
+                            onChanged: (value) => setLocalState(() => textScale = value),
                           ),
                         ),
                       ],
                     ),
                     palette('文字色', textColor, (value) => textColor = value),
-                    palette(
-                      '内フチ（標準：白）',
-                      innerColor,
-                      (value) => innerColor = value,
-                    ),
-                    palette(
-                      '外フチ（標準：オレンジ）',
-                      outerColor,
-                      (value) => outerColor = value,
-                    ),
+                    palette('内フチ（標準：白）', innerColor, (value) => innerColor = value),
+                    palette('外フチ（標準：オレンジ）', outerColor, (value) => outerColor = value),
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       title: const Text('Shadow'),
                       value: shadow,
-                      onChanged: (value) =>
-                          setLocalState(() => shadow = value),
+                      onChanged: (value) => setLocalState(() => shadow = value),
                     ),
                   ],
                 ),
@@ -733,9 +698,7 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
       );
       if (editedPath == null || !mounted) return;
       stickerPath = editedPath;
-      final photo = await ref
-          .read(photoRepositoryProvider)
-          .getMainPhoto(asset.shoeId);
+      final photo = await ref.read(photoRepositoryProvider).getMainPhoto(asset.shoeId);
       if (photo != null) {
         await ref.read(photoRepositoryProvider).updatePhoto(
               photo.copyWith(cutoutPath: editedPath),
@@ -743,11 +706,7 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
         ref.invalidate(mainPhotoProvider(asset.shoeId));
       }
     } else {
-      final updated = await _showStickerDesigner(
-        shoe,
-        asset.stickerPath,
-        asset,
-      );
+      final updated = await _showStickerDesigner(shoe, asset.stickerPath, asset);
       if (updated == null || !mounted) return;
       design = updated;
     }
@@ -792,28 +751,14 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
           });
         }
       case _StickerToolAction.zoomIn:
-        await repository.updateBoardItem(StickerBoardItem(
-          id: item.id,
-          boardId: item.boardId,
-          stickerId: item.stickerId,
-          x: item.x,
-          y: item.y,
-          scale: (item.scale + .1).clamp(.75, 1.5),
-          rotation: item.rotation,
-          zIndex: item.zIndex,
-        ));
+        await repository.updateBoardItem(
+          item.copyWith(scale: (item.scale + .1).clamp(.75, 1.5)),
+        );
         if (mounted) setState(() => _revision++);
       case _StickerToolAction.zoomOut:
-        await repository.updateBoardItem(StickerBoardItem(
-          id: item.id,
-          boardId: item.boardId,
-          stickerId: item.stickerId,
-          x: item.x,
-          y: item.y,
-          scale: (item.scale - .1).clamp(.75, 1.5),
-          rotation: item.rotation,
-          zIndex: item.zIndex,
-        ));
+        await repository.updateBoardItem(
+          item.copyWith(scale: (item.scale - .1).clamp(.75, 1.5)),
+        );
         if (mounted) setState(() => _revision++);
       case _StickerToolAction.bringFront:
         await repository.bringToFront(item);
@@ -822,19 +767,12 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
   }
 
   Future<bool> _checkBoardCapacity(int boardId) async {
-    // Premium purchase/state is not implemented yet, so the app currently
-    // operates as Free. Keeping both limits here makes the future switch a
-    // single policy change instead of another data migration.
-    final isPremium = await ref
-            .read(settingsRepositoryProvider)
-            .getValue('is_premium') ==
-        'true';
+    final isPremium =
+        await ref.read(settingsRepositoryProvider).getValue('is_premium') == 'true';
     final limit = isPremium
         ? StickerRepository.premiumBoardItemLimit
         : StickerRepository.freeBoardItemLimit;
-    final count = await ref
-        .read(stickerRepositoryProvider)
-        .getBoardItemCount(boardId);
+    final count = await ref.read(stickerRepositoryProvider).getBoardItemCount(boardId);
     if (count < limit) return true;
     if (!mounted) return false;
     await showDialog<void>(
@@ -856,27 +794,13 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
     );
     return false;
   }
-
 }
 
-enum _StickerBoardCommand {
-  toggleEdit,
-  cutout,
-}
+enum _StickerBoardCommand { toggleEdit, cutout }
 
-enum _StickerEditAction {
-  cutout,
-  design,
-}
+enum _StickerEditAction { cutout, design }
 
-enum _StickerToolAction {
-  paste,
-  duplicate,
-  delete,
-  zoomIn,
-  zoomOut,
-  bringFront,
-}
+enum _StickerToolAction { paste, duplicate, delete, zoomIn, zoomOut, bringFront }
 
 class _StickerDesign {
   const _StickerDesign({
@@ -949,11 +873,7 @@ class _StickerBoard extends StatefulWidget {
   final ValueChanged<StickerBoardItem> onChanged;
   final void Function(StickerAsset asset, StickerBoardItem item) onEdit;
   final void Function(StickerAsset asset, StickerBoardItem item) onDesign;
-  final void Function(
-    StickerAsset asset,
-    StickerBoardItem item,
-    _StickerToolAction action,
-  ) onToolAction;
+  final void Function(StickerAsset, StickerBoardItem, _StickerToolAction) onToolAction;
 
   @override
   State<_StickerBoard> createState() => _StickerBoardState();
@@ -961,12 +881,22 @@ class _StickerBoard extends StatefulWidget {
 
 class _StickerBoardState extends State<_StickerBoard> {
   late List<StickerBoardItem> _items;
+  int? _selectedTextId;
   double _startScale = 1;
   double _startRotation = 0;
   Offset? _rotationCenter;
   double _handleStartAngle = 0;
   double _handleStartRotation = 0;
   final GlobalKey _boardKey = GlobalKey();
+  final _textController = TextEditingController();
+
+  int? get _textPanelItemId => _selectedTextId ?? widget.selectedItemId;
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -979,6 +909,14 @@ class _StickerBoardState extends State<_StickerBoard> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.items != widget.items) {
       _items = [...widget.items];
+    }
+    if (oldWidget.selectedItemId != widget.selectedItemId &&
+        widget.selectedItemId != null) {
+      final item = _items.where((i) => i.id == widget.selectedItemId).firstOrNull;
+      if (item != null) {
+        _textController.text = item.textContent;
+        if (_selectedTextId != null) setState(() => _selectedTextId = null);
+      }
     }
   }
 
@@ -994,217 +932,385 @@ class _StickerBoardState extends State<_StickerBoard> {
     }
     return Column(
       children: [
+        if (_textPanelItemId != null) _buildTextEditPanel(),
         Expanded(
           child: Center(
             child: Padding(
-        padding: const EdgeInsets.all(2),
-        child: RepaintBoundary(
-          key: _boardKey,
-          child: SizedBox.expand(
-          child: LayoutBuilder(
-            builder: (context, constraints) => GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onLongPressStart: widget.editMode
-                  ? (details) => widget.onPaste(Offset(
-                        (details.localPosition.dx / constraints.maxWidth)
-                            .clamp(0, .78),
-                        (details.localPosition.dy / constraints.maxHeight)
-                            .clamp(0, .82),
-                      ))
-                  : null,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF3E7D3),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
-                ),
-                child: Stack(
-                clipBehavior: Clip.hardEdge,
-                children: [
-                  ..._items.map((item) {
-                  final asset = assets[item.stickerId];
-                  if (asset == null) return const SizedBox.shrink();
-                  return Positioned(
-                    left: item.x * constraints.maxWidth,
-                    top: item.y * constraints.maxHeight,
-                    child: GestureDetector(
-                      onTap: widget.editMode
-                          ? () => widget.onEdit(asset, item)
+              padding: const EdgeInsets.all(2),
+              child: RepaintBoundary(
+                key: _boardKey,
+                child: SizedBox.expand(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onLongPressStart: widget.editMode
+                          ? (details) => widget.onPaste(Offset(
+                                (details.localPosition.dx / constraints.maxWidth)
+                                    .clamp(0, .78),
+                                (details.localPosition.dy / constraints.maxHeight)
+                                    .clamp(0, .82),
+                              ))
                           : null,
-                      onLongPress: widget.editMode
-                          ? () => widget.onDesign(asset, item)
-                          : null,
-                      onScaleStart: (_) {
-                        _startScale = item.scale;
-                        _startRotation = item.rotation;
-                      },
-                      onScaleUpdate: (details) {
-                        final index = _items.indexWhere((value) => value.id == item.id);
-                        setState(() {
-                          _items[index] = StickerBoardItem(
-                            id: item.id, boardId: item.boardId, stickerId: item.stickerId,
-                            x: (item.x + details.focalPointDelta.dx / constraints.maxWidth).clamp(0, .78),
-                            y: (item.y + details.focalPointDelta.dy / constraints.maxHeight).clamp(0, .82),
-                            scale: widget.editMode
-                                ? (_startScale * details.scale).clamp(.75, 1.5)
-                                : item.scale,
-                            rotation: _startRotation,
-                            zIndex: item.zIndex,
-                          );
-                        });
-                      },
-                      onScaleEnd: (_) {
-                        widget.onChanged(
-                          _items.firstWhere((value) => value.id == item.id),
-                        );
-                      },
-                      child: Transform.rotate(
-                        angle: item.rotation,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF3E7D3),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: Theme.of(context).colorScheme.outlineVariant),
+                        ),
                         child: Stack(
-                          clipBehavior: Clip.none,
-                          alignment: Alignment.center,
+                          clipBehavior: Clip.hardEdge,
                           children: [
-                            Transform.scale(
-                              scale: item.scale,
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  border: widget.selectedItemId == item.id
-                                      ? Border.all(
-                                          color: Colors.orange,
-                                          width: 2,
-                                        )
+                            ..._items.map((item) {
+                              final asset = assets[item.stickerId];
+                              if (asset == null) return const SizedBox.shrink();
+                              return Positioned(
+                                left: item.x * constraints.maxWidth,
+                                top: item.y * constraints.maxHeight,
+                                child: GestureDetector(
+                                  onTap: widget.editMode
+                                      ? () {
+                                          setState(() => _selectedTextId = null);
+                                          widget.onEdit(asset, item);
+                                        }
                                       : null,
-                                  borderRadius: BorderRadius.circular(10),
+                                  onLongPress: widget.editMode
+                                      ? () => widget.onDesign(asset, item)
+                                      : null,
+                                  onScaleStart: (_) {
+                                    _startScale = item.scale;
+                                    _startRotation = item.rotation;
+                                  },
+                                  onScaleUpdate: (details) {
+                                    final index = _items
+                                        .indexWhere((value) => value.id == item.id);
+                                    setState(() {
+                                      _items[index] = item.copyWith(
+                                        x: (item.x +
+                                                details.focalPointDelta.dx /
+                                                    constraints.maxWidth)
+                                            .clamp(0, .78),
+                                        y: (item.y +
+                                                details.focalPointDelta.dy /
+                                                    constraints.maxHeight)
+                                            .clamp(0, .82),
+                                        scale: widget.editMode
+                                            ? (_startScale * details.scale)
+                                                .clamp(.75, 1.5)
+                                            : item.scale,
+                                        rotation: _startRotation,
+                                      );
+                                    });
+                                  },
+                                  onScaleEnd: (_) => widget.onChanged(
+                                    _items.firstWhere((value) => value.id == item.id),
+                                  ),
+                                  child: Transform.rotate(
+                                    angle: item.rotation,
+                                    child: Stack(
+                                      clipBehavior: Clip.none,
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Transform.scale(
+                                          scale: item.scale,
+                                          child: DecoratedBox(
+                                            decoration: BoxDecoration(
+                                              border: widget.selectedItemId == item.id
+                                                  ? Border.all(
+                                                      color: Colors.orange,
+                                                      width: 2,
+                                                    )
+                                                  : null,
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            child: RepaintBoundary(
+                                              child: _StickerArtwork(asset: asset),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                child: RepaintBoundary(
-                                  child: _StickerArtwork(asset: asset),
+                              );
+                            }),
+                            ..._items.map((item) => _buildTextItem(item, constraints)),
+                            if (widget.editMode && selectedItem != null)
+                              Positioned(
+                                left: selectedItem.x * constraints.maxWidth +
+                                    75 +
+                                    math.cos(selectedItem.rotation - math.pi / 2) *
+                                        68 *
+                                        selectedItem.scale -
+                                    17,
+                                top: selectedItem.y * constraints.maxHeight +
+                                    60 +
+                                    math.sin(selectedItem.rotation - math.pi / 2) *
+                                        68 *
+                                        selectedItem.scale -
+                                    17,
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onPanStart: (details) {
+                                    final box = _boardKey.currentContext
+                                        ?.findRenderObject() as RenderBox?;
+                                    if (box == null) return;
+                                    _rotationCenter = box.localToGlobal(Offset(
+                                      selectedItem!.x * constraints.maxWidth + 75,
+                                      selectedItem.y * constraints.maxHeight + 43,
+                                    ));
+                                    final delta =
+                                        details.globalPosition - _rotationCenter!;
+                                    _handleStartAngle =
+                                        math.atan2(delta.dy, delta.dx);
+                                    _handleStartRotation = selectedItem.rotation;
+                                  },
+                                  onPanUpdate: (details) {
+                                    final center = _rotationCenter;
+                                    if (center == null) return;
+                                    final index = _items.indexWhere(
+                                      (value) => value.id == selectedItem!.id,
+                                    );
+                                    final current = _items[index];
+                                    final delta = details.globalPosition - center;
+                                    final angle = math.atan2(delta.dy, delta.dx);
+                                    setState(() {
+                                      _items[index] = current.copyWith(
+                                        rotation: _handleStartRotation +
+                                            angle -
+                                            _handleStartAngle,
+                                      );
+                                    });
+                                  },
+                                  onPanEnd: (_) => widget.onChanged(
+                                    _items.firstWhere(
+                                        (value) => value.id == selectedItem!.id),
+                                  ),
+                                  child: Container(
+                                    width: 34,
+                                    height: 34,
+                                    decoration: BoxDecoration(
+                                      color: Colors.orange,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(color: Colors.white, width: 2),
+                                    ),
+                                    child: const Icon(
+                                      Icons.rotate_right,
+                                      size: 20,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                            if (widget.editMode && selectedItem != null)
+                              Positioned(
+                                left: (selectedItem.x * constraints.maxWidth - 50)
+                                    .clamp(4, constraints.maxWidth - 252),
+                                top: (selectedItem.y * constraints.maxHeight +
+                                        96 * selectedItem.scale)
+                                    .clamp(4, constraints.maxHeight - 48),
+                                child: _StickerSelectionToolbar(
+                                  onAction: (action) {
+                                    final current = _items.firstWhere(
+                                      (value) => value.id == selectedItem!.id,
+                                    );
+                                    final asset = assets[current.stickerId];
+                                    if (asset != null) {
+                                      widget.onToolAction(asset, current, action);
+                                    }
+                                  },
+                                ),
+                              ),
                           ],
                         ),
                       ),
                     ),
-                  );
-                  }),
-                  if (widget.editMode && selectedItem != null)
-                    Positioned(
-                      left: selectedItem.x * constraints.maxWidth +
-                          75 +
-                          math.cos(selectedItem.rotation - math.pi / 2) *
-                              68 *
-                              selectedItem.scale -
-                          17,
-                      top: selectedItem.y * constraints.maxHeight +
-                          60 +
-                          math.sin(selectedItem.rotation - math.pi / 2) *
-                              68 *
-                              selectedItem.scale -
-                          17,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onPanStart: (details) {
-                          final box = _boardKey.currentContext
-                              ?.findRenderObject() as RenderBox?;
-                          if (box == null) return;
-                          _rotationCenter = box.localToGlobal(Offset(
-                            selectedItem!.x * constraints.maxWidth + 75,
-                            selectedItem.y * constraints.maxHeight + 43,
-                          ));
-                          final delta =
-                              details.globalPosition - _rotationCenter!;
-                          _handleStartAngle =
-                              math.atan2(delta.dy, delta.dx);
-                          _handleStartRotation = selectedItem.rotation;
-                        },
-                        onPanUpdate: (details) {
-                          final center = _rotationCenter;
-                          if (center == null) return;
-                          final index = _items.indexWhere(
-                            (value) => value.id == selectedItem!.id,
-                          );
-                          final current = _items[index];
-                          final delta = details.globalPosition - center;
-                          final angle = math.atan2(delta.dy, delta.dx);
-                          setState(() {
-                            _items[index] = StickerBoardItem(
-                              id: current.id,
-                              boardId: current.boardId,
-                              stickerId: current.stickerId,
-                              x: current.x,
-                              y: current.y,
-                              scale: current.scale,
-                              rotation: _handleStartRotation +
-                                  angle -
-                                  _handleStartAngle,
-                              zIndex: current.zIndex,
-                            );
-                          });
-                        },
-                        onPanEnd: (_) => widget.onChanged(
-                          _items.firstWhere(
-                            (value) => value.id == selectedItem!.id,
-                          ),
-                        ),
-                        child: Container(
-                          width: 34,
-                          height: 34,
-                          decoration: BoxDecoration(
-                            color: Colors.orange,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                          child: const Icon(
-                            Icons.rotate_right,
-                            size: 20,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (widget.editMode && selectedItem != null)
-                    Positioned(
-                      left: (selectedItem.x * constraints.maxWidth - 50)
-                          .clamp(4, constraints.maxWidth - 252),
-                      top: (selectedItem.y * constraints.maxHeight +
-                              96 * selectedItem.scale)
-                          .clamp(4, constraints.maxHeight - 48),
-                      child: _StickerSelectionToolbar(
-                        onAction: (action) {
-                          final current = _items.firstWhere(
-                            (value) => value.id == selectedItem!.id,
-                          );
-                          final asset = assets[current.stickerId];
-                          if (asset != null) {
-                            widget.onToolAction(asset, current, action);
-                          }
-                        },
-                      ),
-                    ),
-                ],
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-            ),
-          ),
-        ),
-        ),
         ),
       ],
     );
   }
 
+  Widget _buildTextItem(StickerBoardItem item, BoxConstraints constraints) {
+    if (!item.textEnabled || item.textContent.isEmpty) return const SizedBox.shrink();
+    final isSelected = _selectedTextId == item.id;
+    return Positioned(
+      left: (item.textX * constraints.maxWidth).clamp(0.0, constraints.maxWidth - 12),
+      top: (item.textY * constraints.maxHeight).clamp(0.0, constraints.maxHeight - 12),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => setState(() {
+          _selectedTextId = item.id;
+          _textController.text = item.textContent;
+        }),
+        onPanUpdate: (details) {
+          final index = _items.indexWhere((v) => v.id == item.id);
+          if (index == -1) return;
+          setState(() {
+            _items[index] = _items[index].copyWith(
+              textX: (_items[index].textX + details.delta.dx / constraints.maxWidth)
+                  .clamp(0.0, 0.95),
+              textY: (_items[index].textY + details.delta.dy / constraints.maxHeight)
+                  .clamp(0.0, 0.95),
+            );
+          });
+        },
+        onPanEnd: (_) =>
+            widget.onChanged(_items.firstWhere((v) => v.id == item.id)),
+        child: Container(
+          padding: const EdgeInsets.all(2),
+          decoration: BoxDecoration(
+            border: isSelected ? Border.all(color: Colors.orange, width: 1) : null,
+          ),
+          child: Text(
+            item.textContent,
+            style: TextStyle(
+              fontSize: constraints.maxWidth * item.textSize,
+              color: _hexToColor(item.textColor),
+              fontFamily: item.textFont.isEmpty ? null : item.textFont,
+              decoration: TextDecoration.none,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextEditPanel() {
+    final item = _items.where((i) => i.id == _textPanelItemId).firstOrNull;
+    if (item == null) return const SizedBox.shrink();
+
+    const colorOptions = ['#FFFFFF', '#000000', '#FF6B00', '#FF3B30', '#007AFF', '#FFD60A'];
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border(
+            bottom: BorderSide(color: Theme.of(context).colorScheme.outlineVariant)),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Switch(
+                value: item.textEnabled,
+                onChanged: (v) => _updateTextItem(item.copyWith(textEnabled: v)),
+              ),
+              Expanded(
+                child: TextField(
+                  controller: _textController,
+                  decoration: const InputDecoration(
+                    hintText: 'テキストを入力',
+                    isDense: true,
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  ),
+                  style: const TextStyle(fontSize: 14),
+                  onChanged: (v) => _updateTextItem(item.copyWith(textContent: v)),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              const Text('A', style: TextStyle(fontSize: 10)),
+              Expanded(
+                child: Slider(
+                  value: item.textSize,
+                  min: 0.01,
+                  max: 0.06,
+                  divisions: 25,
+                  onChanged: (v) {
+                    final index = _items.indexWhere((i) => i.id == item.id);
+                    if (index != -1) {
+                      setState(() => _items[index] = _items[index].copyWith(textSize: v));
+                    }
+                  },
+                  onChangeEnd: (_) =>
+                      widget.onChanged(_items.firstWhere((i) => i.id == item.id)),
+                ),
+              ),
+              const Text('A', style: TextStyle(fontSize: 20)),
+            ],
+          ),
+          Row(
+            children: [
+              ...colorOptions.map((hex) => GestureDetector(
+                    onTap: () => _updateTextItem(item.copyWith(textColor: hex)),
+                    child: Container(
+                      width: 26,
+                      height: 26,
+                      margin: const EdgeInsets.only(right: 6),
+                      decoration: BoxDecoration(
+                        color: _hexToColor(hex),
+                        shape: BoxShape.circle,
+                        border: item.textColor == hex
+                            ? Border.all(color: Colors.orange, width: 2)
+                            : Border.all(color: Colors.grey.shade400, width: 1),
+                      ),
+                    ),
+                  )),
+              const Spacer(),
+              DropdownButton<String>(
+                value: item.textFont,
+                isDense: true,
+                underline: const SizedBox(),
+                items: const [
+                  DropdownMenuItem(
+                      value: '',
+                      child: Text('デフォルト', style: TextStyle(fontSize: 13))),
+                  DropdownMenuItem(
+                      value: 'serif',
+                      child: Text('セリフ',
+                          style: TextStyle(fontSize: 13, fontFamily: 'serif'))),
+                  DropdownMenuItem(
+                      value: 'monospace',
+                      child: Text('等幅',
+                          style: TextStyle(fontSize: 13, fontFamily: 'monospace'))),
+                ],
+                onChanged: (v) {
+                  if (v != null) _updateTextItem(item.copyWith(textFont: v));
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _updateTextItem(StickerBoardItem updated) {
+    final index = _items.indexWhere((i) => i.id == updated.id);
+    if (index == -1) return;
+    setState(() => _items[index] = updated);
+    widget.onChanged(updated);
+  }
+
+  Color _hexToColor(String hex) {
+    final h = hex.replaceAll('#', '');
+    return Color(int.parse('FF$h', radix: 16));
+  }
+
   Future<void> exportBoard() async {
-    final boundary = _boardKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+    final boundary =
+        _boardKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
     if (boundary == null) return;
     final image = await boundary.toImage(pixelRatio: 3);
     final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
     if (bytes == null) return;
     final directory = await getTemporaryDirectory();
-    final file = File(p.join(directory.path, 'kickxkick_board_${DateTime.now().millisecondsSinceEpoch}.png'));
+    final file = File(p.join(
+        directory.path,
+        'kickxkick_board_${DateTime.now().millisecondsSinceEpoch}.png'));
     await file.writeAsBytes(bytes.buffer.asUint8List());
-    await SharePlus.instance.share(ShareParams(files: [XFile(file.path)], subject: 'KickxKick Sticker Board'));
+    await SharePlus.instance
+        .share(ShareParams(files: [XFile(file.path)], subject: 'KickxKick Sticker Board'));
   }
 }
 
@@ -1338,33 +1444,16 @@ class _StickerArtwork extends StatelessWidget {
                     ? null
                     : (details) {
                         onTextPositionChanged!(Offset(
-                          (textX + details.delta.dx / width)
-                              .clamp(minX, maxX),
-                          (textY + details.delta.dy / height)
-                              .clamp(minY, maxY),
+                          (textX + details.delta.dx / width).clamp(minX, maxX),
+                          (textY + details.delta.dy / height).clamp(minY, maxY),
                         ));
                       },
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    _stickerText(
-                      text,
-                      Color(asset.outerBorderColor),
-                      PaintingStyle.stroke,
-                      8,
-                    ),
-                    _stickerText(
-                      text,
-                      Color(asset.innerBorderColor),
-                      PaintingStyle.stroke,
-                      5,
-                    ),
-                    _stickerText(
-                      text,
-                      Color(asset.textColor),
-                      PaintingStyle.fill,
-                      0,
-                    ),
+                    _stickerText(text, Color(asset.outerBorderColor), PaintingStyle.stroke, 8),
+                    _stickerText(text, Color(asset.innerBorderColor), PaintingStyle.stroke, 5),
+                    _stickerText(text, Color(asset.textColor), PaintingStyle.fill, 0),
                   ],
                 ),
               ),
@@ -1388,10 +1477,7 @@ class _StickerArtwork extends StatelessWidget {
         width: size * 1.08,
         height: height,
         child: Transform.translate(
-          offset: Offset(
-            radius * math.cos(angle),
-            radius * math.sin(angle),
-          ),
+          offset: Offset(radius * math.cos(angle), radius * math.sin(angle)),
           child: ColorFiltered(
             colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
             child: Image.file(

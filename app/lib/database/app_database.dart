@@ -21,7 +21,7 @@ class AppDatabase {
 
     return openDatabase(
       path,
-      version: 12,
+      version: 13,
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
       },
@@ -141,6 +141,15 @@ class AppDatabase {
       await db.execute(
         'UPDATE stickers SET text_y = 0.55 WHERE text_y = 0.72',
       );
+    }
+    if (oldVersion < 13) {
+      await db.execute("ALTER TABLE sticker_board_items ADD COLUMN text_enabled INTEGER NOT NULL DEFAULT 0");
+      await db.execute("ALTER TABLE sticker_board_items ADD COLUMN text_content TEXT NOT NULL DEFAULT ''");
+      await db.execute("ALTER TABLE sticker_board_items ADD COLUMN text_color TEXT NOT NULL DEFAULT '#FFFFFF'");
+      await db.execute('ALTER TABLE sticker_board_items ADD COLUMN text_size REAL NOT NULL DEFAULT 0.025');
+      await db.execute("ALTER TABLE sticker_board_items ADD COLUMN text_font TEXT NOT NULL DEFAULT ''");
+      await db.execute('ALTER TABLE sticker_board_items ADD COLUMN text_x REAL NOT NULL DEFAULT 0.7');
+      await db.execute('ALTER TABLE sticker_board_items ADD COLUMN text_y REAL NOT NULL DEFAULT 0.75');
     }
   }
 
@@ -294,6 +303,13 @@ class AppDatabase {
         scale REAL NOT NULL DEFAULT 1.0,
         rotation REAL NOT NULL DEFAULT 0.0,
         z_index INTEGER NOT NULL DEFAULT 0,
+        text_enabled INTEGER NOT NULL DEFAULT 0,
+        text_content TEXT NOT NULL DEFAULT '',
+        text_color TEXT NOT NULL DEFAULT '#FFFFFF',
+        text_size REAL NOT NULL DEFAULT 0.025,
+        text_font TEXT NOT NULL DEFAULT '',
+        text_x REAL NOT NULL DEFAULT 0.7,
+        text_y REAL NOT NULL DEFAULT 0.75,
         FOREIGN KEY (board_id) REFERENCES sticker_boards(id) ON DELETE CASCADE,
         FOREIGN KEY (sticker_id) REFERENCES stickers(id) ON DELETE CASCADE
       )
