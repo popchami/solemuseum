@@ -510,153 +510,23 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
       0xFFE53935, 0xFFEC407A, 0xFF7E57C2, 0xFF1E88E5,
       0xFF00ACC1, 0xFF43A047,
     ];
-    return showDialog<_StickerDesign>(
-      context: context,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setLocalState) {
-          final preview = StickerAsset(
-            id: 0,
-            shoeId: shoe.id!,
-            sourcePath: cutoutPath,
-            stickerPath: cutoutPath,
-            stickerText: text,
-            textColor: textColor,
-            innerBorderColor: innerColor,
-            outerBorderColor: outerColor,
-            shadowEnabled: shadow,
-            textScale: textScale,
-            textX: textX,
-            textY: textY,
-          );
-          Widget palette(String label, int selected, ValueChanged<int> set) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label, style: Theme.of(context).textTheme.labelLarge),
-                const SizedBox(height: 6),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: colors.map((value) {
-                    final active = value == selected;
-                    return InkWell(
-                      borderRadius: BorderRadius.circular(99),
-                      onTap: () => setLocalState(() => set(value)),
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: Color(value),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: active
-                                ? Theme.of(context).colorScheme.primary
-                                : Theme.of(context).colorScheme.outlineVariant,
-                            width: active ? 3 : 1,
-                          ),
-                        ),
-                        child: active
-                            ? Icon(
-                                Icons.check,
-                                size: 17,
-                                color: value == 0xFFFFFFFF ? Colors.black : Colors.white,
-                              )
-                            : null,
-                      ),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 12),
-              ],
-            );
-          }
-
-          return AlertDialog(
-            title: const Text('ステッカーデザイン'),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextFormField(
-                      initialValue: text,
-                      maxLength: 15,
-                      decoration: const InputDecoration(
-                        labelText: 'ステッカーテキスト',
-                        helperText: '靴詳細の文字を初期値として使用します',
-                      ),
-                      onChanged: (value) => setLocalState(() => text = value),
-                    ),
-                    Container(
-                      height: 180,
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF3E7D3),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: _StickerArtwork(
-                        asset: preview,
-                        size: 160,
-                        onTextPositionChanged: (position) => setLocalState(() {
-                          textX = position.dx;
-                          textY = position.dy;
-                        }),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        const SizedBox(width: 64, child: Text('文字サイズ')),
-                        Expanded(
-                          child: Slider(
-                            value: textScale,
-                            min: .6,
-                            max: 1.6,
-                            divisions: 20,
-                            onChanged: (value) => setLocalState(() => textScale = value),
-                          ),
-                        ),
-                      ],
-                    ),
-                    palette('文字色', textColor, (value) => textColor = value),
-                    palette('内フチ（標準：白）', innerColor, (value) => innerColor = value),
-                    palette('外フチ（標準：オレンジ）', outerColor, (value) => outerColor = value),
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Shadow'),
-                      value: shadow,
-                      onChanged: (value) => setLocalState(() => shadow = value),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('キャンセル'),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.pop(
-                  dialogContext,
-                  _StickerDesign(
-                    text: text.trim().isEmpty ? null : text.trim(),
-                    textColor: textColor,
-                    innerBorderColor: innerColor,
-                    outerBorderColor: outerColor,
-                    shadowEnabled: shadow,
-                    textScale: textScale,
-                    textX: textX,
-                    textY: textY,
-                  ),
-                ),
-                child: const Text('作成'),
-              ),
-            ],
-          );
-        },
+    return Navigator.push<_StickerDesign>(
+      context,
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => _StickerDesignerPage(
+          shoe: shoe,
+          cutoutPath: cutoutPath,
+          initialText: text,
+          initialTextColor: textColor,
+          initialInnerColor: innerColor,
+          initialOuterColor: outerColor,
+          initialShadow: shadow,
+          initialTextScale: textScale,
+          initialTextX: textX,
+          initialTextY: textY,
+          colors: colors,
+        ),
       ),
     );
   }
@@ -1366,6 +1236,213 @@ class _StickerArtwork extends StatelessWidget {
           ..strokeWidth = strokeWidth
           ..color = color,
       ),
+    );
+  }
+}
+
+class _StickerDesignerPage extends StatefulWidget {
+  const _StickerDesignerPage({
+    required this.shoe,
+    required this.cutoutPath,
+    required this.initialText,
+    required this.initialTextColor,
+    required this.initialInnerColor,
+    required this.initialOuterColor,
+    required this.initialShadow,
+    required this.initialTextScale,
+    required this.initialTextX,
+    required this.initialTextY,
+    required this.colors,
+  });
+
+  final Shoe shoe;
+  final String cutoutPath;
+  final String initialText;
+  final int initialTextColor;
+  final int initialInnerColor;
+  final int initialOuterColor;
+  final bool initialShadow;
+  final double initialTextScale;
+  final double initialTextX;
+  final double initialTextY;
+  final List<int> colors;
+
+  @override
+  State<_StickerDesignerPage> createState() => _StickerDesignerPageState();
+}
+
+class _StickerDesignerPageState extends State<_StickerDesignerPage> {
+  late String _text;
+  late int _textColor;
+  late int _innerColor;
+  late int _outerColor;
+  late bool _shadow;
+  late double _textScale;
+  late double _textX;
+  late double _textY;
+
+  @override
+  void initState() {
+    super.initState();
+    _text = widget.initialText;
+    _textColor = widget.initialTextColor;
+    _innerColor = widget.initialInnerColor;
+    _outerColor = widget.initialOuterColor;
+    _shadow = widget.initialShadow;
+    _textScale = widget.initialTextScale;
+    _textX = widget.initialTextX;
+    _textY = widget.initialTextY;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final preview = StickerAsset(
+      id: 0,
+      shoeId: widget.shoe.id!,
+      sourcePath: widget.cutoutPath,
+      stickerPath: widget.cutoutPath,
+      stickerText: _text,
+      textColor: _textColor,
+      innerBorderColor: _innerColor,
+      outerBorderColor: _outerColor,
+      shadowEnabled: _shadow,
+      textScale: _textScale,
+      textX: _textX,
+      textY: _textY,
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ステッカーデザイン'),
+        leading: TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('キャンセル'),
+        ),
+        leadingWidth: 88,
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.pop(
+              context,
+              _StickerDesign(
+                text: _text.trim().isEmpty ? null : _text.trim(),
+                textColor: _textColor,
+                innerBorderColor: _innerColor,
+                outerBorderColor: _outerColor,
+                shadowEnabled: _shadow,
+                textScale: _textScale,
+                textX: _textX,
+                textY: _textY,
+              ),
+            ),
+            child: const Text('作成'),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                initialValue: _text,
+                maxLength: 15,
+                decoration: const InputDecoration(
+                  labelText: 'ステッカーテキスト',
+                  helperText: '靴詳細の文字を初期値として使用します',
+                ),
+                onChanged: (v) => setState(() => _text = v),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                height: 280,
+                width: double.infinity,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF3E7D3),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: _StickerArtwork(
+                  asset: preview,
+                  size: 240,
+                  onTextPositionChanged: (pos) => setState(() {
+                    _textX = pos.dx;
+                    _textY = pos.dy;
+                  }),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const SizedBox(width: 64, child: Text('文字サイズ')),
+                  Expanded(
+                    child: Slider(
+                      value: _textScale,
+                      min: .6,
+                      max: 1.6,
+                      divisions: 20,
+                      onChanged: (v) => setState(() => _textScale = v),
+                    ),
+                  ),
+                ],
+              ),
+              _palette('文字色', _textColor, (v) => setState(() => _textColor = v)),
+              _palette('内フチ（標準：白）', _innerColor, (v) => setState(() => _innerColor = v)),
+              _palette('外フチ（標準：オレンジ）', _outerColor, (v) => setState(() => _outerColor = v)),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Shadow'),
+                value: _shadow,
+                onChanged: (v) => setState(() => _shadow = v),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _palette(String label, int selected, ValueChanged<int> onSelect) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: Theme.of(context).textTheme.labelLarge),
+        const SizedBox(height: 6),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: widget.colors.map((value) {
+            final active = value == selected;
+            return InkWell(
+              borderRadius: BorderRadius.circular(99),
+              onTap: () => onSelect(value),
+              child: Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: Color(value),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: active
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.outlineVariant,
+                    width: active ? 3 : 1,
+                  ),
+                ),
+                child: active
+                    ? Icon(
+                        Icons.check,
+                        size: 19,
+                        color: value == 0xFFFFFFFF ? Colors.black : Colors.white,
+                      )
+                    : null,
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 16),
+      ],
     );
   }
 }
