@@ -21,7 +21,7 @@ class AppDatabase {
 
     return openDatabase(
       path,
-      version: 13,
+      version: 14,
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
       },
@@ -146,10 +146,13 @@ class AppDatabase {
       await db.execute("ALTER TABLE sticker_board_items ADD COLUMN text_enabled INTEGER NOT NULL DEFAULT 0");
       await db.execute("ALTER TABLE sticker_board_items ADD COLUMN text_content TEXT NOT NULL DEFAULT ''");
       await db.execute("ALTER TABLE sticker_board_items ADD COLUMN text_color TEXT NOT NULL DEFAULT '#FFFFFF'");
-      await db.execute('ALTER TABLE sticker_board_items ADD COLUMN text_size REAL NOT NULL DEFAULT 0.025');
+      await db.execute('ALTER TABLE sticker_board_items ADD COLUMN text_size REAL NOT NULL DEFAULT 0.005');
       await db.execute("ALTER TABLE sticker_board_items ADD COLUMN text_font TEXT NOT NULL DEFAULT ''");
       await db.execute('ALTER TABLE sticker_board_items ADD COLUMN text_x REAL NOT NULL DEFAULT 0.7');
       await db.execute('ALTER TABLE sticker_board_items ADD COLUMN text_y REAL NOT NULL DEFAULT 0.75');
+    }
+    if (oldVersion < 14) {
+      await db.execute('UPDATE sticker_board_items SET text_size = 0.005 WHERE text_size = 0.025');
     }
   }
 
@@ -306,7 +309,7 @@ class AppDatabase {
         text_enabled INTEGER NOT NULL DEFAULT 0,
         text_content TEXT NOT NULL DEFAULT '',
         text_color TEXT NOT NULL DEFAULT '#FFFFFF',
-        text_size REAL NOT NULL DEFAULT 0.025,
+        text_size REAL NOT NULL DEFAULT 0.005,
         text_font TEXT NOT NULL DEFAULT '',
         text_x REAL NOT NULL DEFAULT 0.7,
         text_y REAL NOT NULL DEFAULT 0.75,

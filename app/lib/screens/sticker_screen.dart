@@ -1222,10 +1222,10 @@ class _StickerBoardState extends State<_StickerBoard> {
               const Text('A', style: TextStyle(fontSize: 10)),
               Expanded(
                 child: Slider(
-                  value: item.textSize,
-                  min: 0.01,
-                  max: 0.06,
-                  divisions: 25,
+                  value: item.textSize.clamp(0.003, 0.02),
+                  min: 0.003,
+                  max: 0.02,
+                  divisions: 17,
                   onChanged: (v) {
                     final index = _items.indexWhere((i) => i.id == item.id);
                     if (index != -1) {
