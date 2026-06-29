@@ -1,6 +1,6 @@
 {
-  "version": "0.2.0",
-  "updatedAt": "2026-06-26",
+  "version": "0.3.1",
+  "updatedAt": "2026-06-28",
   "items": [
     {"modelId":"nike_air_force_1","alias":"AF1"},
     {"modelId":"nike_air_force_1","alias":"AF-1"},
@@ -146,6 +146,13 @@
     {"modelId":"reebok_classic_leather","alias":"ClassicLeather"},
     {"modelId":"reebok_instapump_fury","alias":"InstaPumpFury"},
     {"modelId":"reebok_workout_plus","alias":"WorkoutPlus"},
-    {"modelId":"reebok_freestyle","alias":"Freestyle"}
+    {"modelId":"reebok_freestyle","alias":"Freestyle"},
+
+    {"modelId":"hoka_bondi_9","alias":"Bondi9"},
+    {"modelId":"hoka_clifton_10","alias":"Clifton10"},
+    {"modelId":"hoka_speedgoat_7","alias":"Speedgoat7"},
+    {"modelId":"hoka_arahi_8","alias":"Arahi8"},
+    {"modelId":"hoka_transport_2","alias":"Transport2"},
+    {"modelId":"hoka_challenger_8","alias":"Challenger8"}
   ]
 }
