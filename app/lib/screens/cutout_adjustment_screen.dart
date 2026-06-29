@@ -39,6 +39,7 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
   List<List<Offset>> _outlineRegions = const [];
   double _previewAspect = 1;
   bool _adjusting = false;
+  bool _rendering = false;
   final TransformationController _transformationController =
       TransformationController();
 
@@ -125,7 +126,14 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('切り抜きを微調整')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          tooltip: 'キャンセル',
+          onPressed: _onCancel,
+        ),
+        title: const Text('切り抜きを微調整'),
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -137,6 +145,7 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
                 '背景が複雑な写真や、スニーカーと背景色が似ている写真では、背景削除がうまくできない場合があります。',
               ),
             ),
+            _buildModeIndicator(context),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -241,6 +250,20 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
                                         if (_brushPosition != null &&
                                             _mode != _EditMode.move)
                                           _buildMagnifier(constraints),
+                                        if (_rendering)
+                                          Container(
+                                            color: Colors.black54,
+                                            child: const Center(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  CircularProgressIndicator(color: Colors.white),
+                                                  SizedBox(height: 12),
+                                                  Text('画像を更新中…', style: TextStyle(color: Colors.white)),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   );
@@ -271,8 +294,8 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
                   SegmentedButton<_EditMode>(
                     segments: const [
                       ButtonSegment(value: _EditMode.move, icon: Icon(Icons.pan_tool_outlined), label: Text('移動')),
-                      ButtonSegment(value: _EditMode.erase, icon: Icon(Icons.auto_fix_off), label: Text('消す')),
-                      ButtonSegment(value: _EditMode.restore, icon: Icon(Icons.restore), label: Text('復元')),
+                      ButtonSegment(value: _EditMode.erase, icon: Icon(Icons.auto_fix_off), label: Text('背景を消す')),
+                      ButtonSegment(value: _EditMode.restore, icon: Icon(Icons.restore), label: Text('靴を戻す')),
                     ],
                     selected: {_mode},
                     onSelectionChanged: (value) => setState(() => _mode = value.first),
@@ -322,7 +345,7 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
-                  const Text('弱'),
+                  const Text('背景残す'),
                   Expanded(
                     child: Slider(
                       value: _threshold,
@@ -335,7 +358,7 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
                       onChangeEnd: (_) => _generate(),
                     ),
                   ),
-                  const Text('強'),
+                  const Text('背景消す'),
                 ],
               ),
             ),
@@ -451,9 +474,73 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
     await _renderBrushEdits(refreshOutline: true);
   }
 
+  Future<void> _onCancel() async {
+    if (_strokes.isNotEmpty) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('変更を破棄しますか？'),
+          content: const Text('ブラシで加えた変更は保存されません。'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('続ける'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('破棄して戻る'),
+            ),
+          ],
+        ),
+      );
+      if (confirm != true) return;
+    }
+    if (mounted) Navigator.pop(context, null);
+  }
+
+  Widget _buildModeIndicator(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    if (_adjusting) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        color: cs.primaryContainer,
+        child: Row(
+          children: [
+            Icon(Icons.edit_outlined, size: 15, color: cs.onPrimaryContainer),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                '微調整モード — ブラシで切り抜きを修正できます',
+                style: TextStyle(fontSize: 12, color: cs.onPrimaryContainer),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      color: cs.tertiaryContainer,
+      child: Row(
+        children: [
+          Icon(Icons.auto_fix_high, size: 15, color: cs.onTertiaryContainer),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              '自動生成モード — スライダーで背景除去の強さを調整',
+              style: TextStyle(fontSize: 12, color: cs.onTertiaryContainer),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildMagnifier(BoxConstraints constraints) {
     final finger = _brushPosition!;
-    const magnifierSize = 116.0;
+    const magnifierSize = 160.0;
     const margin = 12.0;
     final placeLeft = finger.dx > constraints.maxWidth / 2;
     final placeTop = finger.dy > constraints.maxHeight / 2;
@@ -473,11 +560,11 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
       child: IgnorePointer(
         child: RawMagnifier(
           size: const Size.square(magnifierSize),
-          magnificationScale: 2.2,
+          magnificationScale: 3.0,
           focalPointOffset: finger - center,
           decoration: const MagnifierDecoration(
             shape: CircleBorder(
-              side: BorderSide(color: Colors.orange, width: 3),
+              side: BorderSide(color: Colors.orange, width: 4),
             ),
             shadows: [
               BoxShadow(color: Colors.black54, blurRadius: 10),
@@ -492,21 +579,26 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
     final path = _previewPath;
     final baseBytes = _basePreviewBytes;
     if (path == null || baseBytes == null) return;
-    await File(path).writeAsBytes(baseBytes, flush: true);
-    if (_strokes.isNotEmpty) {
-      await BackgroundRemovalService().applyBrushEdits(
-        originalPath: widget.sourcePath,
-        cutoutPath: path,
-        strokes: List.of(_strokes),
-      );
-    }
-    await FileImage(File(path)).evict();
-    final outline = refreshOutline ? await _detectOutline(path) : null;
-    if (mounted) {
-      setState(() {
-        _previewRevision++;
-        if (outline != null) _outlinePoints = outline;
-      });
+    if (mounted) setState(() => _rendering = true);
+    try {
+      await File(path).writeAsBytes(baseBytes, flush: true);
+      if (_strokes.isNotEmpty) {
+        await BackgroundRemovalService().applyBrushEdits(
+          originalPath: widget.sourcePath,
+          cutoutPath: path,
+          strokes: List.of(_strokes),
+        );
+      }
+      await FileImage(File(path)).evict();
+      final outline = refreshOutline ? await _detectOutline(path) : null;
+      if (mounted) {
+        setState(() {
+          _previewRevision++;
+          if (outline != null) _outlinePoints = outline;
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _rendering = false);
     }
   }
 
