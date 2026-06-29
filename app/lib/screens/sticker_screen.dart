@@ -881,22 +881,12 @@ class _StickerBoard extends StatefulWidget {
 
 class _StickerBoardState extends State<_StickerBoard> {
   late List<StickerBoardItem> _items;
-  int? _selectedTextId;
   double _startScale = 1;
   double _startRotation = 0;
   Offset? _rotationCenter;
   double _handleStartAngle = 0;
   double _handleStartRotation = 0;
   final GlobalKey _boardKey = GlobalKey();
-  final _textController = TextEditingController();
-
-  int? get _textPanelItemId => _selectedTextId ?? widget.selectedItemId;
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
 
   @override
   void initState() {
@@ -909,14 +899,6 @@ class _StickerBoardState extends State<_StickerBoard> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.items != widget.items) {
       _items = [...widget.items];
-    }
-    if (oldWidget.selectedItemId != widget.selectedItemId &&
-        widget.selectedItemId != null) {
-      final item = _items.where((i) => i.id == widget.selectedItemId).firstOrNull;
-      if (item != null) {
-        _textController.text = item.textContent;
-        if (_selectedTextId != null) setState(() => _selectedTextId = null);
-      }
     }
   }
 
@@ -932,7 +914,6 @@ class _StickerBoardState extends State<_StickerBoard> {
     }
     return Column(
       children: [
-        if (_textPanelItemId != null) _buildTextEditPanel(),
         Expanded(
           child: Center(
             child: Padding(
@@ -969,10 +950,7 @@ class _StickerBoardState extends State<_StickerBoard> {
                                 top: item.y * constraints.maxHeight,
                                 child: GestureDetector(
                                   onTap: widget.editMode
-                                      ? () {
-                                          setState(() => _selectedTextId = null);
-                                          widget.onEdit(asset, item);
-                                        }
+                                      ? () => widget.onEdit(asset, item)
                                       : null,
                                   onLongPress: widget.editMode
                                       ? () => widget.onDesign(asset, item)
@@ -1137,16 +1115,11 @@ class _StickerBoardState extends State<_StickerBoard> {
 
   Widget _buildTextItem(StickerBoardItem item, BoxConstraints constraints) {
     if (!item.textEnabled || item.textContent.isEmpty) return const SizedBox.shrink();
-    final isSelected = _selectedTextId == item.id;
     return Positioned(
       left: (item.textX * constraints.maxWidth).clamp(0.0, constraints.maxWidth - 12),
       top: (item.textY * constraints.maxHeight).clamp(0.0, constraints.maxHeight - 12),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () => setState(() {
-          _selectedTextId = item.id;
-          _textController.text = item.textContent;
-        }),
         onPanUpdate: (details) {
           final index = _items.indexWhere((v) => v.id == item.id);
           if (index == -1) return;
@@ -1161,135 +1134,17 @@ class _StickerBoardState extends State<_StickerBoard> {
         },
         onPanEnd: (_) =>
             widget.onChanged(_items.firstWhere((v) => v.id == item.id)),
-        child: Container(
-          padding: const EdgeInsets.all(2),
-          decoration: BoxDecoration(
-            border: isSelected ? Border.all(color: Colors.orange, width: 1) : null,
-          ),
-          child: Text(
-            item.textContent,
-            style: TextStyle(
-              fontSize: 120 * 0.72 * item.scale * item.textSize,
-              color: _hexToColor(item.textColor),
-              fontFamily: item.textFont.isEmpty ? null : item.textFont,
-              decoration: TextDecoration.none,
-            ),
+        child: Text(
+          item.textContent,
+          style: TextStyle(
+            fontSize: 120 * 0.72 * item.scale * item.textSize,
+            color: _hexToColor(item.textColor),
+            fontFamily: item.textFont.isEmpty ? null : item.textFont,
+            decoration: TextDecoration.none,
           ),
         ),
       ),
     );
-  }
-
-  Widget _buildTextEditPanel() {
-    final item = _items.where((i) => i.id == _textPanelItemId).firstOrNull;
-    if (item == null) return const SizedBox.shrink();
-
-    const colorOptions = ['#FFFFFF', '#000000', '#FF6B00', '#FF3B30', '#007AFF', '#FFD60A'];
-
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        border: Border(
-            bottom: BorderSide(color: Theme.of(context).colorScheme.outlineVariant)),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Switch(
-                value: item.textEnabled,
-                onChanged: (v) => _updateTextItem(item.copyWith(textEnabled: v)),
-              ),
-              Expanded(
-                child: TextField(
-                  controller: _textController,
-                  decoration: const InputDecoration(
-                    hintText: 'テキストを入力',
-                    isDense: true,
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  ),
-                  style: const TextStyle(fontSize: 14),
-                  onChanged: (v) => _updateTextItem(item.copyWith(textContent: v)),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              const Text('A', style: TextStyle(fontSize: 10)),
-              Expanded(
-                child: Slider(
-                  value: item.textSize.clamp(0.02, 0.06),
-                  min: 0.02,
-                  max: 0.06,
-                  divisions: 20,
-                  onChanged: (v) {
-                    final index = _items.indexWhere((i) => i.id == item.id);
-                    if (index != -1) {
-                      setState(() => _items[index] = _items[index].copyWith(textSize: v));
-                    }
-                  },
-                  onChangeEnd: (_) =>
-                      widget.onChanged(_items.firstWhere((i) => i.id == item.id)),
-                ),
-              ),
-              const Text('A', style: TextStyle(fontSize: 20)),
-            ],
-          ),
-          Row(
-            children: [
-              ...colorOptions.map((hex) => GestureDetector(
-                    onTap: () => _updateTextItem(item.copyWith(textColor: hex)),
-                    child: Container(
-                      width: 26,
-                      height: 26,
-                      margin: const EdgeInsets.only(right: 6),
-                      decoration: BoxDecoration(
-                        color: _hexToColor(hex),
-                        shape: BoxShape.circle,
-                        border: item.textColor == hex
-                            ? Border.all(color: Colors.orange, width: 2)
-                            : Border.all(color: Colors.grey.shade400, width: 1),
-                      ),
-                    ),
-                  )),
-              const Spacer(),
-              DropdownButton<String>(
-                value: item.textFont,
-                isDense: true,
-                underline: const SizedBox(),
-                items: const [
-                  DropdownMenuItem(
-                      value: '',
-                      child: Text('デフォルト', style: TextStyle(fontSize: 13))),
-                  DropdownMenuItem(
-                      value: 'serif',
-                      child: Text('セリフ',
-                          style: TextStyle(fontSize: 13, fontFamily: 'serif'))),
-                  DropdownMenuItem(
-                      value: 'monospace',
-                      child: Text('等幅',
-                          style: TextStyle(fontSize: 13, fontFamily: 'monospace'))),
-                ],
-                onChanged: (v) {
-                  if (v != null) _updateTextItem(item.copyWith(textFont: v));
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _updateTextItem(StickerBoardItem updated) {
-    final index = _items.indexWhere((i) => i.id == updated.id);
-    if (index == -1) return;
-    setState(() => _items[index] = updated);
-    widget.onChanged(updated);
   }
 
   Color _hexToColor(String hex) {
