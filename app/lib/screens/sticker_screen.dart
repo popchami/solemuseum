@@ -608,41 +608,39 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
       case _StickerToolAction.paste:
         setState(() => _pasteStickerId = asset.id);
       case _StickerToolAction.duplicate:
+        // DB INSERT が必要なため await を維持（新アイテムの ID を DB が採番）
         if (!await _checkBoardCapacity(item.boardId)) return;
         final newItem = await repository.duplicateBoardItem(item);
         if (mounted) setState(() => _boardItems = [..._boardItems, newItem]);
       case _StickerToolAction.delete:
-        await repository.deleteBoardItem(item.id);
-        if (mounted) {
-          setState(() {
-            _selectedSticker = null;
-            _selectedBoardItem = null;
-            _boardItems = _boardItems.where((i) => i.id != item.id).toList();
-          });
-        }
+        // UI 先行・DB バックグラウンド
+        setState(() {
+          _selectedSticker = null;
+          _selectedBoardItem = null;
+          _boardItems = _boardItems.where((i) => i.id != item.id).toList();
+        });
+        repository.deleteBoardItem(item.id);
       case _StickerToolAction.zoomIn:
         final zoomedIn = item.copyWith(scale: (item.scale + .1).clamp(.75, 1.5));
-        await repository.updateBoardItem(zoomedIn);
-        if (mounted) setState(() {
+        setState(() {
           _boardItems = [for (final i in _boardItems) i.id == zoomedIn.id ? zoomedIn : i];
         });
+        repository.updateBoardItem(zoomedIn);
       case _StickerToolAction.zoomOut:
         final zoomedOut = item.copyWith(scale: (item.scale - .1).clamp(.75, 1.5));
-        await repository.updateBoardItem(zoomedOut);
-        if (mounted) setState(() {
+        setState(() {
           _boardItems = [for (final i in _boardItems) i.id == zoomedOut.id ? zoomedOut : i];
         });
+        repository.updateBoardItem(zoomedOut);
       case _StickerToolAction.bringFront:
-        await repository.bringToFront(item);
-        if (mounted) {
-          final maxZ = _boardItems.fold(0, (m, i) => i.zIndex > m ? i.zIndex : m);
-          final fronted = item.copyWith(zIndex: maxZ + 1);
-          setState(() {
-            _boardItems = ([
-              for (final i in _boardItems) i.id == item.id ? fronted : i,
-            ]..sort((a, b) => a.zIndex.compareTo(b.zIndex)));
-          });
-        }
+        final maxZ = _boardItems.fold(0, (m, i) => i.zIndex > m ? i.zIndex : m);
+        final fronted = item.copyWith(zIndex: maxZ + 1);
+        setState(() {
+          _boardItems = ([
+            for (final i in _boardItems) i.id == item.id ? fronted : i,
+          ]..sort((a, b) => a.zIndex.compareTo(b.zIndex)));
+        });
+        repository.bringToFront(item);
     }
   }
 
@@ -772,7 +770,7 @@ class _StickerBoardState extends State<_StickerBoard> {
   void didUpdateWidget(covariant _StickerBoard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.items != widget.items) {
-      _items = [...widget.items];
+      setState(() => _items = [...widget.items]);
     }
   }
 
