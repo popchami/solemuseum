@@ -1,6 +1,6 @@
 {
-  "version": "0.4.0",
-  "updatedAt": "2026-06-29",
+  "version": "0.5.1",
+  "updatedAt": "2026-06-30",
   "items": [
     {"id":"nike_air_force_1","brandId":"nike","modelName":"Air Force 1","category":"lifestyle","source":"master"},
     {"id":"nike_air_max_1","brandId":"nike","modelName":"Air Max 1","category":"lifestyle","source":"master"},
@@ -126,6 +126,21 @@
     {"id":"salomon_xa_pro","brandId":"salomon","modelName":"XA PRO","category":"trail_running","source":"master"},
     {"id":"salomon_speedcross","brandId":"salomon","modelName":"SPEEDCROSS","category":"trail_running","source":"master"},
     {"id":"salomon_x_ultra","brandId":"salomon","modelName":"X ULTRA","category":"hiking","source":"master"},
-    {"id":"salomon_xt_4","brandId":"salomon","modelName":"XT-4","category":"lifestyle","source":"master"}
+    {"id":"salomon_xt_4","brandId":"salomon","modelName":"XT-4","category":"lifestyle","source":"master"},
+
+    {"id":"merrell_agility_peak_6","brandId":"merrell","modelName":"AGILITY PEAK 6","category":"trail_running","source":"master"},
+    {"id":"merrell_agility_peak_6_gore_tex","brandId":"merrell","modelName":"AGILITY PEAK 6 GORE-TEX","category":"trail_running","source":"master"},
+    {"id":"merrell_vapor_glove_7","brandId":"merrell","modelName":"VAPOR GLOVE 7","category":"training","source":"master"},
+    {"id":"merrell_trail_glove_8","brandId":"merrell","modelName":"TRAIL GLOVE 8","category":"trail_running","source":"master"},
+    {"id":"merrell_jungle_trek_moc","brandId":"merrell","modelName":"JUNGLE TREK MOC","category":"lifestyle","source":"master"},
+
+    {"id":"brooks_ghost_18","brandId":"brooks","modelName":"Ghost 18","category":"running","source":"master"},
+    {"id":"brooks_ghost_trail","brandId":"brooks","modelName":"Ghost Trail","category":"trail_running","source":"master"},
+    {"id":"brooks_glycerin","brandId":"brooks","modelName":"Glycerin","category":"running","source":"master"},
+    {"id":"brooks_adrenaline","brandId":"brooks","modelName":"Adrenaline","category":"running","source":"master"},
+    {"id":"brooks_hyperion","brandId":"brooks","modelName":"Hyperion","category":"running","source":"master"},
+    {"id":"brooks_cascadia_elite","brandId":"brooks","modelName":"Cascadia Elite","category":"trail_running","source":"master"},
+    {"id":"brooks_revel_max","brandId":"brooks","modelName":"Revel MAX","category":"running","source":"master"},
+    {"id":"brooks_vanguard","brandId":"brooks","modelName":"Vanguard","category":"lifestyle","source":"master"}
   ]
 }
