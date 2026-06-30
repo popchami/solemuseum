@@ -14,6 +14,7 @@ import '../providers/shoe_provider.dart';
 import '../providers/wear_log_provider.dart';
 import '../widgets/wear_history_section.dart';
 import '../widgets/app_dialogs.dart';
+import '../services/background_removal_service.dart' show CutoutResult;
 import 'shoe_form_screen.dart';
 import 'cutout_adjustment_screen.dart';
 
@@ -55,7 +56,7 @@ class ShoeDetailScreen extends ConsumerWidget {
     }
 
     if (!context.mounted) return;
-    final cutoutPath = await Navigator.of(context).push<String>(
+    final result = await Navigator.of(context).push<CutoutResult>(
       MaterialPageRoute(
         builder: (_) => CutoutAdjustmentScreen(
           sourcePath: pickedFile.path,
@@ -63,7 +64,7 @@ class ShoeDetailScreen extends ConsumerWidget {
         ),
       ),
     );
-    if (cutoutPath == null) return;
+    if (result == null) return;
 
     try {
       final filePath = await ref.read(photoStorageServiceProvider).savePhoto(
@@ -76,7 +77,10 @@ class ShoeDetailScreen extends ConsumerWidget {
               shoeId: shoe.id!,
               photoType: photoType,
               filePath: filePath,
-              cutoutPath: cutoutPath,
+              cutoutPath: result.cutoutPath,
+              cutoutMaskPath: result.maskPath,
+              cutoutThreshold: result.threshold,
+              cutoutEngine: result.engine,
             ),
           );
       final storage = ref.read(photoStorageServiceProvider);

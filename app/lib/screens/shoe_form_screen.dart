@@ -13,7 +13,8 @@ import '../providers/brand_provider.dart';
 import '../providers/photo_provider.dart';
 import '../providers/photo_storage_provider.dart';
 import '../providers/shoe_provider.dart';
-import '../services/background_removal_service.dart';
+import '../services/background_removal_service.dart'
+    show BackgroundRemovalService, CutoutResult;
 import 'cutout_adjustment_screen.dart';
 import '../widgets/app_dialogs.dart';
 
@@ -73,7 +74,7 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
   bool _colorPaletteExpanded = true;
   DateTime? _purchaseDate;
   XFile? _pendingMainPhoto;
-  String? _pendingCutoutPath;
+  CutoutResult? _pendingCutoutResult;
   bool _saving = false;
   String? _lastAutoDisplayTitle;
   String? _lastAutoStickerText;
@@ -121,7 +122,7 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
   Future<void> _pickMainPhoto() async {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked == null || !mounted) return;
-    final cutoutPath = await Navigator.of(context).push<String>(
+    final result = await Navigator.of(context).push<CutoutResult>(
       MaterialPageRoute(
         builder: (_) => CutoutAdjustmentScreen(
           sourcePath: picked.path,
@@ -129,10 +130,10 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
         ),
       ),
     );
-    if (cutoutPath != null && mounted) {
+    if (result != null && mounted) {
       setState(() {
         _pendingMainPhoto = picked;
-        _pendingCutoutPath = cutoutPath;
+        _pendingCutoutResult = result;
       });
     }
   }
@@ -225,7 +226,7 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
       shoeId: shoeId,
       photoType: PhotoType.main,
     );
-    final cutoutPath = _pendingCutoutPath ??
+    final result = _pendingCutoutResult ??
         await BackgroundRemovalService().removeEdgeBackground(filePath, shoeId);
     final repository = ref.read(photoRepositoryProvider);
     final previousPhotos = await repository.replaceMainPhoto(
@@ -233,7 +234,10 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
         shoeId: shoeId,
         photoType: PhotoType.main,
         filePath: filePath,
-        cutoutPath: cutoutPath,
+        cutoutPath: result.cutoutPath,
+        cutoutMaskPath: result.maskPath,
+        cutoutThreshold: result.threshold,
+        cutoutEngine: result.engine,
       ),
     );
     for (final previousPhoto in previousPhotos) {
@@ -343,7 +347,7 @@ class _ShoeFormScreenState extends ConsumerState<ShoeFormScreen> {
                 onTap: _pickMainPhoto,
                 onRemove: () => setState(() {
                   _pendingMainPhoto = null;
-                  _pendingCutoutPath = null;
+                  _pendingCutoutResult = null;
                 }),
               ),
               const SizedBox(height: 28),

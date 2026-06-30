@@ -7,6 +7,21 @@ import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+/// 切り抜き処理の結果（切り抜き画像パス・マスクパス・設定値）
+class CutoutResult {
+  const CutoutResult({
+    required this.cutoutPath,
+    this.maskPath,
+    required this.threshold,
+    required this.engine,
+  });
+
+  final String cutoutPath;
+  final String? maskPath;  // グレースケールマスクPNG（ML Kitのみ）
+  final double threshold;
+  final String engine;     // 'mlkit' または 'floodfill'
+}
+
 class BackgroundRemovalService {
   static const _mlkitMarkerFile = '.mlkit_ready';
 
@@ -18,10 +33,10 @@ class BackgroundRemovalService {
     return !await marker.exists();
   }
 
-  /// 背景除去のエントリポイント
+  /// 背景除去のエントリポイント。CutoutResult を返す。
   /// Android: ML Kit Subject Segmentation → 失敗時はフラッドフィルにフォールバック
   /// iOS: フラッドフィルのみ
-  Future<String> removeEdgeBackground(
+  Future<CutoutResult> removeEdgeBackground(
     String sourcePath,
     int shoeId, {
     double threshold = 90,
@@ -44,7 +59,7 @@ class BackgroundRemovalService {
   // ML Kit Subject Segmentation (Android)
   // ---------------------------------------------------------------------------
 
-  Future<String> _removeWithMlKit(
+  Future<CutoutResult> _removeWithMlKit(
     String sourcePath,
     int shoeId, {
     required double threshold,
@@ -95,12 +110,42 @@ class BackgroundRemovalService {
       }
 
       _smoothCutoutEdge(image, visited);
-      final output = await _savePng(image, shoeId);
+      final cutoutPath = await _savePng(image, shoeId);
+      final maskPath = await _saveMaskPng(confidences, maskW, maskH, shoeId);
       await _markMlKitReady();
-      return output;
+      return CutoutResult(
+        cutoutPath: cutoutPath,
+        maskPath: maskPath,
+        threshold: threshold,
+        engine: 'mlkit',
+      );
     } finally {
       await segmenter.close();
     }
+  }
+
+  Future<String> _saveMaskPng(
+    Float32List confidences,
+    int maskW,
+    int maskH,
+    int shoeId,
+  ) async {
+    final root = await getApplicationDocumentsDirectory();
+    final directory = Directory(p.join(root.path, 'kickxkick', 'masks'));
+    await directory.create(recursive: true);
+    final output = p.join(
+      directory.path,
+      'shoe_${shoeId}_${DateTime.now().millisecondsSinceEpoch}_mask.png',
+    );
+    final maskImage = img.Image(width: maskW, height: maskH);
+    for (var y = 0; y < maskH; y++) {
+      for (var x = 0; x < maskW; x++) {
+        final v = (confidences[y * maskW + x] * 255).round().clamp(0, 255);
+        maskImage.setPixelRgba(x, y, v, v, v, 255);
+      }
+    }
+    await File(output).writeAsBytes(Uint8List.fromList(img.encodePng(maskImage)));
+    return output;
   }
 
   Future<void> _markMlKitReady() async {
@@ -116,7 +161,7 @@ class BackgroundRemovalService {
   // フラッドフィル（iOS フォールバック・既存ロジック）
   // ---------------------------------------------------------------------------
 
-  Future<String> _removeWithFloodFill(
+  Future<CutoutResult> _removeWithFloodFill(
     String sourcePath,
     int shoeId, {
     required double threshold,
@@ -188,7 +233,12 @@ class BackgroundRemovalService {
       enqueue(x, y + 1);
     }
     _smoothCutoutEdge(image, visited);
-    return await _savePng(image, shoeId);
+    return CutoutResult(
+      cutoutPath: await _savePng(image, shoeId),
+      maskPath: null,
+      threshold: threshold,
+      engine: 'floodfill',
+    );
   }
 
   // ---------------------------------------------------------------------------

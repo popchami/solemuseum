@@ -18,6 +18,9 @@ class Photo {
   final PhotoType photoType;
   final String filePath;
   final String? cutoutPath;
+  final String? cutoutMaskPath;
+  final double cutoutThreshold;
+  final String? cutoutEngine;
   final int displayOrder;
   final DateTime createdAt;
 
@@ -27,6 +30,9 @@ class Photo {
     required this.photoType,
     required this.filePath,
     this.cutoutPath,
+    this.cutoutMaskPath,
+    this.cutoutThreshold = 90,
+    this.cutoutEngine,
     required this.displayOrder,
     required this.createdAt,
   });
@@ -36,6 +42,9 @@ class Photo {
     required PhotoType photoType,
     required String filePath,
     String? cutoutPath,
+    String? cutoutMaskPath,
+    double cutoutThreshold = 90,
+    String? cutoutEngine,
     int displayOrder = 0,
   }) {
     return Photo(
@@ -43,6 +52,9 @@ class Photo {
       photoType: photoType,
       filePath: filePath,
       cutoutPath: cutoutPath,
+      cutoutMaskPath: cutoutMaskPath,
+      cutoutThreshold: cutoutThreshold,
+      cutoutEngine: cutoutEngine,
       displayOrder: displayOrder,
       createdAt: DateTime.now(),
     );
@@ -55,6 +67,9 @@ class Photo {
       photoType: PhotoTypeX.fromDatabaseValue(map['photo_type'] as String),
       filePath: map['file_path'] as String,
       cutoutPath: map['cutout_path'] as String?,
+      cutoutMaskPath: map['cutout_mask_path'] as String?,
+      cutoutThreshold: (map['cutout_threshold'] as num?)?.toDouble() ?? 90,
+      cutoutEngine: map['cutout_engine'] as String?,
       displayOrder: map['display_order'] as int,
       createdAt: DateTime.parse(map['created_at'] as String),
     );
@@ -67,6 +82,9 @@ class Photo {
       'photo_type': photoType.databaseValue,
       'file_path': filePath,
       'cutout_path': cutoutPath,
+      'cutout_mask_path': cutoutMaskPath,
+      'cutout_threshold': cutoutThreshold,
+      'cutout_engine': cutoutEngine,
       'display_order': displayOrder,
       'created_at': createdAt.toIso8601String(),
     };
@@ -78,6 +96,9 @@ class Photo {
     PhotoType? photoType,
     String? filePath,
     String? cutoutPath,
+    String? cutoutMaskPath,
+    double? cutoutThreshold,
+    String? cutoutEngine,
     int? displayOrder,
     DateTime? createdAt,
   }) {
@@ -87,6 +108,9 @@ class Photo {
       photoType: photoType ?? this.photoType,
       filePath: filePath ?? this.filePath,
       cutoutPath: cutoutPath ?? this.cutoutPath,
+      cutoutMaskPath: cutoutMaskPath ?? this.cutoutMaskPath,
+      cutoutThreshold: cutoutThreshold ?? this.cutoutThreshold,
+      cutoutEngine: cutoutEngine ?? this.cutoutEngine,
       displayOrder: displayOrder ?? this.displayOrder,
       createdAt: createdAt ?? this.createdAt,
     );

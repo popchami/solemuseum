@@ -21,7 +21,7 @@ class AppDatabase {
 
     return openDatabase(
       path,
-      version: 15,
+      version: 16,
       onConfigure: (db) async {
         await db.execute('PRAGMA foreign_keys = ON');
       },
@@ -157,6 +157,13 @@ class AppDatabase {
     if (oldVersion < 15) {
       await db.execute('UPDATE sticker_board_items SET text_size = 0.025 WHERE text_size <= 0.005');
     }
+    if (oldVersion < 16) {
+      await db.execute('ALTER TABLE photos ADD COLUMN cutout_mask_path TEXT');
+      await db.execute(
+        'ALTER TABLE photos ADD COLUMN cutout_threshold REAL NOT NULL DEFAULT 90',
+      );
+      await db.execute('ALTER TABLE photos ADD COLUMN cutout_engine TEXT');
+    }
   }
 
   Future<void> _createShoeIndexes(Database db) async {
@@ -176,6 +183,9 @@ class AppDatabase {
         shoe_id INTEGER NOT NULL,
         file_path TEXT NOT NULL,
         cutout_path TEXT,
+        cutout_mask_path TEXT,
+        cutout_threshold REAL NOT NULL DEFAULT 90,
+        cutout_engine TEXT,
         photo_type TEXT NOT NULL,
         display_order INTEGER NOT NULL DEFAULT 0,
         created_at TEXT NOT NULL,

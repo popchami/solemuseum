@@ -5,7 +5,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 
-import '../services/background_removal_service.dart';
+import '../services/background_removal_service.dart'
+    show BackgroundRemovalService, CutoutResult, CutoutBrushStroke, CutoutBrushPoint;
 
 class CutoutAdjustmentScreen extends StatefulWidget {
   const CutoutAdjustmentScreen({
@@ -26,6 +27,8 @@ class CutoutAdjustmentScreen extends StatefulWidget {
 class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
   double _threshold = 90;
   String? _previewPath;
+  String? _maskPath;
+  String _cutoutEngine = 'floodfill';
   Uint8List? _basePreviewBytes;
   int _previewRevision = 0;
   bool _processing = false;
@@ -107,16 +110,18 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
           ),
         );
       }
-      final path = await BackgroundRemovalService().removeEdgeBackground(
+      final result = await BackgroundRemovalService().removeEdgeBackground(
         widget.sourcePath,
         widget.shoeId,
         threshold: _threshold,
       );
-      final outline = await _detectOutline(path);
-      final baseBytes = await File(path).readAsBytes();
+      final outline = await _detectOutline(result.cutoutPath);
+      final baseBytes = await File(result.cutoutPath).readAsBytes();
       if (mounted) {
         setState(() {
-          _previewPath = path;
+          _previewPath = result.cutoutPath;
+          _maskPath = result.maskPath;
+          _cutoutEngine = result.engine;
           _basePreviewBytes = baseBytes;
           _previewRevision++;
           _outlinePoints = outline;
@@ -406,7 +411,15 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
                               : () async {
                               setState(() => _processing = true);
                               if (context.mounted) {
-                                Navigator.pop(context, _previewPath);
+                                Navigator.pop(
+                                  context,
+                                  CutoutResult(
+                                    cutoutPath: _previewPath!,
+                                    maskPath: _maskPath,
+                                    threshold: _threshold,
+                                    engine: _cutoutEngine,
+                                  ),
+                                );
                               }
                             },
                       icon: Icon(_adjusting ? Icons.check : Icons.tune),

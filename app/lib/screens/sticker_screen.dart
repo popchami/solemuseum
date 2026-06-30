@@ -18,7 +18,8 @@ import '../providers/shoe_provider.dart';
 import '../providers/sticker_provider.dart';
 import '../providers/settings_provider.dart';
 import '../repositories/sticker_repository.dart';
-import '../services/background_removal_service.dart';
+import '../services/background_removal_service.dart'
+    show BackgroundRemovalService, CutoutResult;
 import '../widgets/empty_state.dart';
 import 'cutout_adjustment_screen.dart';
 
@@ -428,10 +429,16 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
     try {
       var cutoutPath = photo.cutoutPath;
       if (cutoutPath == null || !await File(cutoutPath).exists()) {
-        cutoutPath = await BackgroundRemovalService()
+        final result = await BackgroundRemovalService()
             .removeEdgeBackground(photo.filePath, shoe.id!);
+        cutoutPath = result.cutoutPath;
         await ref.read(photoRepositoryProvider).updatePhoto(
-              photo.copyWith(cutoutPath: cutoutPath),
+              photo.copyWith(
+                cutoutPath: result.cutoutPath,
+                cutoutMaskPath: result.maskPath,
+                cutoutThreshold: result.threshold,
+                cutoutEngine: result.engine,
+              ),
             );
         ref.invalidate(mainPhotoProvider(shoe.id!));
       }
@@ -557,7 +564,7 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
       textY: asset.textY,
     );
     if (action == _StickerEditAction.cutout) {
-      final editedPath = await Navigator.push<String>(
+      final editResult = await Navigator.push<CutoutResult>(
         context,
         MaterialPageRoute(
           builder: (_) => CutoutAdjustmentScreen(
@@ -567,12 +574,17 @@ class _StickerScreenState extends ConsumerState<StickerScreen> {
           ),
         ),
       );
-      if (editedPath == null || !mounted) return;
-      stickerPath = editedPath;
+      if (editResult == null || !mounted) return;
+      stickerPath = editResult.cutoutPath;
       final photo = await ref.read(photoRepositoryProvider).getMainPhoto(asset.shoeId);
       if (photo != null) {
         await ref.read(photoRepositoryProvider).updatePhoto(
-              photo.copyWith(cutoutPath: editedPath),
+              photo.copyWith(
+                cutoutPath: editResult.cutoutPath,
+                cutoutMaskPath: editResult.maskPath,
+                cutoutThreshold: editResult.threshold,
+                cutoutEngine: editResult.engine,
+              ),
             );
         ref.invalidate(mainPhotoProvider(asset.shoeId));
       }
