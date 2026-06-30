@@ -1015,6 +1015,7 @@ class _StickerBoardState extends State<_StickerBoard> {
             color: _hexToColor(item.textColor),
             fontFamily: item.textFont.isEmpty ? null : item.textFont,
             decoration: TextDecoration.none,
+            backgroundColor: Colors.transparent,
           ),
         ),
       ),
@@ -1187,8 +1188,6 @@ class _StickerArtworkState extends State<_StickerArtwork> {
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    _stickerText(text, Color(asset.outerBorderColor), PaintingStyle.stroke, 8, size, asset.textScale),
-                    _stickerText(text, Color(asset.innerBorderColor), PaintingStyle.stroke, 5, size, asset.textScale),
                     _stickerText(text, Color(asset.textColor), PaintingStyle.fill, 0, size, asset.textScale),
                   ],
                 ),
@@ -1414,64 +1413,73 @@ class _StickerDesignerPageState extends State<_StickerDesignerPage> {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                initialValue: _text,
-                maxLength: 15,
-                decoration: const InputDecoration(
-                  labelText: 'ステッカーテキスト',
-                  helperText: '靴詳細の文字を初期値として使用します',
-                ),
-                onChanged: (v) => setState(() => _text = v),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                height: 280,
-                width: double.infinity,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF3E7D3),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: _StickerArtwork(
-                  asset: preview,
-                  size: 240,
-                  onTextPositionChanged: (pos) => setState(() {
-                    _textX = pos.dx;
-                    _textY = pos.dy;
-                  }),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  const SizedBox(width: 64, child: Text('文字サイズ')),
-                  Expanded(
-                    child: Slider(
-                      value: _textScale,
-                      min: .6,
-                      max: 1.6,
-                      divisions: 20,
-                      onChanged: (v) => setState(() => _textScale = v),
+        child: Column(
+          children: [
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final size = (constraints.maxWidth / 1.25)
+                      .clamp(0.0, constraints.maxHeight / 0.72);
+                  return Container(
+                    width: double.infinity,
+                    color: const Color(0xFFF3E7D3),
+                    alignment: Alignment.center,
+                    child: _StickerArtwork(
+                      asset: preview,
+                      size: size,
+                      onTextPositionChanged: (pos) => setState(() {
+                        _textX = pos.dx;
+                        _textY = pos.dy;
+                      }),
                     ),
-                  ),
-                ],
+                  );
+                },
               ),
-              _palette('文字色', _textColor, (v) => setState(() => _textColor = v)),
-              _palette('内フチ（標準：白）', _innerColor, (v) => setState(() => _innerColor = v)),
-              _palette('外フチ（標準：オレンジ）', _outerColor, (v) => setState(() => _outerColor = v)),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Shadow'),
-                value: _shadow,
-                onChanged: (v) => setState(() => _shadow = v),
+            ),
+            SizedBox(
+              height: 280,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      initialValue: _text,
+                      maxLength: 15,
+                      decoration: const InputDecoration(
+                        labelText: 'ステッカーテキスト',
+                        helperText: '靴詳細の文字を初期値として使用します',
+                      ),
+                      onChanged: (v) => setState(() => _text = v),
+                    ),
+                    Row(
+                      children: [
+                        const SizedBox(width: 64, child: Text('文字サイズ')),
+                        Expanded(
+                          child: Slider(
+                            value: _textScale,
+                            min: .6,
+                            max: 1.6,
+                            divisions: 20,
+                            onChanged: (v) => setState(() => _textScale = v),
+                          ),
+                        ),
+                      ],
+                    ),
+                    _palette('文字色', _textColor, (v) => setState(() => _textColor = v)),
+                    _palette('内フチ（標準：白）', _innerColor, (v) => setState(() => _innerColor = v)),
+                    _palette('外フチ（標準：オレンジ）', _outerColor, (v) => setState(() => _outerColor = v)),
+                    SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('Shadow'),
+                      value: _shadow,
+                      onChanged: (v) => setState(() => _shadow = v),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
