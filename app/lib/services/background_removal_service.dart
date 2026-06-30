@@ -85,15 +85,20 @@ class BackgroundRemovalService {
   }) async {
     final segmenter = SubjectSegmenter(
       options: SubjectSegmenterOptions(
+        enableForegroundBitmap: false,
         enableForegroundConfidenceMask: true,
+        enableMultipleSubjects: SubjectResultOptions(
+          enableConfidenceMask: false,
+          enableSubjectBitmap: false,
+        ),
       ),
     );
     try {
       final result = await segmenter.processImage(
         InputImage.fromFilePath(sourcePath),
       );
-      final mask = result.foregroundMask;
-      if (mask == null) throw StateError('セグメンテーションマスクを取得できませんでした');
+      final confidenceList = result.foregroundConfidenceMask;
+      if (confidenceList == null) throw StateError('セグメンテーションマスクを取得できませんでした');
 
       // 出力画像を 1400px 以内にリサイズ
       final bytes = await File(sourcePath).readAsBytes();
@@ -103,11 +108,13 @@ class BackgroundRemovalService {
           decoded.width > 1400 ? img.copyResize(decoded, width: 1400) : decoded;
       final image = resized.convert(numChannels: 4);
 
-      final maskW = mask.width;
-      final maskH = mask.height;
+      // 0.0.3 API: foregroundConfidenceMask は List<double>（幅・高さなし）
+      // マスクは元画像と同じ解像度で返されるため decoded のサイズを使う
+      final maskW = decoded.width;
+      final maskH = decoded.height;
       final outW = image.width;
       final outH = image.height;
-      final confidences = mask.confidences;
+      final confidences = Float32List.fromList(confidenceList);
 
       // 既存のスライダー値 (20-220) を確信度カットオフ (0.05-0.95) に変換
       // 低い値 → 前景を多く残す / 高い値 → より積極的に除去
