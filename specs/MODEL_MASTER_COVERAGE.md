@@ -1,4 +1,4 @@
-# Kick×Kick Model Master Coverage v1.7
+# Kick×Kick Model Master Coverage v1.8
 
 ## Purpose
 
@@ -68,8 +68,8 @@ TODO
 | HOKA | PASS | PASS | PASS | PASS | PASS | 代表6モデル追加済み。 |
 | Saucony | PASS | PASS | PASS | PASS | PASS | 代表6モデル追加済み。 |
 | SALOMON | PASS | PASS | PASS | PASS | PASS | 代表6モデル追加済み。 |
-| MERRELL | TODO | TODO | TODO | TODO | BRAND_ONLY | ABC-MART掲載確認済み。モデルは次回以降に段階追加。 |
-| BROOKS | TODO | TODO | TODO | TODO | BRAND_ONLY | ABC-MART掲載確認済み。モデルは次回以降に段階追加。 |
+| MERRELL | PASS | PASS | PASS | PASS | PASS | 代表5モデル追加済み。広すぎるPeak/Glove単体は未追加。 |
+| BROOKS | PASS | PASS | PASS | PASS | PASS | 代表8モデル追加済み。広すぎるGhost/Trail/Max単体は未追加。 |
 
 ---
 
@@ -114,6 +114,10 @@ searchKeywords: TODO
 - ABC-MART掲載ブランドを基準にbrands.jsonを90ブランドへ拡張
 - MERRELL / BROOKSをTier B brand-onlyとして追加
 - Tier Cブランドをbrand-onlyとして先行登録
+
+2026-07-01 v0.5.1
+- MERRELL / BROOKS のモデル、Alias、searchKeywordsを追加
+- data/*.json と app/assets/data/*.json の同期状態を回復
 ```
 
 ---
@@ -121,11 +125,10 @@ searchKeywords: TODO
 ## Next Work
 
 ```text
-1. MERRELL / BROOKS のモデル追加
-2. Tier Cブランドのモデル追加を優先度順に進める
-3. Tier S / A / B のABC-MART差分監査を継続
-4. Search MVPテストケースを実機またはFlutterテストで実施
-5. data/*.json と app/assets/data/*.json の同期自動化
+1. Tier Cブランドのモデル追加を優先度順に進める
+2. Tier S / A / B のABC-MART差分監査を継続
+3. Search MVPテストケースを実機またはFlutterテストで実施
+4. data/*.json と app/assets/data/*.json の同期自動化
 ```
 
 ---
