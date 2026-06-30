@@ -4,6 +4,37 @@
 
 ---
 
+## 2026-07-01 v0.5.1 completion
+
+### Added / Updated
+
+- `app/assets/data/aliases.json` を v0.5.1 に同期更新
+- `data/search_keywords.json` を v0.5.1 に更新
+  - MERRELL: `AgilityPeak6` / `アジリティピーク6` / `AgilityPeak6GTX` / `AgilityPeak6GORETEX` / `アジリティピーク6ゴアテックス` / `VaporGlove7` / `ベイパーグローブ7` / `TrailGlove8` / `トレイルグローブ8` / `JungleTrekMoc` / `ジャングルトレックモック`
+  - BROOKS: `Ghost18` / `ゴースト18` / `GhostTrail` / `ゴーストトレイル` / `グリセリン` / `アドレナリン` / `AdrenalineGTS` / `ハイペリオン` / `CascadiaElite` / `カスケディアエリート` / `RevelMax` / `レベルマックス` / `ヴァンガード`
+- `app/assets/data/search_keywords.json` を v0.5.1 に同期更新
+- `data/README.md` を v0.5.1 状態に更新
+- `data/validation_rules.md` を v1.3 に更新
+- `specs/MODEL_MASTER_COVERAGE.md` を v1.8 に更新
+- `specs/KICKXKICK_TASK_BOARD.md` を v2.2 に更新
+
+### Audited
+
+- `data/*.json` と `app/assets/data/*.json` の同期状態を回復
+- MERRELL / BROOKS の `models -> aliases -> search_keywords` の整合性を更新
+- `Peak` / `Glove` / `Ghost` / `Trail` / `Max` など広すぎる単語単体は追加なし
+- `7` / `8` / `18` など単体数字検索は追加なし
+- 商品説明文、商品画像、在庫情報、色名、コラボ名は追加なし
+
+### Remaining
+
+- Search MVPテストケース実施
+- data/*.json と app/assets/data/*.json の同期自動化
+- Tier S / A / B のABC-MART差分監査
+- Tier Cブランドのモデル追加
+
+---
+
 ## 2026-06-30 v0.5.1
 
 ### Added
@@ -28,12 +59,10 @@
 
 ### Remaining
 
-- `app/assets/data/aliases.json` の同期
-- `data/search_keywords.json` / `app/assets/data/search_keywords.json` の v0.5.1 更新
-- `data/README.md` / `data/validation_rules.md` の v0.5.1反映
-- `specs/MODEL_MASTER_COVERAGE.md` / `specs/KICKXKICK_TASK_BOARD.md` の v0.5.1反映
 - Search MVPテストケース実施
 - data/*.json と app/assets/data/*.json の同期自動化
+- Tier S / A / B のABC-MART差分監査
+- Tier Cブランドのモデル追加
 
 ---
 
@@ -69,9 +98,6 @@
 
 ### Remaining
 
-- `data/README.md` / `data/validation_rules.md` の詳細追記
-- `specs/KICKXKICK_TASK_BOARD.md` の進捗反映
-- MERRELL / BROOKS のモデル追加
 - Tier Cブランドのモデル追加
 - Search MVPテストケース実施
 - data/*.json と app/assets/data/*.json の同期自動化
