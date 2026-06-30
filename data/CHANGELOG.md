@@ -4,6 +4,39 @@
 
 ---
 
+## 2026-06-30 v0.5.1
+
+### Added
+
+- `data/models.json` を v0.5.1 に更新
+  - MERRELL: `AGILITY PEAK 6` / `AGILITY PEAK 6 GORE-TEX` / `VAPOR GLOVE 7` / `TRAIL GLOVE 8` / `JUNGLE TREK MOC`
+  - BROOKS: `Ghost 18` / `Ghost Trail` / `Glycerin` / `Adrenaline` / `Hyperion` / `Cascadia Elite` / `Revel MAX` / `Vanguard`
+
+- `app/assets/data/models.json` を v0.5.1 に同期更新
+
+- `data/aliases.json` を v0.5.1 に更新
+  - MERRELL / BROOKS の連結表記Aliasを追加
+  - 広すぎる単語単体は追加なし
+
+### Audited
+
+- MERRELL公式オンラインストア上で `AGILITY PEAK 6` / `AGILITY PEAK 6 GORE-TEX` / `VAPOR GLOVE 7` / `TRAIL GLOVE 8` / `JUNGLE TREK MOC` の掲載を確認
+- BROOKS公式オンラインショップ上で `Ghost` / `Glycerin` / `Adrenaline` / `Hyperion` 系列、および `Ghost 18` / `Ghost Trail` / `Cascadia Elite` / `Revel MAX` / `Vanguard` の掲載を確認
+- `models.json.brandId -> brands.json.brandId` は `merrell` / `brooks` とも既存登録済みブランドを参照
+- 色名、商品説明文、商品画像、在庫情報は追加なし
+- `Peak` / `Glove` / `Ghost` / `Trail` / `Max` など広すぎるAlias単体は追加なし
+
+### Remaining
+
+- `app/assets/data/aliases.json` の同期
+- `data/search_keywords.json` / `app/assets/data/search_keywords.json` の v0.5.1 更新
+- `data/README.md` / `data/validation_rules.md` の v0.5.1反映
+- `specs/MODEL_MASTER_COVERAGE.md` / `specs/KICKXKICK_TASK_BOARD.md` の v0.5.1反映
+- Search MVPテストケース実施
+- data/*.json と app/assets/data/*.json の同期自動化
+
+---
+
 ## 2026-06-29 v0.5.0
 
 ### Added
