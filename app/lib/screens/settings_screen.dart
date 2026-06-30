@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../app_build_info.dart';
 import '../features/search/screens/search_demo_screen.dart';
 import '../providers/backup_provider.dart';
 import '../providers/brand_provider.dart';
@@ -161,7 +162,7 @@ class SettingsScreen extends ConsumerWidget {
           const _SectionTitle(title: 'アプリ情報'),
           const ListTile(
             title: Text('KickxKick'),
-            subtitle: Text('v1.0.0'),
+            subtitle: Text('v$appVersion ($appBuildHash)'),
           ),
           const ListTile(
             title: Text('Collect. Create. Exhibit.'),
