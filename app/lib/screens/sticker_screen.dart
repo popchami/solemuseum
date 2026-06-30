@@ -818,6 +818,7 @@ class _StickerBoardState extends State<_StickerBoard> {
                               final asset = assets[item.stickerId];
                               if (asset == null) return const SizedBox.shrink();
                               return Positioned(
+                                key: ValueKey(item.id),
                                 left: item.x * constraints.maxWidth,
                                 top: item.y * constraints.maxHeight,
                                 child: GestureDetector(
@@ -988,6 +989,7 @@ class _StickerBoardState extends State<_StickerBoard> {
   Widget _buildTextItem(StickerBoardItem item, BoxConstraints constraints) {
     if (!item.textEnabled || item.textContent.isEmpty) return const SizedBox.shrink();
     return Positioned(
+      key: ValueKey('text_${item.id}'),
       left: (item.textX * constraints.maxWidth).clamp(0.0, constraints.maxWidth - 12),
       top: (item.textY * constraints.maxHeight).clamp(0.0, constraints.maxHeight - 12),
       child: GestureDetector(
