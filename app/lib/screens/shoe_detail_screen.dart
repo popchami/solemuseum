@@ -14,7 +14,7 @@ import '../providers/shoe_provider.dart';
 import '../providers/wear_log_provider.dart';
 import '../widgets/wear_history_section.dart';
 import '../widgets/app_dialogs.dart';
-import '../services/background_removal_service.dart' show CutoutResult;
+import '../services/background_removal_service.dart';
 import 'shoe_form_screen.dart';
 import 'cutout_adjustment_screen.dart';
 
@@ -301,8 +301,9 @@ class _DetailBody extends ConsumerWidget {
       ),
       children: [
         mainPhotoAsync.when(
-          data: (photo) => _MainPhoto(
+          data: (photo) => _MainPhotoSection(
             photo: photo,
+            shoeId: shoe.id!,
           ),
           loading: () => const _PhotoPlaceholder(label: '写真を読み込み中'),
           error: (_, __) => const _PhotoPlaceholder(label: '写真を読み込めませんでした'),
@@ -365,46 +366,148 @@ class _DetailBody extends ConsumerWidget {
   }
 }
 
-class _MainPhoto extends StatelessWidget {
+class _MainPhotoSection extends ConsumerStatefulWidget {
   final Photo? photo;
+  final int shoeId;
 
-  const _MainPhoto({required this.photo});
+  const _MainPhotoSection({required this.photo, required this.shoeId});
+
+  @override
+  ConsumerState<_MainPhotoSection> createState() => _MainPhotoSectionState();
+}
+
+class _MainPhotoSectionState extends ConsumerState<_MainPhotoSection> {
+  bool _isRegenerating = false;
+  bool _isSlow = false;
+
+  Future<void> _regenerate() async {
+    final photo = widget.photo;
+    if (photo == null || photo.cutoutPath == null) return;
+
+    final hasMask = photo.cutoutMaskPath != null &&
+        await File(photo.cutoutMaskPath!).exists();
+
+    setState(() {
+      _isRegenerating = true;
+      _isSlow = !hasMask;
+    });
+
+    try {
+      final service = BackgroundRemovalService();
+      final CutoutResult result;
+
+      if (hasMask) {
+        result = await service.regenerateFromMask(
+          sourcePath: photo.filePath,
+          maskPath: photo.cutoutMaskPath!,
+          shoeId: widget.shoeId,
+          threshold: photo.cutoutThreshold,
+          smoothing: photo.cutoutSmoothing,
+          antialiasing: photo.cutoutAntialiasing,
+        );
+      } else {
+        result = await service.removeEdgeBackground(
+          photo.filePath,
+          widget.shoeId,
+          threshold: photo.cutoutThreshold,
+          smoothing: photo.cutoutSmoothing,
+          antialiasing: photo.cutoutAntialiasing,
+        );
+      }
+
+      await ref.read(photoRepositoryProvider).updatePhoto(
+        photo.copyWith(
+          cutoutPath: result.cutoutPath,
+          cutoutMaskPath: result.maskPath ?? photo.cutoutMaskPath,
+          cutoutThreshold: result.threshold,
+          cutoutEngine: result.engine,
+          cutoutSmoothing: result.smoothing,
+          cutoutAntialiasing: result.antialiasing,
+        ),
+      );
+
+      ref.invalidate(mainPhotoProvider(widget.shoeId));
+      ref.invalidate(photosByShoeIdProvider(widget.shoeId));
+    } catch (_) {
+      if (mounted) {
+        await showAppMessage(context, title: '再生成に失敗しました');
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isRegenerating = false;
+          _isSlow = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final currentPhoto = photo;
-    if (currentPhoto == null) {
-      return Ink(
-          height: 220,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.add_a_photo_outlined, size: 56),
-              SizedBox(height: 12),
-              Text('メイン写真を追加'),
-              SizedBox(height: 4),
-              Text('タップして写真を選択'),
-            ],
-          ),
-      );
-    }
+    final photo = widget.photo;
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: Image.file(
-        File(currentPhoto.cutoutPath ?? currentPhoto.filePath),
-        height: 220,
-        width: double.infinity,
-        fit: BoxFit.cover,
-        filterQuality: FilterQuality.high,
-        errorBuilder: (_, __, ___) => const _PhotoPlaceholder(
-          label: '写真ファイルが見つかりません',
-        ),
-      ),
+    return Column(
+      children: [
+        if (photo == null)
+          Ink(
+            height: 220,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.add_a_photo_outlined, size: 56),
+                SizedBox(height: 12),
+                Text('メイン写真を追加'),
+                SizedBox(height: 4),
+                Text('タップして写真を選択'),
+              ],
+            ),
+          )
+        else
+          ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Image.file(
+              File(photo.cutoutPath ?? photo.filePath),
+              height: 220,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.high,
+              errorBuilder: (_, __, ___) => const _PhotoPlaceholder(
+                label: '写真ファイルが見つかりません',
+              ),
+            ),
+          ),
+        if (photo != null && photo.cutoutPath != null) ...[
+          const SizedBox(height: 8),
+          if (_isRegenerating)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                if (_isSlow) ...[
+                  const SizedBox(width: 8),
+                  Text(
+                    '処理中...',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ],
+            )
+          else
+            TextButton.icon(
+              onPressed: _regenerate,
+              icon: const Icon(Icons.refresh, size: 18),
+              label: const Text('切り抜きを再生成'),
+            ),
+        ],
+      ],
     );
   }
 }

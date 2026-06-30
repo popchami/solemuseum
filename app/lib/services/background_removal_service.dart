@@ -372,6 +372,67 @@ class BackgroundRemovalService {
   }
 
   // ---------------------------------------------------------------------------
+  // マスク再利用による高速再生成（ML Kit 再実行不要）
+  // ---------------------------------------------------------------------------
+
+  /// 保存済みマスク画像（グレースケール PNG）と設定値から切り抜きを再生成する。
+  /// ML Kit の再実行なしに threshold / smoothing / antialiasing だけを再適用できる。
+  Future<CutoutResult> regenerateFromMask({
+    required String sourcePath,
+    required String maskPath,
+    required int shoeId,
+    required double threshold,
+    double smoothing = 50,
+    double antialiasing = 50,
+  }) async {
+    final bytes = await File(sourcePath).readAsBytes();
+    final decoded = img.decodeImage(bytes);
+    if (decoded == null) throw StateError('元画像を読み込めませんでした');
+    final resized =
+        decoded.width > 1400 ? img.copyResize(decoded, width: 1400) : decoded;
+    final image = resized.convert(numChannels: 4);
+
+    final maskBytes = await File(maskPath).readAsBytes();
+    final maskImage = img.decodeImage(maskBytes);
+    if (maskImage == null) throw StateError('マスク画像を読み込めませんでした');
+
+    final maskW = maskImage.width;
+    final maskH = maskImage.height;
+    final outW = image.width;
+    final outH = image.height;
+
+    // threshold (20-220) → 確信度カットオフ (0.05-0.95) — _removeWithMlKit と同じ変換
+    final cutoff = (threshold / 220.0).clamp(0.05, 0.95);
+    final visited = Uint8List(outW * outH);
+
+    for (var y = 0; y < outH; y++) {
+      for (var x = 0; x < outW; x++) {
+        final maskX = (x * maskW / outW).round().clamp(0, maskW - 1);
+        final maskY = (y * maskH / outH).round().clamp(0, maskH - 1);
+        // マスクは R チャンネルに確信度 * 255 が格納されている
+        final confidence = maskImage.getPixel(maskX, maskY).r / 255.0;
+        if (confidence < cutoff) {
+          final pixel = image.getPixel(x, y);
+          image.setPixelRgba(x, y, pixel.r, pixel.g, pixel.b, 0);
+          visited[y * outW + x] = 1;
+        }
+      }
+    }
+
+    _applyAntialiasing(image, visited, antialiasing);
+    _smoothCutoutEdge(image, visited, smoothing);
+
+    return CutoutResult(
+      cutoutPath: await _savePng(image, shoeId),
+      maskPath: maskPath,
+      threshold: threshold,
+      engine: 'mlkit',
+      smoothing: smoothing,
+      antialiasing: antialiasing,
+    );
+  }
+
+  // ---------------------------------------------------------------------------
   // ブラシ編集（変更なし）
   // ---------------------------------------------------------------------------
 
