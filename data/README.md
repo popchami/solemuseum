@@ -24,16 +24,19 @@ search_keywords.json
 ```text
 Tier S: Nike / Air Jordan / adidas / New Balance / ASICS
 Tier A: PUMA / Converse / Vans / Reebok
-Tier B: HOKA / Saucony / SALOMON
+Tier B: HOKA / Saucony / SALOMON / MERRELL / BROOKS
+Tier C: brand-only registry
 ```
 
 Tier SはMVP基準でPASS。ただしABC-MARTなど国内流通リファレンスとの差分監査は継続する。
 
 Tier Aは代表モデルのみ高確度で追加済み。今後も国内流通モデルを基準に段階拡張する。
 
-Tier BはHOKAに加え、ABC-MART掲載ブランドからSaucony / SALOMONを追加。各ブランドは公式サイト上で確認できる高確度モデルのみ登録済み。2026-06-29時点では `data/*.json` と `app/assets/data/*.json` は同期済み。
+Tier BはHOKA / Saucony / SALOMON / MERRELL / BROOKSを追加済み。MERRELL / BROOKSは v0.5.1 でモデル・Alias・searchKeywordsまで追加した。
 
-Tier Cは未追加。
+Tier Cはブランド名のみ先行登録済み。モデル・Alias・searchKeywordsは未追加。
+
+2026-07-01時点で `data/*.json` と `app/assets/data/*.json` は同期済み。
 
 ---
 
@@ -141,6 +144,11 @@ Clifton10 -> Clifton 10
 Speedgoat7 -> Speedgoat 7
 Ride19 -> Ride 19
 XT6 -> XT-6
+AgilityPeak6 -> AGILITY PEAK 6
+VaporGlove7 -> VAPOR GLOVE 7
+TrailGlove8 -> TRAIL GLOVE 8
+Ghost18 -> Ghost 18
+CascadiaElite -> Cascadia Elite
 ```
 
 `aliases.json` や `search_keywords.json` の値を保存名にしてはいけない。
@@ -169,9 +177,10 @@ puma_speedcat
 vans_old_skool
 reebok_club_c
 hoka_bondi_9
-hoka_clifton_10
 saucony_ride_19
 salomon_xt_6
+merrell_agility_peak_6
+brooks_ghost_18
 ```
 
 ---
@@ -214,78 +223,7 @@ searchKeywordsに入れないもの:
 ```text
 - 1文字だけの数字や英字
 - Air / Max / GEL / Cloud / XT / Pro など広すぎる単語
-- Old / Classic / Star / Club / Ride / Guide など広すぎる単語
+- Old / Classic / Star / Club / Ride / Guide / Ghost / Trail / Glove / Peak など広すぎる単語
 - 色名だけ
 - コラボ名だけ
 ```
-
-例外:
-
-```text
-Air Jordan の AJ1 / AJ3 のように、ブランド内で明確にモデル指定できる場合は Alias 側で扱う。
-```
-
----
-
-## Brand Consistency Rule
-
-`models.json` の `brandId` は `brands.json` に存在する必要がある。
-
-`aliases.json` と `search_keywords.json` の `modelId` は `models.json` に存在する必要がある。
-
----
-
-## Duplicate Rule
-
-同じモデルを別IDで重複登録しない。
-
----
-
-## Free Input Rule
-
-候補にないモデルでも登録できる。
-
-ただし、マスターデータに追加する場合は以下を確認する。
-
-```text
-- 正式表記が決まっている
-- brandIdが正しい
-- Aliasが検索専用になっている
-- searchKeywordsが広すぎない
-```
-
----
-
-## Update Flow
-
-データ追加時の基本手順:
-
-```text
-1. ABC-MARTなど国内流通リファレンスでブランド・モデル候補を確認
-2. ブランド公式サイトまたは信頼できる公式情報で正式表記を確認
-3. brands.json にブランドがあるか確認
-4. models.json にモデルを追加
-5. aliases.json にAliasを追加
-6. search_keywords.json に必要な検索語を追加
-7. app/assets/data/*.json に同期
-8. specs/MODEL_MASTER_COVERAGE.md を更新
-9. data/CHANGELOG.md に監査ログを残す
-10. specs/KICKXKICK_TASK_BOARD.md を更新
-```
-
----
-
-## Quality Standard
-
-Tier Sでは以下を満たすこと。
-
-```text
-Model Coverage: PASS
-Alias: PASS
-searchKeywords: PASS
-Canonical Name: PASS
-```
-
-Tier A以降も、追加する場合は同じ基準で育成する。
-
-候補の完全網羅より、ユーザーが登録を完了できることを優先する。
