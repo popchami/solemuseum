@@ -272,14 +272,6 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(12),
-              color: Theme.of(context).colorScheme.secondaryContainer,
-              child: const Text(
-                '背景が複雑な写真や、スニーカーと背景色が似ている写真では、背景削除がうまくできない場合があります。',
-              ),
-            ),
             _buildModeIndicator(context),
             Expanded(
               child: Padding(
@@ -474,39 +466,72 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
               ),
             // 自動生成モード時の調整パネル開閉バー
             if (!_adjusting) _buildAdjustmentPanelHandle(),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _processing
-                          ? null
-                          : _adjusting
-                              ? () => setState(() {
-                                    _adjusting = false;
-                                    _mode = _EditMode.move;
-                                    _transformationController.value = Matrix4.identity();
-                                  })
-                              : _generate,
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('やり直す'),
+            if (_adjusting)
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _processing
+                            ? null
+                            : () => setState(() {
+                                  _adjusting = false;
+                                  _mode = _EditMode.move;
+                                  _transformationController.value = Matrix4.identity();
+                                }),
+                        icon: const Icon(Icons.arrow_back),
+                        label: const Text('AI調整に戻る'),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: FilledButton.icon(
-                      onPressed: _previewPath == null || _processing
-                          ? null
-                          : !_adjusting
-                              ? () => setState(() {
-                                    _adjusting = true;
-                                    _mode = _EditMode.move;
-                                    _transformationController.value = Matrix4.identity();
-                                  })
-                              : () async {
-                                  setState(() => _processing = true);
-                                  if (context.mounted) {
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: _previewPath == null || _processing
+                            ? null
+                            : () async {
+                                setState(() => _processing = true);
+                                if (context.mounted) {
+                                  Navigator.pop(
+                                    context,
+                                    CutoutResult(
+                                      cutoutPath: _previewPath!,
+                                      maskPath: _maskPath,
+                                      threshold: _threshold,
+                                      engine: _cutoutEngine,
+                                      smoothing: _smoothing,
+                                      antialiasing: _antialiasing,
+                                    ),
+                                  );
+                                }
+                              },
+                        icon: const Icon(Icons.check),
+                        label: const Text('保存'),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: _processing ? null : _generate,
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('やり直す'),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: FilledButton.icon(
+                            onPressed: _previewPath == null || _processing
+                                ? null
+                                : () {
                                     Navigator.pop(
                                       context,
                                       CutoutResult(
@@ -518,15 +543,31 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
                                         antialiasing: _antialiasing,
                                       ),
                                     );
-                                  }
-                                },
-                      icon: Icon(_adjusting ? Icons.check : Icons.tune),
-                      label: Text(_adjusting ? '保存' : '微調整へ'),
+                                  },
+                            icon: const Icon(Icons.check),
+                            label: const Text('この切り抜きで決定'),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                    TextButton.icon(
+                      onPressed: _previewPath == null || _processing
+                          ? null
+                          : () => setState(() {
+                                _adjusting = true;
+                                _mode = _EditMode.move;
+                                _transformationController.value = Matrix4.identity();
+                              }),
+                      icon: const Icon(Icons.edit_outlined, size: 15),
+                      label: const Text('それでも直したい場合はブラシで調整'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                        textStyle: const TextStyle(fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),
@@ -670,7 +711,7 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
             const SizedBox(width: 6),
             Expanded(
               child: Text(
-                '微調整モード — ブラシで切り抜きを修正できます',
+                'ブラシ調整モード — 背景が複雑・靴と背景色が似ている写真では自動切り抜きが難しい場合があります。ブラシで手動修正してください。',
                 style: TextStyle(fontSize: 12, color: cs.onPrimaryContainer),
               ),
             ),
