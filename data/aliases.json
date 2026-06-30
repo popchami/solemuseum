@@ -1,6 +1,6 @@
 {
-  "version": "0.4.0",
-  "updatedAt": "2026-06-29",
+  "version": "0.5.1",
+  "updatedAt": "2026-06-30",
   "items": [
     {"modelId":"nike_air_force_1","alias":"AF1"},
     {"modelId":"nike_air_force_1","alias":"AF-1"},
@@ -167,6 +167,18 @@
     {"modelId":"salomon_xa_pro","alias":"XAPro"},
     {"modelId":"salomon_speedcross","alias":"Speedcross"},
     {"modelId":"salomon_x_ultra","alias":"XUltra"},
-    {"modelId":"salomon_xt_4","alias":"XT4"}
+    {"modelId":"salomon_xt_4","alias":"XT4"},
+
+    {"modelId":"merrell_agility_peak_6","alias":"AgilityPeak6"},
+    {"modelId":"merrell_agility_peak_6_gore_tex","alias":"AgilityPeak6GTX"},
+    {"modelId":"merrell_vapor_glove_7","alias":"VaporGlove7"},
+    {"modelId":"merrell_trail_glove_8","alias":"TrailGlove8"},
+    {"modelId":"merrell_jungle_trek_moc","alias":"JungleTrekMoc"},
+
+    {"modelId":"brooks_ghost_18","alias":"Ghost18"},
+    {"modelId":"brooks_ghost_trail","alias":"GhostTrail"},
+    {"modelId":"brooks_adrenaline","alias":"AdrenalineGTS"},
+    {"modelId":"brooks_cascadia_elite","alias":"CascadiaElite"},
+    {"modelId":"brooks_revel_max","alias":"RevelMax"}
   ]
 }
