@@ -1284,11 +1284,11 @@ class _StickerArtworkPainter extends CustomPainter {
       );
     }
 
-    // 2. 外枠: radius=6 で 20 方向に描画
+    // 2. 外枠: radius=6 で 8 方向に描画
     final outerPaint = Paint()
       ..colorFilter = ColorFilter.mode(outerBorderColor, BlendMode.srcIn);
-    for (var i = 0; i < 20; i++) {
-      final angle = i * 2 * math.pi / 20;
+    for (var i = 0; i < 8; i++) {
+      final angle = i * 2 * math.pi / 8;
       canvas.drawImageRect(
         image, srcRect,
         Rect.fromLTWH(
@@ -1300,11 +1300,11 @@ class _StickerArtworkPainter extends CustomPainter {
       );
     }
 
-    // 3. 内枠: radius=3 で 16 方向に描画
+    // 3. 内枠: radius=3 で 4 方向に描画
     final innerPaint = Paint()
       ..colorFilter = ColorFilter.mode(innerBorderColor, BlendMode.srcIn);
-    for (var i = 0; i < 16; i++) {
-      final angle = i * 2 * math.pi / 16;
+    for (var i = 0; i < 4; i++) {
+      final angle = i * 2 * math.pi / 4;
       canvas.drawImageRect(
         image, srcRect,
         Rect.fromLTWH(

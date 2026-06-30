@@ -22,7 +22,7 @@ class StickerRepository {
       var sticker = StickerAsset.fromMap(row);
       final preview = sticker.previewPath;
       if (preview == null ||
-          !preview.endsWith('_v2.png') ||
+          !preview.endsWith('_v3.png') ||
           !await File(preview).exists()) {
         final generated = await _createPreview(
           sticker.stickerPath,
@@ -100,7 +100,7 @@ class StickerRepository {
     final decoded = img.decodeImage(await File(sourcePath).readAsBytes());
     if (decoded == null) return sourcePath;
     final trimmed = _trimTransparentPadding(decoded);
-    const maxDimension = 640;
+    const maxDimension = 450;
     final img.Image preview;
     if (trimmed.width <= maxDimension && trimmed.height <= maxDimension) {
       preview = trimmed;
@@ -120,7 +120,7 @@ class StickerRepository {
     final root = await getApplicationDocumentsDirectory();
     final directory = Directory(p.join(root.path, 'kickxkick', 'previews'));
     await directory.create(recursive: true);
-    final output = p.join(directory.path, 'sticker_${shoeId}_v2.png');
+    final output = p.join(directory.path, 'sticker_${shoeId}_v3.png');
     await File(output).writeAsBytes(
       Uint8List.fromList(img.encodePng(preview, level: 6)),
       flush: true,
