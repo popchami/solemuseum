@@ -1436,7 +1436,7 @@ class _StickerDesignerPageState extends State<_StickerDesignerPage> {
               ),
             ),
             SizedBox(
-              height: 280,
+              height: 200,
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
                 child: Column(
