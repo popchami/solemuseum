@@ -11,6 +11,7 @@ import '../providers/brand_provider.dart';
 import '../providers/photo_provider.dart';
 import '../providers/photo_storage_provider.dart';
 import '../providers/shoe_provider.dart';
+import '../providers/sticker_provider.dart';
 import '../providers/wear_log_provider.dart';
 import '../widgets/wear_history_section.dart';
 import '../widgets/app_dialogs.dart';
@@ -426,8 +427,15 @@ class _MainPhotoSectionState extends ConsumerState<_MainPhotoSection> {
         ),
       );
 
+      await ref.read(stickerRepositoryProvider).updateStickerCutout(
+        shoeId: widget.shoeId,
+        sourcePath: photo.filePath,
+        stickerPath: result.cutoutPath,
+      );
+
       ref.invalidate(mainPhotoProvider(widget.shoeId));
       ref.invalidate(photosByShoeIdProvider(widget.shoeId));
+      ref.invalidate(stickersProvider);
     } catch (_) {
       if (mounted) {
         await showAppMessage(context, title: '再生成に失敗しました');

@@ -159,6 +159,36 @@ class StickerRepository {
     );
   }
 
+  /// 既存ステッカーの cutout パスとプレビューだけを更新する。
+  /// ステッカーが未登録の場合は何もしない（テキスト・色設定は保持）。
+  Future<void> updateStickerCutout({
+    required int shoeId,
+    required String sourcePath,
+    required String stickerPath,
+  }) async {
+    final db = await AppDatabase.instance.database;
+    final existing = await db.query(
+      'stickers',
+      columns: ['id'],
+      where: 'shoe_id = ?',
+      whereArgs: [shoeId],
+      limit: 1,
+    );
+    if (existing.isEmpty) return;
+    final previewPath = await _createPreview(stickerPath, shoeId);
+    await db.update(
+      'stickers',
+      {
+        'source_path': sourcePath,
+        'sticker_path': stickerPath,
+        'preview_path': previewPath,
+        'updated_at': DateTime.now().toIso8601String(),
+      },
+      where: 'shoe_id = ?',
+      whereArgs: [shoeId],
+    );
+  }
+
   Future<int> ensureDefaultBoard() async {
     final db = await AppDatabase.instance.database;
     final existing = await db.query('sticker_boards', columns: ['id'], limit: 1);
