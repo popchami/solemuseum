@@ -83,7 +83,7 @@ CRUD
 
 ## Database
 
-SQLite / Drift によるローカル保存。
+SQLite (sqflite) によるローカル保存。
 
 責務
 
@@ -156,8 +156,7 @@ Providerを増やしすぎない
 使用
 
 ```text
-SQLite
-Drift
+SQLite (sqflite)
 ```
 
 MVPでは
@@ -220,9 +219,11 @@ MVPでは以下を禁止する。
 クラウド同期
 AI鑑定
 相場取得
-SNS共有
+SNS共有（アプリ内の自動投稿・SNS API連携）
 売買機能
 ```
+
+注: PNG書き出し機能（LINEスタンプ等アプリ外での利用）はこの禁止対象に含まない。書き出し後の使い方はユーザーに委ねる。
 
 ---
 
