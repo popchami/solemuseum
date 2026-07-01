@@ -26,9 +26,9 @@ class CutoutAdjustmentScreen extends StatefulWidget {
 }
 
 class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
-  double _threshold = 90;
-  double _smoothing = 50;
-  double _antialiasing = 50;
+  double _threshold = 20;
+  double _smoothing = 0;
+  double _antialiasing = 0;
   String? _previewPath;
   String? _maskPath;
   String _cutoutEngine = 'floodfill';
@@ -952,6 +952,7 @@ class _AdjustmentPanelState extends State<_AdjustmentPanel> {
     required double max,
     required ValueChanged<double> onChanged,
     required VoidCallback onChangeEnd,
+    double displayOffset = 0,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -991,7 +992,7 @@ class _AdjustmentPanelState extends State<_AdjustmentPanel> {
           SizedBox(
             width: 32,
             child: Text(
-              '${value.round()}',
+              '${(value - displayOffset).round()}',
               textAlign: TextAlign.right,
               style: const TextStyle(fontSize: 12),
             ),
@@ -1037,6 +1038,7 @@ class _AdjustmentPanelState extends State<_AdjustmentPanel> {
               widget.onThresholdChanged(v);
             },
             onChangeEnd: widget.onGenerate,
+            displayOffset: 20,
           ),
           _buildRow(
             label: 'スムージング',
