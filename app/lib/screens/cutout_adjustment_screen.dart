@@ -515,54 +515,27 @@ class _CutoutAdjustmentScreenState extends State<CutoutAdjustmentScreen> {
             else
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-                child: Column(
+                child: Row(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: _processing ? null : _generate,
-                            icon: const Icon(Icons.refresh),
-                            label: const Text('やり直す'),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: FilledButton.icon(
-                            onPressed: _previewPath == null || _processing
-                                ? null
-                                : () {
-                                    Navigator.pop(
-                                      context,
-                                      CutoutResult(
-                                        cutoutPath: _previewPath!,
-                                        maskPath: _maskPath,
-                                        threshold: _threshold,
-                                        engine: _cutoutEngine,
-                                        smoothing: _smoothing,
-                                        antialiasing: _antialiasing,
-                                      ),
-                                    );
-                                  },
-                            icon: const Icon(Icons.check),
-                            label: const Text('この切り抜きで決定'),
-                          ),
-                        ),
-                      ],
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _processing ? null : _generate,
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('やり直す'),
+                      ),
                     ),
-                    TextButton.icon(
-                      onPressed: _previewPath == null || _processing
-                          ? null
-                          : () => setState(() {
-                                _adjusting = true;
-                                _mode = _EditMode.move;
-                                _transformationController.value = Matrix4.identity();
-                              }),
-                      icon: const Icon(Icons.edit_outlined, size: 15),
-                      label: const Text('それでも直したい場合はブラシで調整'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                        textStyle: const TextStyle(fontSize: 13),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: _previewPath == null || _processing
+                            ? null
+                            : () => setState(() {
+                                  _adjusting = true;
+                                  _mode = _EditMode.move;
+                                  _transformationController.value = Matrix4.identity();
+                                }),
+                        icon: const Icon(Icons.arrow_forward),
+                        label: const Text('次へ：微調整する'),
                       ),
                     ),
                   ],
